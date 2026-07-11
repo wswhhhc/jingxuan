@@ -89,6 +89,18 @@
   - 输出到 `backend/target/openapi/openapi.json`
 - CI 后端 JDK 基线已从 17 对齐到 21，避免与当前 `pom.xml` 偏离。
 
+#### 2026-07-11 阶段 1 前端契约生成链
+
+- 已引入 Orval 8 与 TanStack Vue Query 5，建立 `OpenAPI → Axios 客户端 → DTO → Vue Query hooks` 生成链。
+- 生成代码统一写入 `frontend/src/shared/api/generated`，并通过 `frontend/src/shared/api/http.ts` 复用现有认证与错误拦截器。
+- 旧页面暂不切换到生成客户端；阶段 2 起按业务闭环逐步迁移，禁止新增页面直接调用底层 Axios。
+- 根命令新增：
+  - `npm run api:generate`：导出 OpenAPI 并生成前端客户端。
+  - `npm run api:check`：重新生成并检查提交的客户端是否与契约一致。
+- CI 新增独立“API 契约一致性”任务，同时配置 JDK 21 与 Node 24，阻止契约漂移进入主分支。
+- 修正 HTTP bearer 安全方案中无效的 `name` 字段，使导出的 OpenAPI 3.1 文档通过 Orval 校验。
+- `npm run verify:frontend` 已通过：ESLint、类型检查、Vitest 56/56 与生产构建均成功。
+
 #### 当前工具链差异
 
 - 目标基线仍然是 `JDK 25 LTS`。

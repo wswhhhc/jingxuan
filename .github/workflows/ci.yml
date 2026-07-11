@@ -18,6 +18,39 @@ env:
   CI: "true"
 
 jobs:
+  api-contract:
+    name: API 契约一致性
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      JWT_SECRET: ci-contract-${{ github.sha }}-${{ github.run_id }}
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+
+      - name: 配置 JDK 21
+        uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9 # v4.8.0
+        with:
+          java-version: 21
+          distribution: temurin
+          cache: maven
+          cache-dependency-path: backend/pom.xml
+
+      - name: 配置 Node.js 24.14.1
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 24.14.1
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: 安装前端依赖
+        run: npm --prefix frontend ci --legacy-peer-deps
+
+      - name: 校验 OpenAPI 与生成客户端一致
+        run: npm run api:check
+
   frontend-quality:
     name: 前端质量门禁
     runs-on: ubuntu-latest

@@ -143,3 +143,12 @@
 - OpenAPI 导出和 Orval 客户端已重新生成，前端类型检查通过。
 - 当前旧服务尚未提供 refresh token 能力，本切片不伪造 refresh 接口；待认证会话基础设施完成后再补齐刷新轮换。
 - 曾发现并修复 `@V1Api` 元注解路径不会与 Controller 路径自动拼接的问题，现由 Controller 明确声明完整 `/api/v1/...` 路径。
+
+#### 2026-07-11 v1 refresh 会话基础设施
+
+- 新增 Redis refresh token 服务：客户端持有随机不透明令牌，Redis 仅保存 SHA-256 哈希键和最小会话载荷。
+- 默认 refresh 会话 8 小时，“记住我”30 天；每次轮换使用 Redis `getAndDelete` 消费旧令牌，重复使用直接失败。
+- v1 access token 独立配置为 15 分钟，旧接口的 24 小时 JWT 配置保持兼容。
+- 新增 `/api/v1/auth/refresh`，注销可同时撤销 refresh token；登录/刷新响应均提供 access 与 refresh 令牌。
+- `/api/v1/auth/login` 和 `/api/v1/auth/refresh` 已加入匿名路径白名单。
+- Redis refresh 服务、认证 Controller 和前端生成客户端均已测试/同步；正式 Redis 集成测试仍需在 Testcontainers Redis 环境执行。

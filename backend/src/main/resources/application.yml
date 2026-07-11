@@ -61,12 +61,13 @@ mybatis-plus:
 
 # Spring Security 忽略路径（无需认证）
 ignored:
-  paths: /auth/login,/api/auth/login,/auth/register,/api/auth/register,/auth/send-code,/api/auth/send-code,/swagger-ui/**,/v3/api-docs/**,/doc.html,/webjars/**,/favicon.ico,/uploads/**,/public/**,/comment/list/**
+  paths: /auth/login,/api/auth/login,/api/v1/auth/login,/api/v1/auth/refresh,/auth/register,/api/auth/register,/auth/send-code,/api/auth/send-code,/swagger-ui/**,/v3/api-docs/**,/doc.html,/webjars/**,/favicon.ico,/uploads/**,/public/**,/comment/list/**
 
 # JWT 配置
 jwt:
   secret: ${JWT_SECRET}
   expiration: ${JWT_EXPIRATION_MS:86400000}  # 24小时
+  v1-access-expiration: ${JWT_V1_ACCESS_EXPIRATION_MS:900000}  # v1 access token 15分钟
 
 springdoc:
   api-docs:

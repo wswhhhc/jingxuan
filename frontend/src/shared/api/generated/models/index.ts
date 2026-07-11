@@ -158,6 +158,7 @@ export * from './userInfoVO';
 export * from './userVO';
 export * from './userVOStatus';
 export * from './v1LoginResponse';
+export * from './v1RefreshRequest';
 export * from './v1UserInfo';
 export * from './workAttachment';
 export * from './workDetailVO';

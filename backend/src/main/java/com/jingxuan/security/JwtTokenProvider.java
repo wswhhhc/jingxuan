@@ -29,6 +29,9 @@ public class JwtTokenProvider {
     @Value("${jwt.remember-expiration:604800000}")
     private long rememberExpiration;
 
+    @Value("${jwt.v1-access-expiration:900000}")
+    private long v1AccessExpiration;
+
     public JwtTokenProvider(@Value("${jwt.secret}") String secret) {
         Objects.requireNonNull(secret, "jwt.secret 未配置，请在 application.yml 中设置 jwt.secret");
         if (secret.isBlank()) {
@@ -47,13 +50,22 @@ public class JwtTokenProvider {
      */
     public String generateToken(Long userId, String username, String role, boolean rememberMe) {
         long exp = rememberMe ? rememberExpiration : expiration;
+        return generateToken(userId, username, role, exp);
+    }
+
+    /** v1 access token：固定短时有效，长期会话由 refresh token 维持。 */
+    public String generateV1AccessToken(Long userId, String username, String role) {
+        return generateToken(userId, username, role, v1AccessExpiration);
+    }
+
+    private String generateToken(Long userId, String username, String role, long validity) {
         return Jwts.builder()
                 .id(UUID.randomUUID().toString())
                 .claim(SecurityConstants.CLAIM_USER_ID, userId)
                 .claim(SecurityConstants.CLAIM_USERNAME, username)
                 .claim(SecurityConstants.CLAIM_ROLE, role)
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + exp))
+                .expiration(new Date(System.currentTimeMillis() + validity))
                 .signWith(secretKey)
                 .compact();
     }

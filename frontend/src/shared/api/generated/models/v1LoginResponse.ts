@@ -9,7 +9,9 @@ import type { V1UserInfo } from './v1UserInfo';
 
 export interface V1LoginResponse {
   accessToken?: string;
+  refreshToken?: string;
   tokenType?: string;
   expiresIn?: number;
+  refreshExpiresIn?: number;
   user?: V1UserInfo;
 }

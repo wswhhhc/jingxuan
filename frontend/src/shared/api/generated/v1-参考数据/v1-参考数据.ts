@@ -6,13 +6,17 @@
  * OpenAPI spec version: 1.0.0
  */
 import {
+  useMutation,
   useQuery
 } from '@tanstack/vue-query';
 import type {
   DataTag,
+  MutationFunction,
   QueryClient,
   QueryFunction,
   QueryKey,
+  UseMutationOptions,
+  UseMutationReturnType,
   UseQueryOptions,
   UseQueryReturnType
 } from '@tanstack/vue-query';
@@ -27,10 +31,13 @@ import type {
 } from 'vue';
 
 import type {
+  DeleteTagParams,
   ResultVoid,
   TagsParams,
+  V1DeletionImpact,
   V1ReferenceItem,
-  V1Tag
+  V1Tag,
+  V1TagRequest
 } from '../models';
 
 import { apiRequest } from '../../http';
@@ -41,6 +48,137 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 
 /**
+ * @summary 更新标签
+ */
+export const updateTag = (
+    id: MaybeRefOrGetter<number>,
+    v1TagRequest: MaybeRefOrGetter<V1TagRequest>,
+ options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
+) => {
+      id = toValue(id);
+v1TagRequest = toValue(v1TagRequest);
+
+      return apiRequest<V1Tag>(
+      {url: `/api/v1/tags/${id}`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: v1TagRequest, signal
+    },
+      options);
+    }
+
+
+
+
+export const getUpdateTagMutationOptions = <TError = ResultVoid,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateTag>>, TError,{id: number;data: V1TagRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateTag>>, TError,{id: number;data: V1TagRequest}, TContext> => {
+
+const mutationKey = ['updateTag'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateTag>>, {id: number;data: V1TagRequest}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  updateTag(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateTagMutationResult = NonNullable<Awaited<ReturnType<typeof updateTag>>>
+    export type UpdateTagMutationBody = V1TagRequest
+    export type UpdateTagMutationError = ResultVoid
+
+    /**
+ * @summary 更新标签
+ */
+export const useUpdateTag = <TError = ResultVoid,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateTag>>, TError,{id: number;data: V1TagRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient): UseMutationReturnType<
+        Awaited<ReturnType<typeof updateTag>>,
+        TError,
+        {id: number;data: V1TagRequest},
+        TContext
+      > => {
+      return useMutation(getUpdateTagMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary 确认后物理删除标签
+ */
+export const deleteTag = (
+    id: MaybeRefOrGetter<number>,
+    params?: MaybeRefOrGetter<DeleteTagParams>,
+ options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
+) => {
+      id = toValue(id);
+params = toValue(params);
+
+      return apiRequest<void>(
+      {url: `/api/v1/tags/${id}`, method: 'DELETE',
+        params, signal
+    },
+      options);
+    }
+
+
+
+
+export const getDeleteTagMutationOptions = <TError = ResultVoid,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteTag>>, TError,{id: number;params?: DeleteTagParams}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteTag>>, TError,{id: number;params?: DeleteTagParams}, TContext> => {
+
+const mutationKey = ['deleteTag'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteTag>>, {id: number;params?: DeleteTagParams}> = (props) => {
+          const {id,params} = props ?? {};
+
+          return  deleteTag(id,params,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteTagMutationResult = NonNullable<Awaited<ReturnType<typeof deleteTag>>>
+
+    export type DeleteTagMutationError = ResultVoid
+
+    /**
+ * @summary 确认后物理删除标签
+ */
+export const useDeleteTag = <TError = ResultVoid,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteTag>>, TError,{id: number;params?: DeleteTagParams}, TContext>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient): UseMutationReturnType<
+        Awaited<ReturnType<typeof deleteTag>>,
+        TError,
+        {id: number;params?: DeleteTagParams},
+        TContext
+      > => {
+      return useMutation(getDeleteTagMutationOptions(options), queryClient);
+    }
+    /**
  * @summary 获取标签
  */
 export const tags = (
@@ -98,6 +236,140 @@ export function useTags<TData = Awaited<ReturnType<typeof tags>>, TError = Resul
  ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getTagsQueryOptions(params,options)
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = unref(queryOptions).queryKey as DataTag<QueryKey, TData, TError>;
+
+  return query;
+}
+
+
+
+
+
+
+/**
+ * @summary 创建标签
+ */
+export const createTag = (
+    v1TagRequest: MaybeRefOrGetter<V1TagRequest>,
+ options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
+) => {
+      v1TagRequest = toValue(v1TagRequest);
+
+      return apiRequest<V1Tag>(
+      {url: `/api/v1/tags`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: v1TagRequest, signal
+    },
+      options);
+    }
+
+
+
+
+export const getCreateTagMutationOptions = <TError = ResultVoid,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createTag>>, TError,{data: V1TagRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof createTag>>, TError,{data: V1TagRequest}, TContext> => {
+
+const mutationKey = ['createTag'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createTag>>, {data: V1TagRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  createTag(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateTagMutationResult = NonNullable<Awaited<ReturnType<typeof createTag>>>
+    export type CreateTagMutationBody = V1TagRequest
+    export type CreateTagMutationError = ResultVoid
+
+    /**
+ * @summary 创建标签
+ */
+export const useCreateTag = <TError = ResultVoid,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createTag>>, TError,{data: V1TagRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient): UseMutationReturnType<
+        Awaited<ReturnType<typeof createTag>>,
+        TError,
+        {data: V1TagRequest},
+        TContext
+      > => {
+      return useMutation(getCreateTagMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary 预览删除标签影响
+ */
+export const tagDeletionImpact = (
+    id: MaybeRefOrGetter<number>,
+ options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
+) => {
+      id = toValue(id);
+
+      return apiRequest<V1DeletionImpact>(
+      {url: `/api/v1/tags/${id}/deletion-impact`, method: 'GET', signal
+    },
+      options);
+    }
+
+
+
+
+export const getTagDeletionImpactQueryKey = (id: MaybeRefOrGetter<number>,) => {
+    return [
+    'api','v1','tags',id,'deletion-impact'
+    ] as const;
+    }
+
+
+export const getTagDeletionImpactQueryOptions = <TData = Awaited<ReturnType<typeof tagDeletionImpact>>, TError = ResultVoid>(id: MaybeRefOrGetter<number>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof tagDeletionImpact>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  getTagDeletionImpactQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof tagDeletionImpact>>> = ({ signal }) => tagDeletionImpact(id, requestOptions, signal);
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: computed(() => toValue(id) !== null && toValue(id) !== undefined), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof tagDeletionImpact>>, TError, TData>
+}
+
+export type TagDeletionImpactQueryResult = NonNullable<Awaited<ReturnType<typeof tagDeletionImpact>>>
+export type TagDeletionImpactQueryError = ResultVoid
+
+
+/**
+ * @summary 预览删除标签影响
+ */
+
+export function useTagDeletionImpact<TData = Awaited<ReturnType<typeof tagDeletionImpact>>, TError = ResultVoid>(
+ id: MaybeRefOrGetter<number>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof tagDeletionImpact>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getTagDeletionImpactQueryOptions(id,options)
 
   const query = useQuery(queryOptions, queryClient) as UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 

@@ -84,7 +84,7 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 /**
  * @summary 更新标签
  */
-export const updateTag = (
+export const updateTag1 = (
     id: MaybeRefOrGetter<number>,
     tag: MaybeRefOrGetter<Tag>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
@@ -103,11 +103,11 @@ tag = toValue(tag);
 
 
 
-export const getUpdateTagMutationOptions = <TError = ResultVoid,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateTag>>, TError,{id: number;data: Tag}, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof updateTag>>, TError,{id: number;data: Tag}, TContext> => {
+export const getUpdateTag1MutationOptions = <TError = ResultVoid,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateTag1>>, TError,{id: number;data: Tag}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateTag1>>, TError,{id: number;data: Tag}, TContext> => {
 
-const mutationKey = ['updateTag'];
+const mutationKey = ['updateTag1'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -117,10 +117,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateTag>>, {id: number;data: Tag}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateTag1>>, {id: number;data: Tag}> = (props) => {
           const {id,data} = props ?? {};
 
-          return  updateTag(id,data,requestOptions)
+          return  updateTag1(id,data,requestOptions)
         }
 
 
@@ -130,27 +130,27 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type UpdateTagMutationResult = NonNullable<Awaited<ReturnType<typeof updateTag>>>
-    export type UpdateTagMutationBody = Tag
-    export type UpdateTagMutationError = ResultVoid
+    export type UpdateTag1MutationResult = NonNullable<Awaited<ReturnType<typeof updateTag1>>>
+    export type UpdateTag1MutationBody = Tag
+    export type UpdateTag1MutationError = ResultVoid
 
     /**
  * @summary 更新标签
  */
-export const useUpdateTag = <TError = ResultVoid,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateTag>>, TError,{id: number;data: Tag}, TContext>, request?: SecondParameter<typeof apiRequest>}
+export const useUpdateTag1 = <TError = ResultVoid,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateTag1>>, TError,{id: number;data: Tag}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
-        Awaited<ReturnType<typeof updateTag>>,
+        Awaited<ReturnType<typeof updateTag1>>,
         TError,
         {id: number;data: Tag},
         TContext
       > => {
-      return useMutation(getUpdateTagMutationOptions(options), queryClient);
+      return useMutation(getUpdateTag1MutationOptions(options), queryClient);
     }
     /**
  * @summary 删除标签
  */
-export const deleteTag = (
+export const deleteTag1 = (
     id: MaybeRefOrGetter<number>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {
@@ -165,11 +165,11 @@ export const deleteTag = (
 
 
 
-export const getDeleteTagMutationOptions = <TError = ResultVoid,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteTag>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof deleteTag>>, TError,{id: number}, TContext> => {
+export const getDeleteTag1MutationOptions = <TError = ResultVoid,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteTag1>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteTag1>>, TError,{id: number}, TContext> => {
 
-const mutationKey = ['deleteTag'];
+const mutationKey = ['deleteTag1'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -179,10 +179,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteTag>>, {id: number}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteTag1>>, {id: number}> = (props) => {
           const {id} = props ?? {};
 
-          return  deleteTag(id,requestOptions)
+          return  deleteTag1(id,requestOptions)
         }
 
 
@@ -192,22 +192,22 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type DeleteTagMutationResult = NonNullable<Awaited<ReturnType<typeof deleteTag>>>
+    export type DeleteTag1MutationResult = NonNullable<Awaited<ReturnType<typeof deleteTag1>>>
 
-    export type DeleteTagMutationError = ResultVoid
+    export type DeleteTag1MutationError = ResultVoid
 
     /**
  * @summary 删除标签
  */
-export const useDeleteTag = <TError = ResultVoid,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteTag>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof apiRequest>}
+export const useDeleteTag1 = <TError = ResultVoid,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteTag1>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
-        Awaited<ReturnType<typeof deleteTag>>,
+        Awaited<ReturnType<typeof deleteTag1>>,
         TError,
         {id: number},
         TContext
       > => {
-      return useMutation(getDeleteTagMutationOptions(options), queryClient);
+      return useMutation(getDeleteTag1MutationOptions(options), queryClient);
     }
     /**
  * @summary 更新奖品
@@ -735,7 +735,7 @@ export function useListTags<TData = Awaited<ReturnType<typeof listTags>>, TError
 /**
  * @summary 创建标签
  */
-export const createTag = (
+export const createTag1 = (
     tag: MaybeRefOrGetter<Tag>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {
@@ -752,11 +752,11 @@ export const createTag = (
 
 
 
-export const getCreateTagMutationOptions = <TError = ResultVoid,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createTag>>, TError,{data: Tag}, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof createTag>>, TError,{data: Tag}, TContext> => {
+export const getCreateTag1MutationOptions = <TError = ResultVoid,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createTag1>>, TError,{data: Tag}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof createTag1>>, TError,{data: Tag}, TContext> => {
 
-const mutationKey = ['createTag'];
+const mutationKey = ['createTag1'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -766,10 +766,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createTag>>, {data: Tag}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createTag1>>, {data: Tag}> = (props) => {
           const {data} = props ?? {};
 
-          return  createTag(data,requestOptions)
+          return  createTag1(data,requestOptions)
         }
 
 
@@ -779,22 +779,22 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type CreateTagMutationResult = NonNullable<Awaited<ReturnType<typeof createTag>>>
-    export type CreateTagMutationBody = Tag
-    export type CreateTagMutationError = ResultVoid
+    export type CreateTag1MutationResult = NonNullable<Awaited<ReturnType<typeof createTag1>>>
+    export type CreateTag1MutationBody = Tag
+    export type CreateTag1MutationError = ResultVoid
 
     /**
  * @summary 创建标签
  */
-export const useCreateTag = <TError = ResultVoid,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createTag>>, TError,{data: Tag}, TContext>, request?: SecondParameter<typeof apiRequest>}
+export const useCreateTag1 = <TError = ResultVoid,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createTag1>>, TError,{data: Tag}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
-        Awaited<ReturnType<typeof createTag>>,
+        Awaited<ReturnType<typeof createTag1>>,
         TError,
         {data: Tag},
         TContext
       > => {
-      return useMutation(getCreateTagMutationOptions(options), queryClient);
+      return useMutation(getCreateTag1MutationOptions(options), queryClient);
     }
     /**
  * @summary 新增奖品

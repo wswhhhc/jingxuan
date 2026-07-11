@@ -346,6 +346,8 @@
                                     <goal>start</goal>
                                 </goals>
                                 <configuration>
+                                    <wait>1000</wait>
+                                    <maxAttempts>90</maxAttempts>
                                     <jvmArguments>
                                         -Dserver.port=18080
                                         -Dspring.profiles.active=dev

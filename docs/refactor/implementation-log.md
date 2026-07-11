@@ -168,3 +168,14 @@
 - 上述 GET 接口仅提供注册与公开筛选所需的参考数据，已显式配置为匿名可读。
 - 单元测试、OpenAPI/Orval 生成、前端类型检查通过；Testcontainers HTTP 测试验证班级/标签可公开访问且返回字符串 ID。
 - 字典/标签写操作和删除影响清单尚未迁移，仍保留在后续独立切片。
+
+#### 2026-07-11 标签写入与删除影响清单
+
+- 新增管理员受保护的 v1 标签创建、更新、删除影响预览和确认删除接口。
+- `GET /api/v1/tags/{id}/deletion-impact` 返回 `work_tag` 引用数；有引用时必须在 `DELETE /api/v1/tags/{id}?confirm=true` 显式确认。
+- 确认删除在同一事务中物理删除 `tag` 并清理 `work_tag` 关联，避免遗留孤儿关系。
+- 通过 `TagMapper.physicalDeleteById` 绕开旧逻辑删除，为 v2 物理删除语义建立可审查入口。
+- 命令用例单元测试通过；OpenAPI/Orval 与前端类型检查通过。
+- Testcontainers HTTP 测试验证管理员可读取影响清单、未确认删除返回 409、确认后返回 204。
+- Springdoc OpenAPI 导出 profile 将启动等待由 30 秒提高到 90 秒，适配本机约 28 秒的冷启动而不影响运行时应用配置。
+- 班级/字典写操作及其用户、批次范围影响清单仍待新表外键迁移后实现。

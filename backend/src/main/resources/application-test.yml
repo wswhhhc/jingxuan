@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  sql:
+    init:
+      mode: never
+
+# 仅用于自动化测试的 Base64 密钥，不是生产密钥；生产配置仍必须通过 JWT_SECRET 注入。
+jwt:
+  secret: dGhpcyBpcyBhIHRlc3Qgc2VjcmV0IGtleSBmb3Igand0IDI1NiBiaXRzIGxvbmc=
+
+# DeepSeek 审核测试环境直接放行
+deepseek:
+  api-key: ""
+  fallback: bypass
+
+jingxuan:
+  upload:
+    path: ./target/test-uploads
+
+logging:
+  level:
+    com.jingxuan: warn
+    com.baomidou: warn
+    org.springframework: warn

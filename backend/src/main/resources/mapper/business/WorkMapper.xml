@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jingxuan.mapper.WorkMapper">
+
+    <!-- 作品列表查询（带筛选条件） -->
+    <select id="selectWorkList" resultType="com.jingxuan.entity.Work">
+        SELECT w.* FROM work w
+        <where>
+            w.deleted = 0
+            <if test="status != null">AND w.status = #{status}</if>
+            <if test="submitterId != null">AND w.submitter_id = #{submitterId}</if>
+            <if test="batchId != null">AND w.batch_id = #{batchId}</if>
+            <if test="keyword != null and keyword != ''">
+                AND (w.title LIKE CONCAT('%', #{keyword}, '%')
+                OR w.tech_stack LIKE CONCAT('%', #{keyword}, '%')
+                OR w.advisor LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="techStack != null and techStack != ''">
+                AND w.tech_stack LIKE CONCAT('%', #{techStack}, '%')
+            </if>
+        </where>
+        ORDER BY w.create_time DESC
+    </select>
+
+    <!-- 综合排行榜查询（按作品维度聚合评分） -->
+    <select id="selectRankList" resultType="com.jingxuan.modules.rank.dto.RankVO">
+        SELECT
+            w.id AS workId,
+            w.title AS workTitle,
+            w.tech_stack AS techStack,
+            w.cover_url AS coverUrl,
+            w.advisor AS advisor,
+            w.submit_time AS submitTime,
+            ROUND(AVG(ws.total), 2) AS avgScore,
+            ROUND(AVG(ws.innovation), 2) AS avgInnovation,
+            ROUND(AVG(ws.difficulty), 2) AS avgDifficulty,
+            ROUND(AVG(ws.completion), 2) AS avgCompletion,
+            ROUND(AVG(ws.practicality), 2) AS avgPracticality,
+            COUNT(ws.id) AS teacherCount
+        FROM work w
+        INNER JOIN work_score ws ON w.id = ws.work_id AND ws.deleted = 0
+        <where>
+            w.deleted = 0
+            AND w.status = 3
+            <if test="batchId != null">AND w.batch_id = #{batchId}</if>
+            <if test="techStack != null and techStack != ''">
+                AND w.tech_stack LIKE CONCAT('%', #{techStack}, '%')
+            </if>
+        </where>
+        GROUP BY w.id
+        ORDER BY avgScore DESC, avgCompletion DESC, avgInnovation DESC, w.submit_time ASC
+    </select>
+
+    <!-- 获取有评分数据的作品涉及的技术栈分类 -->
+    <select id="selectDistinctTechStacksFromRanked" resultType="java.lang.String">
+        SELECT DISTINCT w.tech_stack
+        FROM work w
+        INNER JOIN work_score ws ON w.id = ws.work_id AND ws.deleted = 0
+        WHERE w.deleted = 0 AND w.status = 3
+          AND w.tech_stack IS NOT NULL AND w.tech_stack != ''
+          <if test="batchId != null">AND w.batch_id = #{batchId}</if>
+        ORDER BY w.tech_stack ASC
+    </select>
+
+    <!-- 统计指定批次中有评分数据的作品数 -->
+    <select id="countRankedWorksByBatch" resultType="java.lang.Long">
+        SELECT COUNT(DISTINCT w.id)
+        FROM work w
+        INNER JOIN work_score ws ON w.id = ws.work_id AND ws.deleted = 0
+        WHERE w.deleted = 0 AND w.status = 3 AND w.batch_id = #{batchId}
+    </select>
+
+    <!-- 评分分布统计（按分数段） -->
+    <select id="selectScoreDistribution" resultType="java.util.HashMap">
+        SELECT
+            CASE
+                WHEN avg_score >= 90 THEN '90-100'
+                WHEN avg_score >= 80 THEN '80-89'
+                WHEN avg_score >= 70 THEN '70-79'
+                WHEN avg_score >= 60 THEN '60-69'
+                ELSE '60以下'
+            END AS name,
+            COUNT(*) AS value
+        FROM (
+            SELECT ROUND(AVG(ws.total), 0) AS avg_score
+            FROM work w
+            INNER JOIN work_score ws ON w.id = ws.work_id AND ws.deleted = 0
+            WHERE w.deleted = 0 AND w.status = 3
+            GROUP BY w.id
+        ) t
+        GROUP BY name
+        ORDER BY name
+    </select>
+
+    <!-- 查询作品在同批次中的排名 -->
+    <select id="selectWorkRank" resultType="java.lang.Integer">
+        SELECT COUNT(*) + 1
+        FROM (
+            SELECT w.id
+            FROM work w
+            INNER JOIN work_score ws ON w.id = ws.work_id AND ws.deleted = 0
+            WHERE w.deleted = 0 AND w.status = 3 AND w.batch_id = #{batchId}
+            GROUP BY w.id
+            HAVING AVG(ws.total) > (
+                SELECT AVG(ws2.total) FROM work_score ws2
+                WHERE ws2.work_id = #{workId} AND ws2.deleted = 0
+            )
+        ) t
+    </select>
+
+</mapper>

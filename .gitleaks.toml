@@ -1,0 +1,30 @@
+title = "菁选秘密扫描配置"
+minVersion = "v8.25.0"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "JWT 单元测试中的两个固定测试密钥"
+targetRules = ["generic-api-key"]
+condition = "AND"
+regexTarget = "line"
+paths = [
+  '''(?:^|/)backend/src/test/java/com/jingxuan/security/JwtTokenProviderTest\.java$''',
+]
+regexes = [
+  '''^\s*private static final String TEST_SECRET = "dGhpcyBpcyBhIHRlc3Qgc2VjcmV0IGtleSBmb3Igand0IDI1NiBiaXRzIGxvbmc=";$''',
+  '''^\s*String otherSecret = "YW5vdGhlciB0ZXN0IHNlY3JldCBrZXkgZm9yIGp3dCAyNTYgYml0cyBsb25n";$''',
+]
+
+[[allowlists]]
+description = "异常边界集成测试中用于生成过期令牌的固定测试密钥"
+targetRules = ["generic-api-key"]
+condition = "AND"
+regexTarget = "line"
+paths = [
+  '''(?:^|/)backend/src/test/java/com/jingxuan/modules/adapter/ExceptionBoundaryTest\.java$''',
+]
+regexes = [
+  '''^\s*String secret = "YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXoxMjM0NTY3ODkwYWJjZGVmZ2hpamtsbW5vcA";$''',
+]

@@ -1,0 +1,26 @@
+{
+  "name": "jingxuan-workspace",
+  "private": true,
+  "type": "module",
+  "packageManager": "npm@11.11.0",
+  "engines": {
+    "node": ">=24 <25",
+    "npm": ">=11"
+  },
+  "scripts": {
+    "frontend:lint": "npm --prefix frontend run lint",
+    "frontend:typecheck": "npm --prefix frontend run typecheck",
+    "frontend:test": "npm --prefix frontend run test",
+    "frontend:build": "npm --prefix frontend run build",
+    "frontend:audit": "npm --prefix frontend audit --omit=dev --audit-level=high",
+    "backend:test:unit": "mvn -f backend/pom.xml -B -ntp test",
+    "backend:test:integration": "mvn -f backend/pom.xml -B -ntp verify -DskipUnitTests=true",
+    "backend:verify": "mvn -f backend/pom.xml -B -ntp verify",
+    "format:check": "npm --prefix frontend exec -- prettier --check package.json .github/workflows/ci.yml .github/dependabot.yml scripts/*.mjs",
+    "verify:toolchain": "node scripts/verify-toolchain.mjs",
+    "verify:config": "node --test scripts/verify-security-baseline.test.mjs && node scripts/verify-security-baseline.mjs",
+    "verify:frontend": "npm run frontend:lint && npm run frontend:typecheck && npm run frontend:test && npm run frontend:build",
+    "verify:quick": "npm run verify:toolchain && npm run verify:config && npm run format:check && npm run verify:frontend && npm run backend:test:unit",
+    "verify": "npm run verify:toolchain && npm run verify:config && npm run format:check && npm run verify:frontend && npm run frontend:audit && npm run backend:verify"
+  }
+}

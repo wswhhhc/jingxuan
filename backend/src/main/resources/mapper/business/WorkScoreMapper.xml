@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jingxuan.mapper.WorkScoreMapper">
+
+    <!-- 评分汇总统计 -->
+    <select id="selectScoreSummary" resultType="com.jingxuan.modules.score.dto.ScoreSummaryVO">
+        SELECT
+            ws.work_id AS workId,
+            w.title AS workTitle,
+            ROUND(AVG(ws.total), 2) AS avgTotal,
+            ROUND(AVG(ws.innovation), 2) AS avgInnovation,
+            ROUND(AVG(ws.difficulty), 2) AS avgDifficulty,
+            ROUND(AVG(ws.completion), 2) AS avgCompletion,
+            ROUND(AVG(ws.practicality), 2) AS avgPracticality,
+            COUNT(ws.id) AS teacherCount
+        FROM work_score ws
+        INNER JOIN work w ON w.id = ws.work_id
+        <where>
+            ws.deleted = 0 AND w.deleted = 0
+            <if test="batchId != null">AND ws.batch_id = #{batchId}</if>
+            <if test="workId != null">AND ws.work_id = #{workId}</if>
+        </where>
+        GROUP BY ws.work_id
+    </select>
+
+</mapper>

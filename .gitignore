@@ -1,0 +1,74 @@
+# 本地环境变量（仅允许提交无秘密模板）
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+
+# 证书、私钥与密钥库
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.crt
+*.cer
+*.csr
+
+*.log
+logs/
+**/target/
+**/dist/
+**/node_modules/
+coverage/
+playwright-report/
+test-results/
+.playwright-cli/
+.lighthouseci/
+.vite/
+.claude/
+.codegraph/daemon.pid
+uploads/
+
+# 前端插件可再生成的类型声明（手写的 src/**/*.d.ts 必须提交）
+frontend/auto-imports.d.ts
+frontend/components.d.ts
+docs/progress.md
+docs/findings.md
+docs/task_plan.md
+docs/修复规划路线.md
+docs/接口测试简报-*.md
+outputs/
+tmp/
+tmp_doc_work/
+tmp_perf_render/
+
+# Java artifacts
+*.jar
+*.jar.bak*
+*.class
+BOOT-INF/
+backend/META-INF/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build leftovers
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+frontend/dist/assets/*.bak
+frontend/dist/assets/*.conflicted
+frontend/dist/assets/*.gz
+deploy/
+nginx-jingxuan.conf.bak

@@ -1,0 +1,85 @@
+# ============================================================
+# 菁选校园作品展示平台 — Docker 部署
+# 使用方式：docker compose up -d
+# ============================================================
+
+services:
+  # MySQL 数据库
+  mysql:
+    image: mysql:8.0
+    container_name: jingxuan-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-jingxuan123}
+      MYSQL_DATABASE: jingxuan
+      MYSQL_CHARACTER_SET_SERVER: utf8mb4
+      MYSQL_COLLATION_SERVER: utf8mb4_unicode_ci
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./sql/base/init_schema.sql:/docker-entrypoint-initdb.d/01-init-schema.sql
+      - ./sql/init-docker.sh:/docker-entrypoint-initdb.d/00-init.sh
+    ports:
+      - "3307:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASSWORD:-jingxuan123}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis 缓存
+  redis:
+    image: redis:7-alpine
+    container_name: jingxuan-redis
+    restart: unless-stopped
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # 后端应用（Spring Boot）
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: jingxuan-backend:latest
+    container_name: jingxuan-backend
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      DB_PASSWORD: ${DB_PASSWORD:-jingxuan123}
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+      MAIL_HOST: ${MAIL_HOST:-smtp.qq.com}
+      MAIL_PORT: ${MAIL_PORT:-587}
+      MAIL_USERNAME: ${MAIL_USERNAME:-}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+    ports:
+      - "8080:8080"
+    volumes:
+      - uploads:/app/uploads
+
+  # Nginx 反向代理 + 前端静态资源
+  nginx:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: jingxuan-frontend:latest
+    container_name: jingxuan-nginx
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+
+volumes:
+  mysql-data:
+  redis-data:
+  uploads:

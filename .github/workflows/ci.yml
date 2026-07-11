@@ -1,0 +1,192 @@
+name: 持续集成
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: "true"
+
+jobs:
+  frontend-quality:
+    name: 前端质量门禁
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+
+      - name: 配置 Node.js 24.14.1
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 24.14.1
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: 校验 npm 版本
+        run: npm run verify:toolchain
+
+      - name: 安装前端依赖
+        run: npm --prefix frontend ci
+
+      - name: 检查根工作区配置格式
+        run: npm run format:check
+
+      - name: 检查前端代码规范
+        run: npm run frontend:lint
+
+      - name: 检查前端类型
+        run: npm run frontend:typecheck
+
+      - name: 执行前端单元测试
+        run: |
+          mkdir -p frontend/test-results
+          npm --prefix frontend run test -- --reporter=default --reporter=junit --outputFile.junit=test-results/vitest-junit.xml
+
+      - name: 保存前端失败测试报告
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: 前端测试报告-${{ github.sha }}
+          path: frontend/test-results/
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: 构建前端生产制品
+        run: npm run frontend:build
+
+      - name: 审计前端生产依赖
+        run: npm run frontend:audit
+
+      - name: 保存前端构建制品
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: 前端构建-${{ github.sha }}
+          path: frontend/dist/
+          if-no-files-found: error
+          retention-days: 7
+
+  backend-quality:
+    name: 后端质量门禁
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      JWT_SECRET: ci-test-${{ github.sha }}-${{ github.run_id }}
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+
+      - name: 配置 JDK 17
+        uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9 # v4.8.0
+        with:
+          java-version: 17
+          distribution: temurin
+          cache: maven
+          cache-dependency-path: backend/pom.xml
+
+      - name: 配置 Node.js 24.14.1 以运行根工作区命令
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 24.14.1
+
+      - name: 执行后端单元与集成验证
+        run: npm run backend:verify
+
+      - name: 保存后端失败测试报告
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: 后端测试报告-${{ github.sha }}
+          path: |
+            backend/target/surefire-reports/
+            backend/target/failsafe-reports/
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: 保存后端构建制品
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: 后端构建-${{ github.sha }}
+          path: backend/target/*.jar
+          if-no-files-found: error
+          retention-days: 7
+
+  security-quality:
+    name: 安全基线门禁
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: 检出完整提交历史
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: 配置 Node.js 24.14.1
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 24.14.1
+
+      - name: 检查环境文件与 JWT 配置
+        run: npm run verify:config
+
+      - name: 安装固定版本的 Gitleaks
+        env:
+          GITLEAKS_VERSION: 8.30.1
+          GITLEAKS_ARCHIVE_SHA256: 551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb
+        run: |
+          set -euo pipefail
+          archive="$RUNNER_TEMP/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          curl --fail --location --retry 3 --proto '=https' --tlsv1.2 \
+            --output "$archive" \
+            "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          echo "${GITLEAKS_ARCHIVE_SHA256}  ${archive}" | sha256sum --check --status
+          tar -xzf "$archive" -C "$RUNNER_TEMP" gitleaks
+          chmod 0755 "$RUNNER_TEMP/gitleaks"
+          echo "$RUNNER_TEMP" >> "$GITHUB_PATH"
+
+      - name: 扫描提交历史中的秘密
+        run: gitleaks git --config .gitleaks.toml --redact --verbose .
+
+      - name: 扫描严重依赖与配置漏洞
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: vuln,misconfig
+          severity: CRITICAL,HIGH
+          exit-code: "1"
+          skip-dirs: frontend/node_modules,frontend/dist,backend/target
+
+  dependency-review:
+    name: 拉取请求依赖审查
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+
+      - name: 审查新增依赖风险
+        uses: actions/dependency-review-action@40c09b7dc99638e5ddb0bfd91c1673effc064d8a # v4.8.1
+        with:
+          fail-on-severity: high

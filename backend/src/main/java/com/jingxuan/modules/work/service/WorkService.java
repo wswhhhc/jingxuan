@@ -50,6 +50,11 @@ public interface WorkService extends IService<Work> {
     WorkDetailVO getApprovedWorkDetail(Long id);
 
     /**
+     * 获取可在公开展廊展示的作品详情。
+     */
+    WorkDetailVO getPublishedWorkDetail(Long id);
+
+    /**
      * 获取当前学生自己的作品详情
      */
     WorkDetailVO getCurrentStudentWorkDetail(Long id);

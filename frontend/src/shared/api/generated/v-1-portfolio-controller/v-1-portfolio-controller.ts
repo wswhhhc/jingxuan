@@ -18,11 +18,17 @@ import type {
 } from '@tanstack/vue-query';
 
 import {
+  computed,
+  toValue,
   unref
+} from 'vue';
+import type {
+  MaybeRefOrGetter
 } from 'vue';
 
 import type {
   ResultVoid,
+  V1WorkDetail,
   V1WorkSummary
 } from '../models';
 
@@ -97,3 +103,61 @@ export function useMyWorks<TData = Awaited<ReturnType<typeof myWorks>>, TError =
 
 
 
+export const myWork = (
+    id: MaybeRefOrGetter<string>,
+ options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
+) => {
+      id = toValue(id);
+
+      return apiRequest<V1WorkDetail>(
+      {url: `/api/v1/me/works/${id}`, method: 'GET', signal
+    },
+      options);
+    }
+
+
+
+
+export const getMyWorkQueryKey = (id: MaybeRefOrGetter<string>,) => {
+    return [
+    'api','v1','me','works',id
+    ] as const;
+    }
+
+
+export const getMyWorkQueryOptions = <TData = Awaited<ReturnType<typeof myWork>>, TError = ResultVoid>(id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof myWork>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  getMyWorkQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof myWork>>> = ({ signal }) => myWork(id, requestOptions, signal);
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: computed(() => toValue(id) !== null && toValue(id) !== undefined), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof myWork>>, TError, TData>
+}
+
+export type MyWorkQueryResult = NonNullable<Awaited<ReturnType<typeof myWork>>>
+export type MyWorkQueryError = ResultVoid
+
+
+
+export function useMyWork<TData = Awaited<ReturnType<typeof myWork>>, TError = ResultVoid>(
+ id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof myWork>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getMyWorkQueryOptions(id,options)
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = unref(queryOptions).queryKey as DataTag<QueryKey, TData, TError>;
+
+  return query;
+}

@@ -413,6 +413,17 @@ public class WorkServiceImpl extends ServiceImpl<WorkMapper, Work> implements Wo
     }
 
     @Override
+    public WorkDetailVO getPublishedWorkDetail(Long id) {
+        Work work = getWorkOrThrow(id);
+        ensureApprovedForTeacherView(work);
+        WorkPublish publish = workPublishMapper.selectByWorkId(id);
+        if (publish == null || publish.getPublishStatus() == null || publish.getPublishStatus() != 1) {
+            throw new BusinessException("作品不存在");
+        }
+        return buildWorkDetailVO(work);
+    }
+
+    @Override
     public WorkDetailVO getCurrentStudentWorkDetail(Long id) {
         Work work = getWorkOrThrow(id);
         checkOwnershipForView(work);

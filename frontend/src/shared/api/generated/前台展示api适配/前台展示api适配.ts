@@ -453,9 +453,3 @@ export function useGetPublicClassList<TData = Awaited<ReturnType<typeof getPubli
 
   return query;
 }
-
-
-
-
-
-

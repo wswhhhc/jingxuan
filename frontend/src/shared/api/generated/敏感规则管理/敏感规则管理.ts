@@ -631,9 +631,3 @@ export function useList8<TData = Awaited<ReturnType<typeof list8>>, TError = Res
 
   return query;
 }
-
-
-
-
-
-

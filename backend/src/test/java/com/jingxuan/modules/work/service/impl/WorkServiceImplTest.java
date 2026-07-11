@@ -6,6 +6,7 @@ import com.jingxuan.entity.ScoreBatch;
 import com.jingxuan.entity.Work;
 import com.jingxuan.entity.WorkAttachment;
 import com.jingxuan.entity.WorkMember;
+import com.jingxuan.entity.WorkPublish;
 import com.jingxuan.enums.AuditStatusEnum;
 import com.jingxuan.exception.BusinessException;
 import com.jingxuan.mapper.*;
@@ -380,6 +381,36 @@ class WorkServiceImplTest {
                         () -> workService.deleteWork(1L),
                         "状态 " + status + " 应不可删除");
             }
+        }
+    }
+
+    @Nested
+    @DisplayName("公开展廊详情")
+    class PublishedWorkDetail {
+
+        @Test
+        @DisplayName("未发布的已审核作品不可从公开展廊读取")
+        void rejectsApprovedButUnpublishedWork() {
+            Work work = createWork(1L, AuditStatusEnum.APPROVED.getValue(), CURRENT_USER_ID);
+            when(workMapper.selectById(1L)).thenReturn(work);
+            when(workPublishMapper.selectByWorkId(1L)).thenReturn(null);
+
+            assertThrows(BusinessException.class, () -> workService.getPublishedWorkDetail(1L));
+        }
+
+        @Test
+        @DisplayName("已发布且审核通过的作品可从公开展廊读取")
+        void returnsPublishedApprovedWork() {
+            Work work = createWork(1L, AuditStatusEnum.APPROVED.getValue(), CURRENT_USER_ID);
+            WorkPublish publish = new WorkPublish();
+            publish.setPublishStatus(1);
+            when(workMapper.selectById(1L)).thenReturn(work);
+            when(workPublishMapper.selectByWorkId(1L)).thenReturn(publish);
+            when(workMemberService.getByWorkId(1L)).thenReturn(List.of());
+            when(workAttachmentMapper.selectList(any())).thenReturn(List.of());
+            when(scoreBatchMapper.selectById(1L)).thenReturn(null);
+
+            assertEquals(1L, workService.getPublishedWorkDetail(1L).getId());
         }
     }
 }

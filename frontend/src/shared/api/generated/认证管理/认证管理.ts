@@ -569,9 +569,3 @@ export function useCheckFirstLogin<TData = Awaited<ReturnType<typeof checkFirstL
 
   return query;
 }
-
-
-
-
-
-

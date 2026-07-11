@@ -300,9 +300,3 @@ export function useMe<TData = Awaited<ReturnType<typeof me>>, TError = ResultVoi
 
   return query;
 }
-
-
-
-
-
-

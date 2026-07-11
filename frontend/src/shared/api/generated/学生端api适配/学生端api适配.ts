@@ -781,9 +781,3 @@ export function useGetAvailableBatches<TData = Awaited<ReturnType<typeof getAvai
 
   return query;
 }
-
-
-
-
-
-

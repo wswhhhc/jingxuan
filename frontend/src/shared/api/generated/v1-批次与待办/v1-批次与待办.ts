@@ -243,9 +243,3 @@ export function useBatches<TData = Awaited<ReturnType<typeof batches>>, TError =
 
   return query;
 }
-
-
-
-
-
-

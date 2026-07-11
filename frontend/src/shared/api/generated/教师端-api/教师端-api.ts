@@ -872,9 +872,3 @@ export function useListBatches<TData = Awaited<ReturnType<typeof listBatches>>, 
 
   return query;
 }
-
-
-
-
-
-

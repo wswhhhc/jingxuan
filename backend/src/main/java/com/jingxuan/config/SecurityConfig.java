@@ -58,6 +58,7 @@ public class SecurityConfig {
                     .requestMatchers(HttpMethod.GET, "/api/v1/classes", "/api/v1/dictionaries/**", "/api/v1/tags").permitAll()
                     // 前台公开展示接口
                     .requestMatchers("/public/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/v1/showcase/works/**").permitAll()
                     // 公共评论列表 & 发表（游客也可评论）
                     .requestMatchers(HttpMethod.GET, "/comment/list/**").permitAll()
                     .requestMatchers(HttpMethod.POST, "/comment/add", "/api/comment/add").permitAll()

@@ -244,9 +244,3 @@ export function useGetTree<TData = Awaited<ReturnType<typeof getTree>>, TError =
 
   return query;
 }
-
-
-
-
-
-

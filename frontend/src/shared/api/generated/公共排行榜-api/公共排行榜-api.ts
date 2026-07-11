@@ -247,9 +247,3 @@ export function useGetRankingBatches<TData = Awaited<ReturnType<typeof getRankin
 
   return query;
 }
-
-
-
-
-
-

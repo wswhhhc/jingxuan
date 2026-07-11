@@ -68,7 +68,7 @@ import type {
   ResultVoid,
   ResultWorkDetailVO,
   RewardConfig,
-  SetFeaturedParams,
+  SetFeatured1Params,
   SubmitAuditBody,
   SysDict,
   Tag
@@ -1371,9 +1371,9 @@ export const useOfflineWork = <TError = ResultVoid,
     /**
  * @summary 设置/取消精选作品并配置预览地址
  */
-export const setFeatured = (
+export const setFeatured1 = (
     workId: MaybeRefOrGetter<number>,
-    params: MaybeRefOrGetter<SetFeaturedParams>,
+    params: MaybeRefOrGetter<SetFeatured1Params>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {
       workId = toValue(workId);
@@ -1389,11 +1389,11 @@ params = toValue(params);
 
 
 
-export const getSetFeaturedMutationOptions = <TError = ResultVoid,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setFeatured>>, TError,{workId: number;params: SetFeaturedParams}, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof setFeatured>>, TError,{workId: number;params: SetFeaturedParams}, TContext> => {
+export const getSetFeatured1MutationOptions = <TError = ResultVoid,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setFeatured1>>, TError,{workId: number;params: SetFeatured1Params}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof setFeatured1>>, TError,{workId: number;params: SetFeatured1Params}, TContext> => {
 
-const mutationKey = ['setFeatured'];
+const mutationKey = ['setFeatured1'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -1403,10 +1403,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof setFeatured>>, {workId: number;params: SetFeaturedParams}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof setFeatured1>>, {workId: number;params: SetFeatured1Params}> = (props) => {
           const {workId,params} = props ?? {};
 
-          return  setFeatured(workId,params,requestOptions)
+          return  setFeatured1(workId,params,requestOptions)
         }
 
 
@@ -1416,22 +1416,22 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type SetFeaturedMutationResult = NonNullable<Awaited<ReturnType<typeof setFeatured>>>
+    export type SetFeatured1MutationResult = NonNullable<Awaited<ReturnType<typeof setFeatured1>>>
 
-    export type SetFeaturedMutationError = ResultVoid
+    export type SetFeatured1MutationError = ResultVoid
 
     /**
  * @summary 设置/取消精选作品并配置预览地址
  */
-export const useSetFeatured = <TError = ResultVoid,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setFeatured>>, TError,{workId: number;params: SetFeaturedParams}, TContext>, request?: SecondParameter<typeof apiRequest>}
+export const useSetFeatured1 = <TError = ResultVoid,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setFeatured1>>, TError,{workId: number;params: SetFeatured1Params}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
-        Awaited<ReturnType<typeof setFeatured>>,
+        Awaited<ReturnType<typeof setFeatured1>>,
         TError,
-        {workId: number;params: SetFeaturedParams},
+        {workId: number;params: SetFeatured1Params},
         TContext
       > => {
-      return useMutation(getSetFeaturedMutationOptions(options), queryClient);
+      return useMutation(getSetFeatured1MutationOptions(options), queryClient);
     }
     /**
  * @summary 获取评分批次评分明细（含各教师评分）

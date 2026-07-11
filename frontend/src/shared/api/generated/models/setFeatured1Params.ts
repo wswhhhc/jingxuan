@@ -6,7 +6,7 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type SetFeaturedParams = {
+export type SetFeatured1Params = {
 featured: number;
 previewUrl?: string;
 };

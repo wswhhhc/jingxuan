@@ -16,4 +16,8 @@ public class V1CommentController {
   Long created=commentService.addComment(V1Ids.parse(id,"id"),SecurityUtils.getCurrentUserId(),body.content(),body.parentId()==null?null:V1Ids.parse(body.parentId(),"parentId"),body.guestName());
   return ResponseEntity.status(201).body(new V1CreatedComment(created.toString()));
  }
+ @DeleteMapping("/comments/{id}") public ResponseEntity<Void> delete(@PathVariable String id) {
+  commentService.deleteComment(V1Ids.parse(id,"id"),SecurityUtils.requireCurrentUserId(),SecurityUtils.getCurrentRoleCode());
+  return ResponseEntity.noContent().build();
+ }
 }

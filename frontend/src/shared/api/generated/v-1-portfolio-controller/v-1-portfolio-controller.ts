@@ -33,7 +33,9 @@ import type {
 import type {
   ResultVoid,
   V1CreateWorkRequest,
+  V1CreatedDeletionRequest,
   V1CreatedWork,
+  V1DeleteRequest,
   V1UpdateWorkRequest,
   V1WorkDetail,
   V1WorkSummary
@@ -347,4 +349,64 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
         TContext
       > => {
       return useMutation(getSubmitWork1MutationOptions(options), queryClient);
+    }
+    export const requestDeletion = (
+    id: MaybeRefOrGetter<string>,
+    v1DeleteRequest: MaybeRefOrGetter<V1DeleteRequest>,
+ options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
+) => {
+      id = toValue(id);
+v1DeleteRequest = toValue(v1DeleteRequest);
+
+      return apiRequest<V1CreatedDeletionRequest>(
+      {url: `/api/v1/me/works/${id}/deletion-requests`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: v1DeleteRequest, signal
+    },
+      options);
+    }
+
+
+
+
+export const getRequestDeletionMutationOptions = <TError = ResultVoid,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof requestDeletion>>, TError,{id: string;data: V1DeleteRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof requestDeletion>>, TError,{id: string;data: V1DeleteRequest}, TContext> => {
+
+const mutationKey = ['requestDeletion'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof requestDeletion>>, {id: string;data: V1DeleteRequest}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  requestDeletion(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RequestDeletionMutationResult = NonNullable<Awaited<ReturnType<typeof requestDeletion>>>
+    export type RequestDeletionMutationBody = V1DeleteRequest
+    export type RequestDeletionMutationError = ResultVoid
+
+    export const useRequestDeletion = <TError = ResultVoid,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof requestDeletion>>, TError,{id: string;data: V1DeleteRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient): UseMutationReturnType<
+        Awaited<ReturnType<typeof requestDeletion>>,
+        TError,
+        {id: string;data: V1DeleteRequest},
+        TContext
+      > => {
+      return useMutation(getRequestDeletionMutationOptions(options), queryClient);
     }

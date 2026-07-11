@@ -6,6 +6,9 @@ import com.jingxuan.portfolio.api.V1WorkSummary;
 import com.jingxuan.portfolio.api.V1CreateWorkRequest;
 import com.jingxuan.portfolio.api.V1CreatedWork;
 import com.jingxuan.portfolio.api.V1UpdateWorkRequest;
+import com.jingxuan.portfolio.api.V1DeleteRequest;
+import com.jingxuan.portfolio.api.V1CreatedDeletionRequest;
+import com.jingxuan.modules.deleterequest.service.DeleteRequestService;
 import com.jingxuan.modules.work.service.WorkService;
 import com.jingxuan.modules.work.dto.WorkDetailVO;
 import com.jingxuan.portfolio.api.V1WorkDetail;
@@ -19,7 +22,8 @@ import java.util.List;
 @V1Api @RestController @RequestMapping("/api/v1/me")
 public class V1PortfolioController {
  private final WorkService workService;
- public V1PortfolioController(WorkService workService) { this.workService=workService; }
+ private final DeleteRequestService deleteRequestService;
+ public V1PortfolioController(WorkService workService, DeleteRequestService deleteRequestService) { this.workService=workService; this.deleteRequestService=deleteRequestService; }
  @GetMapping("/works") public List<V1WorkSummary> myWorks() { return workService.getMyWorks(SecurityUtils.requireCurrentUserId()).stream().map(V1WorkSummary::from).toList(); }
  @PostMapping("/works") public ResponseEntity<V1CreatedWork> createWork(@Valid @RequestBody V1CreateWorkRequest request) {
   return ResponseEntity.status(HttpStatus.CREATED).body(V1CreatedWork.draft(workService.createWork(request.toLegacyRequest())));
@@ -30,5 +34,9 @@ public class V1PortfolioController {
  }
  @PostMapping("/works/{id}/submissions") public ResponseEntity<Void> submitWork(@PathVariable String id) {
   workService.submitWork(V1Ids.parse(id, "id")); return ResponseEntity.noContent().build();
+ }
+ @PostMapping("/works/{id}/deletion-requests") public ResponseEntity<V1CreatedDeletionRequest> requestDeletion(@PathVariable String id, @Valid @RequestBody V1DeleteRequest request) {
+  Long created = deleteRequestService.submitRequest(V1Ids.parse(id, "id"), SecurityUtils.requireCurrentUserId(), request.reason());
+  return ResponseEntity.status(HttpStatus.CREATED).body(V1CreatedDeletionRequest.pending(created));
  }
 }

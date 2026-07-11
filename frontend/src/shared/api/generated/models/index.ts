@@ -159,6 +159,7 @@ export * from './uploadFileParams';
 export * from './userInfoVO';
 export * from './userVO';
 export * from './userVOStatus';
+export * from './v1AuditDecisionRequest';
 export * from './v1Batch';
 export * from './v1CompleteTaskRequest';
 export * from './v1CreatedDeletionRequest';

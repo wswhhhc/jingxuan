@@ -1,6 +1,6 @@
 package com.jingxuan.modules.comment.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.spring.service.IService;
 import com.jingxuan.common.PageResult;
 import com.jingxuan.entity.WorkComment;
 import com.jingxuan.modules.comment.dto.AdminCommentVO;
@@ -33,3 +33,4 @@ public interface CommentService extends IService<WorkComment> {
      */
     PageResult<AdminCommentVO> getAdminComments(int pageNum, int pageSize, Long workId, String userKeyword, String contentKeyword);
 }
+

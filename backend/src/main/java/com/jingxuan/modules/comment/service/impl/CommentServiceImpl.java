@@ -2,7 +2,7 @@ package com.jingxuan.modules.comment.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 import com.jingxuan.common.PageResult;
 import com.jingxuan.entity.WorkMember;
 import com.jingxuan.entity.SysRole;
@@ -394,3 +394,4 @@ public class CommentServiceImpl extends ServiceImpl<WorkCommentMapper, WorkComme
         return PageResult.of(result.getRecords(), result.getTotal(), pageNum, pageSize);
     }
 }
+

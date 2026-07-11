@@ -1,6 +1,6 @@
 package com.jingxuan.modules.task.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.spring.service.IService;
 import com.jingxuan.common.PageResult;
 import com.jingxuan.entity.StudentTask;
 
@@ -38,3 +38,4 @@ public interface StudentTaskService extends IService<StudentTask> {
      */
     StudentTask getByUserAndBatch(Long userId, Long batchId);
 }
+

@@ -1,7 +1,7 @@
 package com.jingxuan.modules.deleterequest.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 import com.jingxuan.entity.DeleteRequest;
 import com.jingxuan.common.PageResult;
 import com.jingxuan.common.PageUtil;
@@ -154,3 +154,4 @@ public class DeleteRequestServiceImpl extends ServiceImpl<DeleteRequestMapper, D
         log.info("删除申请已拒绝: requestId={}, workId={}, adminId={}", requestId, request.getWorkId(), adminId);
     }
 }
+

@@ -57,9 +57,9 @@ class WorkMemberPolicyService {
                 continue;
             }
             Long memberCount = workMemberMapper.selectCount(
-                    Wrappers.<WorkMember>lambdaQuery()
-                            .eq(WorkMember::getStudentId, member.getStudentId())
-                            .in(WorkMember::getWorkId, batchWorkIds));
+                    Wrappers.<WorkMember>query()
+                            .eq("student_id", member.getStudentId())
+                            .in("work_id", batchWorkIds));
             if (memberCount > 0) {
                 throw new BusinessException("团队成员 " + member.getStudentName() + " 在当前批次中已有作品，每个学生只能参与一个作品");
             }

@@ -1,6 +1,6 @@
 package com.jingxuan.modules.work.service.impl;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 import com.jingxuan.entity.WorkMember;
 import com.jingxuan.mapper.WorkMemberMapper;
 import com.jingxuan.modules.work.dto.WorkMemberDTO;
@@ -63,3 +63,4 @@ public class WorkMemberServiceImpl extends ServiceImpl<WorkMemberMapper, WorkMem
                 .remove();
     }
 }
+

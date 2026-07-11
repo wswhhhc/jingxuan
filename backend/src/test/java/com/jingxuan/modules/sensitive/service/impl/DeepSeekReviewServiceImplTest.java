@@ -1,6 +1,6 @@
 package com.jingxuan.modules.sensitive.service.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import com.jingxuan.config.DeepSeekConfig;
 import com.jingxuan.modules.sensitive.service.DeepSeekReviewService;
 import com.jingxuan.modules.sensitive.service.SensitiveWordDFA;
@@ -143,3 +143,4 @@ class DeepSeekReviewServiceImplTest {
         }
     }
 }
+

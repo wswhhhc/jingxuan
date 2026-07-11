@@ -1,6 +1,6 @@
 package com.jingxuan.modules.deleterequest.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.spring.service.IService;
 import com.jingxuan.common.PageResult;
 import com.jingxuan.entity.DeleteRequest;
 
@@ -26,3 +26,4 @@ public interface DeleteRequestService extends IService<DeleteRequest> {
      */
     void reject(Long requestId, Long adminId, String reply);
 }
+

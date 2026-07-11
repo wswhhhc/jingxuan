@@ -1,6 +1,6 @@
 package com.jingxuan.modules.sensitive.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.spring.service.IService;
 import com.jingxuan.common.PageResult;
 import com.jingxuan.entity.SensitiveRule;
 
@@ -18,3 +18,4 @@ public interface SensitiveRuleService extends IService<SensitiveRule> {
 
     void updateFallbackAction(Long id, String action);
 }
+

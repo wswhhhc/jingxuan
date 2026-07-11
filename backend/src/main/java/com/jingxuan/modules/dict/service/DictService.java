@@ -1,6 +1,6 @@
 package com.jingxuan.modules.dict.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.spring.service.IService;
 import com.jingxuan.entity.SysDict;
 
 import java.util.List;
@@ -28,3 +28,4 @@ public interface DictService extends IService<SysDict> {
      */
     void updateDict(SysDict dict);
 }
+

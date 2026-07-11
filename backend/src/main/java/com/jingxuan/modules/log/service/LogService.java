@@ -1,6 +1,6 @@
 package com.jingxuan.modules.log.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.spring.service.IService;
 import com.jingxuan.common.PageResult;
 import com.jingxuan.entity.SysLog;
 
@@ -22,3 +22,4 @@ public interface LogService extends IService<SysLog> {
      */
     void recordAction(String action, String target, Long targetId);
 }
+

@@ -22,3 +22,4 @@ public enum MenuTypeEnum {
     @JsonValue
     private final String label;
 }
+

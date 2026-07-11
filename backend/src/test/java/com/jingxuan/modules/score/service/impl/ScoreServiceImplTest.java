@@ -1,6 +1,6 @@
 package com.jingxuan.modules.score.service.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import com.jingxuan.config.DeepSeekConfig;
 import com.jingxuan.entity.ScoreBatch;
 import com.jingxuan.entity.SysDict;
@@ -408,3 +408,4 @@ class ScoreServiceImplTest {
         }
     }
 }
+

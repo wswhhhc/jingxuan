@@ -1,7 +1,7 @@
 package com.jingxuan.modules.sensitive.service.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import com.jingxuan.common.Result;
 import com.jingxuan.config.DeepSeekConfig;
 import com.jingxuan.modules.sensitive.service.DeepSeekReviewService;
@@ -202,3 +202,4 @@ public class DeepSeekReviewServiceImpl implements DeepSeekReviewService {
         return ReviewResult.fail("service_error", message);
     }
 }
+

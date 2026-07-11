@@ -1,6 +1,6 @@
 package com.jingxuan.service;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 import com.jingxuan.entity.SysUser;
 import com.jingxuan.enums.RoleEnum;
 import com.jingxuan.exception.BusinessException;
@@ -86,3 +86,4 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         return sysUserMapper.physicalDeleteById(userId) > 0;
     }
 }
+

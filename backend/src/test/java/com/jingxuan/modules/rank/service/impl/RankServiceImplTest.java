@@ -1,6 +1,6 @@
 package com.jingxuan.modules.rank.service.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import com.jingxuan.entity.RankReward;
 import com.jingxuan.entity.ScoreBatch;
 import com.jingxuan.mapper.RankRewardMapper;
@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import tools.jackson.core.type.TypeReference;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("RankServiceImpl - 排行榜服务")
@@ -69,8 +69,8 @@ class RankServiceImplTest {
             // given
             when(stringRedisTemplate.opsForValue()).thenReturn(valueOps);
             when(valueOps.get(anyString())).thenReturn("cached_json");
-            when(objectMapper.getTypeFactory()).thenReturn(com.fasterxml.jackson.databind.type.TypeFactory.defaultInstance());
-            when(objectMapper.readValue(anyString(), any(com.fasterxml.jackson.databind.JavaType.class)))
+            when(objectMapper.getTypeFactory()).thenReturn(tools.jackson.databind.type.TypeFactory.createDefaultInstance());
+            when(objectMapper.readValue(anyString(), any(tools.jackson.databind.JavaType.class)))
                     .thenReturn(List.of(createRankVO(1, 1L, "作品1")));
             when(rankRewardMapper.selectList(any())).thenReturn(List.of());
 
@@ -179,3 +179,4 @@ class RankServiceImplTest {
         }
     }
 }
+

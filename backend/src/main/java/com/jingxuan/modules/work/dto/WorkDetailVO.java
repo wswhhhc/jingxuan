@@ -106,3 +106,4 @@ public class WorkDetailVO {
     @Schema(description = "标签列表")
     private java.util.List<String> tags;
 }
+

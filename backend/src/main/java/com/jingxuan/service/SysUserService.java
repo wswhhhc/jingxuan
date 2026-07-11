@@ -1,6 +1,6 @@
 package com.jingxuan.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.spring.service.IService;
 import com.jingxuan.entity.SysUser;
 
 /**
@@ -33,3 +33,4 @@ public interface SysUserService extends IService<SysUser> {
      */
     boolean deleteUser(Long userId);
 }
+

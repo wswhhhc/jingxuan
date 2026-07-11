@@ -1,6 +1,6 @@
 package com.jingxuan.modules.userimport.service.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import com.jingxuan.config.DeepSeekConfig;
 import com.jingxuan.util.DeepSeekApiClient;
 import com.jingxuan.entity.SysDict;
@@ -353,3 +353,4 @@ public class AiUserImportServiceImpl implements AiUserImportService {
         return username == null || username.isBlank() ? "未命名账号" : username;
     }
 }
+

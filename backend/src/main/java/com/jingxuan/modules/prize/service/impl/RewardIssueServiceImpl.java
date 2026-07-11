@@ -2,7 +2,7 @@ package com.jingxuan.modules.prize.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 import com.jingxuan.entity.RewardConfig;
 import com.jingxuan.entity.RewardIssue;
 import com.jingxuan.entity.Work;
@@ -80,3 +80,4 @@ public class RewardIssueServiceImpl extends ServiceImpl<RewardIssueMapper, Rewar
                 .eq(RewardIssue::getWorkId, workId));
     }
 }
+

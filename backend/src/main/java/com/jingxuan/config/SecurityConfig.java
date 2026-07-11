@@ -44,7 +44,7 @@ public class SecurityConfig {
             .sessionManagement(session ->
                     session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                    // Knife4j / Swagger
+                    // Springdoc / Swagger UI
                     .requestMatchers("/doc.html", "/swagger-ui/**", "/v3/api-docs/**",
                             "/webjars/**", "/favicon.ico").permitAll()
                     // 认证接口（兼容前端 /api 代理）

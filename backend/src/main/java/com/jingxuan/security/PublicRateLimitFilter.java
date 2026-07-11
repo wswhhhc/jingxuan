@@ -1,6 +1,6 @@
 package com.jingxuan.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.jingxuan.common.Result;
@@ -79,3 +79,4 @@ public class PublicRateLimitFilter extends OncePerRequestFilter {
         }
     }
 }
+

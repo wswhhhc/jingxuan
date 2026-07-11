@@ -1,15 +1,16 @@
 package com.jingxuan;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import com.jingxuan.common.Result;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.resttestclient.TestRestTemplate;
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.data.redis.core.RedisCallback;
@@ -53,6 +54,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * }</pre>
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureTestRestTemplate
 @ActiveProfiles("test")
 @Tag("integration")
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS,
@@ -263,7 +265,10 @@ public abstract class BaseApiTest {
             JsonNode data = getDataNode();
             if (data == null) return null;
             JsonNode f = data.get(field);
-            return f != null ? f.asText() : null;
+            if (f == null || f.isNull()) {
+                return null;
+            }
+            return f.isValueNode() ? f.asText() : f.toString();
         }
 
         /** 取 data 内某个字段的整数值 */
@@ -320,3 +325,4 @@ public abstract class BaseApiTest {
         }
     }
 }
+

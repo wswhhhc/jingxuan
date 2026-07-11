@@ -1,6 +1,6 @@
 package com.jingxuan.modules.userimport.service.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import com.jingxuan.config.DeepSeekConfig;
 import com.jingxuan.entity.SysRole;
 import com.jingxuan.exception.BusinessException;
@@ -351,3 +351,4 @@ class AiUserImportServiceImplTest {
         }
     }
 }
+

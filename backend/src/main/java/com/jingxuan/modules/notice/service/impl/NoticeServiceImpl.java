@@ -2,7 +2,7 @@ package com.jingxuan.modules.notice.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 import com.jingxuan.common.PageResult;
 import com.jingxuan.common.PageUtil;
 import com.jingxuan.entity.SysNotice;
@@ -71,10 +71,10 @@ public class NoticeServiceImpl extends ServiceImpl<SysNoticeMapper, SysNotice> i
             }
 
             List<Long> userIds = sysUserMapper.selectList(
-                    Wrappers.<SysUser>lambdaQuery()
-                            .in(SysUser::getRoleId, roleIds)
-                            .eq(SysUser::getDeleted, 0)
-                            .eq(SysUser::getStatus, 1)
+                    Wrappers.<SysUser>query()
+                            .in("role_id", roleIds)
+                            .eq("deleted", 0)
+                            .eq("status", 1)
             ).stream().map(SysUser::getId).collect(Collectors.toList());
 
             if (!userIds.isEmpty()) {
@@ -170,3 +170,4 @@ public class NoticeServiceImpl extends ServiceImpl<SysNoticeMapper, SysNotice> i
         notices.forEach(notice -> notice.setPublisherName(userNameMap.get(notice.getPublisherId())));
     }
 }
+

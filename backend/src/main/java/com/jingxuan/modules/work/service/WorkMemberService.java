@@ -1,6 +1,6 @@
 package com.jingxuan.modules.work.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.spring.service.IService;
 import com.jingxuan.entity.WorkMember;
 import com.jingxuan.modules.work.dto.WorkMemberDTO;
 
@@ -23,3 +23,4 @@ public interface WorkMemberService extends IService<WorkMember> {
      */
     void removeByWorkId(Long workId);
 }
+

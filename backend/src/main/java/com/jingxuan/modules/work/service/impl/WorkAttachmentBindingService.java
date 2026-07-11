@@ -2,6 +2,7 @@ package com.jingxuan.modules.work.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.jingxuan.entity.WorkAttachment;
 import com.jingxuan.exception.BusinessException;
@@ -29,9 +30,9 @@ class WorkAttachmentBindingService {
         }
 
         Long occupiedCount = workAttachmentMapper.selectCount(
-                Wrappers.<WorkAttachment>lambdaQuery()
-                        .in(WorkAttachment::getId, attachmentIds)
-                        .isNotNull(WorkAttachment::getWorkId)
+                Wrappers.<WorkAttachment>query()
+                        .in("id", attachmentIds)
+                        .isNotNull("work_id")
         );
         if (occupiedCount > 0) {
             throw new BusinessException("部分附件已被其他作品绑定，请重新上传");
@@ -39,19 +40,19 @@ class WorkAttachmentBindingService {
 
         workAttachmentMapper.update(
                 null,
-                Wrappers.<WorkAttachment>lambdaUpdate()
-                        .set(WorkAttachment::getWorkId, workId)
-                        .in(WorkAttachment::getId, attachmentIds)
-                        .isNull(WorkAttachment::getWorkId)
+                Wrappers.<WorkAttachment>update()
+                        .set("work_id", workId)
+                        .in("id", attachmentIds)
+                        .isNull("work_id")
         );
     }
 
     void replaceBindings(Long workId, List<String> rawTargetIds) {
         List<Long> targetIds = parseAttachmentIds(rawTargetIds);
         List<Long> currentIds = workAttachmentMapper.selectList(
-                        Wrappers.<WorkAttachment>lambdaQuery()
-                                .eq(WorkAttachment::getWorkId, workId)
-                                .select(WorkAttachment::getId))
+                        Wrappers.<WorkAttachment>query()
+                                .eq("work_id", workId)
+                                .select("id"))
                 .stream()
                 .map(WorkAttachment::getId)
                 .collect(Collectors.toList());
@@ -66,10 +67,10 @@ class WorkAttachmentBindingService {
 
         if (!addedIds.isEmpty()) {
             Long occupiedCount = workAttachmentMapper.selectCount(
-                    Wrappers.<WorkAttachment>lambdaQuery()
-                            .in(WorkAttachment::getId, addedIds)
-                            .isNotNull(WorkAttachment::getWorkId)
-                            .ne(WorkAttachment::getWorkId, workId)
+                    Wrappers.<WorkAttachment>query()
+                            .in("id", addedIds)
+                            .isNotNull("work_id")
+                            .ne("work_id", workId)
             );
             if (occupiedCount > 0) {
                 throw new BusinessException("部分附件已被其他作品绑定，请重新上传");
@@ -79,29 +80,29 @@ class WorkAttachmentBindingService {
         if (!removedIds.isEmpty()) {
             workAttachmentMapper.update(
                     null,
-                    Wrappers.<WorkAttachment>lambdaUpdate()
-                            .set(WorkAttachment::getWorkId, null)
-                            .in(WorkAttachment::getId, removedIds)
-                            .eq(WorkAttachment::getWorkId, workId)
+                    new UpdateWrapper<WorkAttachment>()
+                            .set("work_id", null)
+                            .in("id", removedIds)
+                            .eq("work_id", workId)
             );
         }
 
         if (!addedIds.isEmpty()) {
             workAttachmentMapper.update(
                     null,
-                    Wrappers.<WorkAttachment>lambdaUpdate()
-                            .set(WorkAttachment::getWorkId, workId)
-                            .in(WorkAttachment::getId, addedIds)
-                            .and(w -> w.isNull(WorkAttachment::getWorkId)
-                                    .or().eq(WorkAttachment::getWorkId, workId))
+                    new UpdateWrapper<WorkAttachment>()
+                            .set("work_id", workId)
+                            .in("id", addedIds)
+                            .and(w -> w.isNull("work_id")
+                                    .or().eq("work_id", workId))
             );
         }
     }
 
     void ensureHasBoundAttachment(Long workId) {
         Long attachmentCount = workAttachmentMapper.selectCount(
-                Wrappers.<WorkAttachment>lambdaQuery()
-                        .eq(WorkAttachment::getWorkId, workId));
+                Wrappers.<WorkAttachment>query()
+                        .eq("work_id", workId));
         if (attachmentCount == null || attachmentCount == 0) {
             throw new BusinessException("请先上传附件再提交审核");
         }
@@ -109,9 +110,9 @@ class WorkAttachmentBindingService {
 
     void releaseAll(Long workId) {
         workAttachmentMapper.update(
-                Wrappers.<WorkAttachment>lambdaUpdate()
-                        .set(WorkAttachment::getWorkId, null)
-                        .eq(WorkAttachment::getWorkId, workId)
+                new UpdateWrapper<WorkAttachment>()
+                        .set("work_id", null)
+                        .eq("work_id", workId)
         );
     }
 

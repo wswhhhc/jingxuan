@@ -17,7 +17,7 @@
 - [x] 修复前端 lint、类型、覆盖率与生产依赖审计。
 - [x] 后端 Testcontainers 单元/集成测试分层。
 - [x] 前后端并行 CI、秘密扫描和统一根命令。
-- [ ] 完成阶段 0 全量验证并建立本地基线提交。
+- [x] 完成阶段 0 全量验证并建立本地基线提交。
 
 #### 2026-07-11 验证结论
 
@@ -55,4 +55,41 @@
   - `ADR-006` 双部署链路
   - `ADR-007` 实时排行榜
   - `ADR-008` 生产 HTTP 风险接受
-- [ ] 开始实际版本升级与工程骨架迁移。
+- [x] 完成后端工程基础第一刀：
+  - `Spring Boot 4.1.0`
+  - `MyBatis-Plus Boot4 3.5.17`
+  - `Springdoc 3.0.3`
+  - `Flyway Core`
+  - `Spring Modulith 2.1.0` 依赖与 `@Modulithic` 骨架
+  - `ApplicationModules` smoke test
+- [x] 开始实际版本升级与工程骨架迁移。
+
+#### 2026-07-11 阶段 1 后端骨架验证
+
+- `mvn -f backend/pom.xml -B -ntp clean compile` 通过。
+- `mvn -f backend/pom.xml -B -ntp clean test` 通过。
+- `mvn -f backend/pom.xml -B -ntp clean verify` 通过。
+- 迁移过程中额外解决了以下兼容问题：
+  - Spring Boot 4 的 `TestRestTemplate` 拆分到 `spring-boot-resttestclient` / `spring-boot-restclient`
+  - MyBatis-Plus Boot4 下 `IService` / `ServiceImpl` 包路径迁移到 `com.baomidou.mybatisplus.spring.service`
+  - `PaginationInnerInterceptor` 需要显式引入 `mybatis-plus-jsqlparser`
+  - Spring Boot 4 的 `ErrorController` 包路径迁移到 `org.springframework.boot.webmvc.error`
+  - Spring 管理的 Jackson Bean 改为 `tools.jackson` 命名空间
+  - JaCoCo 对 `jsqlparser` 超大方法插桩失败，已通过排除 `net/sf/jsqlparser/**` 解决
+
+#### 当前工具链差异
+
+- 目标基线仍然是 `JDK 25 LTS`。
+- 当前本机 Maven 运行时仍为 `Java 21.0.7`；本轮验证已确认 Spring Boot 4.1 可在 Java 21 上完成迁移与测试。
+- 后续需要在具备 JDK 25 的环境中把 `java.version` 从 21 提升到 25，并重跑同一套门禁。
+
+#### 当前已确认的 Modulith 结构问题
+
+- 现有代码能够被 `ApplicationModules.of(Application.class)` 识别。
+- 一旦执行 `verify()`，会立即暴露大量历史边界问题：
+  - `modules/*` 对 `mapper/*` 的直接依赖
+  - adapter/facade 直接注入 Mapper
+  - 安全层反向依赖业务和 mapper
+  - `auth`、`controller`、`mapper` 与 `modules` 之间存在循环依赖
+  - 多处字段注入
+- 这说明 Modulith 骨架已经生效，但正式边界校验要等阶段 2 之后按模块逐步收敛。

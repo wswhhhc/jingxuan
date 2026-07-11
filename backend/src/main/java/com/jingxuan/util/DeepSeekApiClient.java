@@ -1,7 +1,7 @@
 package com.jingxuan.util;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import com.jingxuan.config.DeepSeekConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -59,3 +59,4 @@ public class DeepSeekApiClient {
         return root.at("/choices/0/message/content").asText("");
     }
 }
+

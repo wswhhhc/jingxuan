@@ -1,6 +1,6 @@
 package com.jingxuan.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import com.jingxuan.common.Result;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,3 +30,4 @@ public class RestAccessDeniedHandler implements AccessDeniedHandler {
         objectMapper.writeValue(response.getWriter(), Result.forbidden("权限不足，无法访问"));
     }
 }
+

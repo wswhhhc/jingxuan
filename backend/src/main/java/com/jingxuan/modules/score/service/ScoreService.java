@@ -1,6 +1,6 @@
 package com.jingxuan.modules.score.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.spring.service.IService;
 import com.jingxuan.entity.WorkScore;
 import com.jingxuan.modules.score.dto.ScoreSubmitRequest;
 import com.jingxuan.modules.score.dto.ScoreSummaryVO;
@@ -35,3 +35,4 @@ public interface ScoreService extends IService<WorkScore> {
      */
     List<ScoreSummaryVO> getBatchScoreSummary(Long batchId);
 }
+

@@ -4,7 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 import com.jingxuan.entity.ScoreBatch;
 import com.jingxuan.entity.SysDict;
 import com.jingxuan.entity.SysUser;
@@ -298,3 +298,4 @@ public class ScoreServiceImpl extends ServiceImpl<WorkScoreMapper, WorkScore> im
         return vo;
     }
 }
+

@@ -1,6 +1,6 @@
 package com.jingxuan.modules.notice.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.spring.service.IService;
 import com.jingxuan.common.PageResult;
 import com.jingxuan.entity.SysNotice;
 import com.jingxuan.modules.notice.dto.NoticeRequest;
@@ -32,3 +32,4 @@ public interface NoticeService extends IService<SysNotice> {
      */
     PageResult<SysNotice> getPublishedNotices(int pageNum, int pageSize);
 }
+

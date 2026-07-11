@@ -1,6 +1,6 @@
 package com.jingxuan.modules.rank.service.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import com.jingxuan.BaseServiceTest;
 import com.jingxuan.mapper.RankRewardMapper;
 import com.jingxuan.mapper.ScoreBatchMapper;
@@ -73,3 +73,4 @@ class RankServiceImplExtraTest extends BaseServiceTest {
         assertDoesNotThrow(() -> service.refreshRankCache(1L));
     }
 }
+

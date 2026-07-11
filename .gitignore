@@ -44,6 +44,7 @@ outputs/
 tmp/
 tmp_doc_work/
 tmp_perf_render/
+build/
 
 # Java artifacts
 *.jar

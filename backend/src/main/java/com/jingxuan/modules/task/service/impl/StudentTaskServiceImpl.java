@@ -1,7 +1,7 @@
 package com.jingxuan.modules.task.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 import com.jingxuan.entity.ScoreBatch;
 import com.jingxuan.entity.SysDict;
 import com.jingxuan.entity.SysUser;
@@ -219,3 +219,4 @@ public class StudentTaskServiceImpl extends ServiceImpl<StudentTaskMapper, Stude
         return ClassScopeUtil.parseToStringSet(classScopes).contains(studentClassValue);
     }
 }
+

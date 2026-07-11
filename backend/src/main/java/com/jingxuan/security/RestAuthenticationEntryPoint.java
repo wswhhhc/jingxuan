@@ -1,6 +1,6 @@
 package com.jingxuan.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import com.jingxuan.common.Result;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,3 +30,4 @@ public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
         objectMapper.writeValue(response.getWriter(), Result.unauthorized("未登录或登录已过期"));
     }
 }
+

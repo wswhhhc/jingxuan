@@ -63,13 +63,6 @@ jwt:
   secret: ${JWT_SECRET}
   expiration: ${JWT_EXPIRATION_MS:86400000}  # 24小时
 
-# Knife4j 配置
-knife4j:
-  enable: true
-  setting:
-    language: zh-CN
-    enable-footer: false
-
 # DeepSeek 内容审核
 deepseek:
   api-key: ${DEEPSEEK_API_KEY:}

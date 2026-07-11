@@ -154,6 +154,25 @@ public class PublicWorkFacade {
         return likeResult(liked, getLikeCount(id));
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public void ensureLiked(Long id) {
+        if (!Boolean.TRUE.equals((Boolean) toggleLikeWhenNeeded(id, true).get("liked"))) {
+            throw new IllegalStateException("点赞状态设置失败");
+        }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void ensureUnliked(Long id) {
+        toggleLikeWhenNeeded(id, false);
+    }
+
+    private Map<String, Object> toggleLikeWhenNeeded(Long id, boolean target) {
+        Long userId = SecurityUtils.requireCurrentUserId();
+        boolean current = isLiked(id, userId);
+        if (current == target) return likeResult(current, getLikeCount(id));
+        return toggleLike(id);
+    }
+
     public Map<String, Object> getLikeStatus(Long id) {
         Long userId = getCurrentUserId();
         boolean liked = userId != null && isLiked(id, userId);

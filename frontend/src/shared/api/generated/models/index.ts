@@ -160,6 +160,7 @@ export * from './userInfoVO';
 export * from './userVO';
 export * from './userVOStatus';
 export * from './v1Batch';
+export * from './v1CompleteTaskRequest';
 export * from './v1DeletionImpact';
 export * from './v1LoginResponse';
 export * from './v1ReferenceItem';

@@ -6,24 +6,33 @@
  * OpenAPI spec version: 1.0.0
  */
 import {
+  useMutation,
   useQuery
 } from '@tanstack/vue-query';
 import type {
   DataTag,
+  MutationFunction,
   QueryClient,
   QueryFunction,
   QueryKey,
+  UseMutationOptions,
+  UseMutationReturnType,
   UseQueryOptions,
   UseQueryReturnType
 } from '@tanstack/vue-query';
 
 import {
+  toValue,
   unref
+} from 'vue';
+import type {
+  MaybeRefOrGetter
 } from 'vue';
 
 import type {
   ResultVoid,
   V1Batch,
+  V1CompleteTaskRequest,
   V1Task
 } from '../models';
 
@@ -35,6 +44,72 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 
 /**
+ * @summary 提交作品后完成我的待办
+ */
+export const completeTask1 = (
+    taskId: MaybeRefOrGetter<number>,
+    v1CompleteTaskRequest: MaybeRefOrGetter<V1CompleteTaskRequest>,
+ options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
+) => {
+      taskId = toValue(taskId);
+v1CompleteTaskRequest = toValue(v1CompleteTaskRequest);
+
+      return apiRequest<void>(
+      {url: `/api/v1/me/tasks/${taskId}/completion`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: v1CompleteTaskRequest, signal
+    },
+      options);
+    }
+
+
+
+
+export const getCompleteTask1MutationOptions = <TError = ResultVoid,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof completeTask1>>, TError,{taskId: number;data: V1CompleteTaskRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof completeTask1>>, TError,{taskId: number;data: V1CompleteTaskRequest}, TContext> => {
+
+const mutationKey = ['completeTask1'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof completeTask1>>, {taskId: number;data: V1CompleteTaskRequest}> = (props) => {
+          const {taskId,data} = props ?? {};
+
+          return  completeTask1(taskId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CompleteTask1MutationResult = NonNullable<Awaited<ReturnType<typeof completeTask1>>>
+    export type CompleteTask1MutationBody = V1CompleteTaskRequest
+    export type CompleteTask1MutationError = ResultVoid
+
+    /**
+ * @summary 提交作品后完成我的待办
+ */
+export const useCompleteTask1 = <TError = ResultVoid,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof completeTask1>>, TError,{taskId: number;data: V1CompleteTaskRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient): UseMutationReturnType<
+        Awaited<ReturnType<typeof completeTask1>>,
+        TError,
+        {taskId: number;data: V1CompleteTaskRequest},
+        TContext
+      > => {
+      return useMutation(getCompleteTask1MutationOptions(options), queryClient);
+    }
+    /**
  * @summary 获取我的待办
  */
 export const tasks = (

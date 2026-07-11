@@ -1,5 +1,6 @@
 package com.jingxuan.identityaccess.application;
 
+import com.jingxuan.exception.UnauthorizedException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -36,11 +37,11 @@ public class RedisRefreshTokenService implements RefreshTokenService {
     @Override
     public RotatedRefreshToken rotate(String refreshToken) {
         if (refreshToken == null || refreshToken.isBlank()) {
-            throw new IllegalArgumentException("refresh token 无效");
+            throw new UnauthorizedException("refresh token 无效");
         }
         String payload = redis.opsForValue().getAndDelete(key(refreshToken));
         if (payload == null) {
-            throw new IllegalArgumentException("refresh token 已过期或已被使用");
+            throw new UnauthorizedException("refresh token 已过期或已被使用");
         }
         Session session = decode(payload);
         IssuedRefreshToken replacement = issue(session.userId(), session.username(), session.role(), session.rememberMe());
@@ -71,12 +72,12 @@ public class RedisRefreshTokenService implements RefreshTokenService {
     private static Session decode(String payload) {
         String[] parts = payload.split("\\t", -1);
         if (parts.length != 4) {
-            throw new IllegalArgumentException("refresh token 会话数据损坏");
+            throw new UnauthorizedException("refresh token 会话数据损坏");
         }
         try {
             return new Session(Long.valueOf(parts[0]), parts[1], parts[2], Boolean.parseBoolean(parts[3]));
         } catch (NumberFormatException exception) {
-            throw new IllegalArgumentException("refresh token 会话数据损坏", exception);
+            throw new UnauthorizedException("refresh token 会话数据损坏");
         }
     }
 

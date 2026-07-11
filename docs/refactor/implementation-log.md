@@ -152,3 +152,10 @@
 - 新增 `/api/v1/auth/refresh`，注销可同时撤销 refresh token；登录/刷新响应均提供 access 与 refresh 令牌。
 - `/api/v1/auth/login` 和 `/api/v1/auth/refresh` 已加入匿名路径白名单。
 - Redis refresh 服务、认证 Controller 和前端生成客户端均已测试/同步；正式 Redis 集成测试仍需在 Testcontainers Redis 环境执行。
+
+#### 2026-07-11 refresh token Redis 集成验证
+
+- 新增 `V1AuthApiTest`，通过 Testcontainers MySQL 8 与 Redis 7 发起真实 HTTP 登录、刷新和重放请求。
+- 已验证 refresh token 轮换后旧令牌会返回 `401 UNAUTHENTICATED`。
+- 修正 `SecurityConfig`：v1 登录和刷新路径必须在 Spring Security 的 `permitAll` 规则中显式声明，仅配置 JWT 过滤器忽略路径不足以放行请求。
+- 运行 `$env:DOCKER_HOST='npipe:////./pipe/docker_engine'; $env:JINGXUAN_TEST_IMAGE_REGISTRY='docker.m.daocloud.io'; mvn -f backend/pom.xml -B -ntp "-Dit.test=V1AuthApiTest" -DskipUnitTests=true verify` 通过。

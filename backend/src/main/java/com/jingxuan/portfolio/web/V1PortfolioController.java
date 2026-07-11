@@ -3,6 +3,7 @@ package com.jingxuan.portfolio.web;
 import com.jingxuan.api.V1Api;
 import com.jingxuan.portfolio.api.V1WorkSummary;
 import com.jingxuan.modules.work.service.WorkService;
+import com.jingxuan.modules.work.dto.WorkDetailVO;
 import com.jingxuan.security.SecurityUtils;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -12,4 +13,5 @@ public class V1PortfolioController {
  private final WorkService workService;
  public V1PortfolioController(WorkService workService) { this.workService=workService; }
  @GetMapping("/works") public List<V1WorkSummary> myWorks() { return workService.getMyWorks(SecurityUtils.requireCurrentUserId()).stream().map(V1WorkSummary::from).toList(); }
+ @GetMapping("/works/{id}") public WorkDetailVO myWork(@PathVariable Long id) { return workService.getCurrentStudentWorkDetail(id); }
 }

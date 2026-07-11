@@ -159,3 +159,12 @@
 - 已验证 refresh token 轮换后旧令牌会返回 `401 UNAUTHENTICATED`。
 - 修正 `SecurityConfig`：v1 登录和刷新路径必须在 Spring Security 的 `permitAll` 规则中显式声明，仅配置 JWT 过滤器忽略路径不足以放行请求。
 - 运行 `$env:DOCKER_HOST='npipe:////./pipe/docker_engine'; $env:JINGXUAN_TEST_IMAGE_REGISTRY='docker.m.daocloud.io'; mvn -f backend/pom.xml -B -ntp "-Dit.test=V1AuthApiTest" -DskipUnitTests=true verify` 通过。
+
+#### 2026-07-11 reference-data 只读闭环
+
+- 新增 `/api/v1/classes`、`/api/v1/dictionaries/{type}`、`/api/v1/tags`。
+- 班级继续从过渡期 `sys_dict` 的 `class` 类型读取；输出统一转换为 v1 字符串 ID DTO。
+- 标签查询从旧 Adapter 收敛到 `referencedata.internal.application.ReferenceDataQueryService`，为后续替换 `tag` 表建立单一迁移入口。
+- 上述 GET 接口仅提供注册与公开筛选所需的参考数据，已显式配置为匿名可读。
+- 单元测试、OpenAPI/Orval 生成、前端类型检查通过；Testcontainers HTTP 测试验证班级/标签可公开访问且返回字符串 ID。
+- 字典/标签写操作和删除影响清单尚未迁移，仍保留在后续独立切片。

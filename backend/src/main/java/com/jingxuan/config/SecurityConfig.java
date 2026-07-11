@@ -54,6 +54,8 @@ public class SecurityConfig {
                             "/auth/send-code", "/api/auth/send-code").permitAll()
                     // 静态资源
                     .requestMatchers(HttpMethod.GET, "/uploads/**").permitAll()
+                    // v1 公共参考数据：注册和公开作品筛选需要班级、字典和标签
+                    .requestMatchers(HttpMethod.GET, "/api/v1/classes", "/api/v1/dictionaries/**", "/api/v1/tags").permitAll()
                     // 前台公开展示接口
                     .requestMatchers("/public/**").permitAll()
                     // 公共评论列表 & 发表（游客也可评论）

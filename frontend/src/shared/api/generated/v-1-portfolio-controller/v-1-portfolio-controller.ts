@@ -6,13 +6,17 @@
  * OpenAPI spec version: 1.0.0
  */
 import {
+  useMutation,
   useQuery
 } from '@tanstack/vue-query';
 import type {
   DataTag,
+  MutationFunction,
   QueryClient,
   QueryFunction,
   QueryKey,
+  UseMutationOptions,
+  UseMutationReturnType,
   UseQueryOptions,
   UseQueryReturnType
 } from '@tanstack/vue-query';
@@ -28,6 +32,8 @@ import type {
 
 import type {
   ResultVoid,
+  V1CreateWorkRequest,
+  V1CreatedWork,
   V1WorkDetail,
   V1WorkSummary
 } from '../models';
@@ -103,7 +109,65 @@ export function useMyWorks<TData = Awaited<ReturnType<typeof myWorks>>, TError =
 
 
 
-export const myWork = (
+export const createWork1 = (
+    v1CreateWorkRequest: MaybeRefOrGetter<V1CreateWorkRequest>,
+ options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
+) => {
+      v1CreateWorkRequest = toValue(v1CreateWorkRequest);
+
+      return apiRequest<V1CreatedWork>(
+      {url: `/api/v1/me/works`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: v1CreateWorkRequest, signal
+    },
+      options);
+    }
+
+
+
+
+export const getCreateWork1MutationOptions = <TError = ResultVoid,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createWork1>>, TError,{data: V1CreateWorkRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof createWork1>>, TError,{data: V1CreateWorkRequest}, TContext> => {
+
+const mutationKey = ['createWork1'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createWork1>>, {data: V1CreateWorkRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  createWork1(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateWork1MutationResult = NonNullable<Awaited<ReturnType<typeof createWork1>>>
+    export type CreateWork1MutationBody = V1CreateWorkRequest
+    export type CreateWork1MutationError = ResultVoid
+
+    export const useCreateWork1 = <TError = ResultVoid,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createWork1>>, TError,{data: V1CreateWorkRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient): UseMutationReturnType<
+        Awaited<ReturnType<typeof createWork1>>,
+        TError,
+        {data: V1CreateWorkRequest},
+        TContext
+      > => {
+      return useMutation(getCreateWork1MutationOptions(options), queryClient);
+    }
+    export const myWork = (
     id: MaybeRefOrGetter<string>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {

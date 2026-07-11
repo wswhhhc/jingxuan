@@ -161,6 +161,8 @@ export * from './userVO';
 export * from './userVOStatus';
 export * from './v1Batch';
 export * from './v1CompleteTaskRequest';
+export * from './v1CreatedWork';
+export * from './v1CreateWorkRequest';
 export * from './v1DeletionImpact';
 export * from './v1LoginResponse';
 export * from './v1ReferenceItem';

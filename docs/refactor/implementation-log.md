@@ -69,6 +69,7 @@
 - `mvn -f backend/pom.xml -B -ntp clean compile` 通过。
 - `mvn -f backend/pom.xml -B -ntp clean test` 通过。
 - `mvn -f backend/pom.xml -B -ntp clean verify` 通过。
+- `npm run backend:openapi:export` 通过，并生成 `backend/target/openapi/openapi.json`。
 - 迁移过程中额外解决了以下兼容问题：
   - Spring Boot 4 的 `TestRestTemplate` 拆分到 `spring-boot-resttestclient` / `spring-boot-restclient`
   - MyBatis-Plus Boot4 下 `IService` / `ServiceImpl` 包路径迁移到 `com.baomidou.mybatisplus.spring.service`
@@ -76,6 +77,17 @@
   - Spring Boot 4 的 `ErrorController` 包路径迁移到 `org.springframework.boot.webmvc.error`
   - Spring 管理的 Jackson Bean 改为 `tools.jackson` 命名空间
   - JaCoCo 对 `jsqlparser` 超大方法插桩失败，已通过排除 `net/sf/jsqlparser/**` 解决
+
+#### 2026-07-11 阶段 1 数据库与契约脚手架
+
+- 已引入 Flyway 基线迁移 `db.migration.V1__Baseline`，通过 Java migration 顺序执行现有已验证 SQL 基线。
+- 已将根目录 `sql/` 作为只读 legacy 资源打包到 `classpath:legacy-sql/`，供过渡迁移复用。
+- `application-test.yml` 已关闭 Flyway，保持 Testcontainers + `@Sql` 集成测试稳定。
+- 已为 OpenAPI 导出增加 Maven profile `openapi-export`：
+  - 使用 H2 MySQL 兼容模式启动应用
+  - 在 `http://localhost:18080/v3/api-docs` 拉取文档
+  - 输出到 `backend/target/openapi/openapi.json`
+- CI 后端 JDK 基线已从 17 对齐到 21，避免与当前 `pom.xml` 偏离。
 
 #### 当前工具链差异
 

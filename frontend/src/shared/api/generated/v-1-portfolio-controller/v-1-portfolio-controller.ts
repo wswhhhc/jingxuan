@@ -34,6 +34,7 @@ import type {
   ResultVoid,
   V1CreateWorkRequest,
   V1CreatedWork,
+  V1UpdateWorkRequest,
   V1WorkDetail,
   V1WorkSummary
 } from '../models';
@@ -45,7 +46,131 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 
 
-export const myWorks = (
+export const myWork = (
+    id: MaybeRefOrGetter<string>,
+ options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
+) => {
+      id = toValue(id);
+
+      return apiRequest<V1WorkDetail>(
+      {url: `/api/v1/me/works/${id}`, method: 'GET', signal
+    },
+      options);
+    }
+
+
+
+
+export const getMyWorkQueryKey = (id: MaybeRefOrGetter<string>,) => {
+    return [
+    'api','v1','me','works',id
+    ] as const;
+    }
+
+
+export const getMyWorkQueryOptions = <TData = Awaited<ReturnType<typeof myWork>>, TError = ResultVoid>(id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof myWork>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  getMyWorkQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof myWork>>> = ({ signal }) => myWork(id, requestOptions, signal);
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: computed(() => toValue(id) !== null && toValue(id) !== undefined), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof myWork>>, TError, TData>
+}
+
+export type MyWorkQueryResult = NonNullable<Awaited<ReturnType<typeof myWork>>>
+export type MyWorkQueryError = ResultVoid
+
+
+
+export function useMyWork<TData = Awaited<ReturnType<typeof myWork>>, TError = ResultVoid>(
+ id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof myWork>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getMyWorkQueryOptions(id,options)
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = unref(queryOptions).queryKey as DataTag<QueryKey, TData, TError>;
+
+  return query;
+}
+
+
+
+
+
+
+export const updateWork1 = (
+    id: MaybeRefOrGetter<string>,
+    v1UpdateWorkRequest: MaybeRefOrGetter<V1UpdateWorkRequest>,
+ options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
+) => {
+      id = toValue(id);
+v1UpdateWorkRequest = toValue(v1UpdateWorkRequest);
+
+      return apiRequest<void>(
+      {url: `/api/v1/me/works/${id}`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: v1UpdateWorkRequest, signal
+    },
+      options);
+    }
+
+
+
+
+export const getUpdateWork1MutationOptions = <TError = ResultVoid,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateWork1>>, TError,{id: string;data: V1UpdateWorkRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateWork1>>, TError,{id: string;data: V1UpdateWorkRequest}, TContext> => {
+
+const mutationKey = ['updateWork1'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateWork1>>, {id: string;data: V1UpdateWorkRequest}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  updateWork1(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateWork1MutationResult = NonNullable<Awaited<ReturnType<typeof updateWork1>>>
+    export type UpdateWork1MutationBody = V1UpdateWorkRequest
+    export type UpdateWork1MutationError = ResultVoid
+
+    export const useUpdateWork1 = <TError = ResultVoid,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateWork1>>, TError,{id: string;data: V1UpdateWorkRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient): UseMutationReturnType<
+        Awaited<ReturnType<typeof updateWork1>>,
+        TError,
+        {id: string;data: V1UpdateWorkRequest},
+        TContext
+      > => {
+      return useMutation(getUpdateWork1MutationOptions(options), queryClient);
+    }
+    export const myWorks = (
 
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {
@@ -167,14 +292,14 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       > => {
       return useMutation(getCreateWork1MutationOptions(options), queryClient);
     }
-    export const myWork = (
+    export const submitWork1 = (
     id: MaybeRefOrGetter<string>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {
       id = toValue(id);
 
-      return apiRequest<V1WorkDetail>(
-      {url: `/api/v1/me/works/${id}`, method: 'GET', signal
+      return apiRequest<void>(
+      {url: `/api/v1/me/works/${id}/submissions`, method: 'POST', signal
     },
       options);
     }
@@ -182,46 +307,44 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-export const getMyWorkQueryKey = (id: MaybeRefOrGetter<string>,) => {
-    return [
-    'api','v1','me','works',id
-    ] as const;
+export const getSubmitWork1MutationOptions = <TError = ResultVoid,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof submitWork1>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof submitWork1>>, TError,{id: string}, TContext> => {
+
+const mutationKey = ['submitWork1'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof submitWork1>>, {id: string}> = (props) => {
+          const {id} = props ?? {};
+
+          return  submitWork1(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type SubmitWork1MutationResult = NonNullable<Awaited<ReturnType<typeof submitWork1>>>
+
+    export type SubmitWork1MutationError = ResultVoid
+
+    export const useSubmitWork1 = <TError = ResultVoid,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof submitWork1>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient): UseMutationReturnType<
+        Awaited<ReturnType<typeof submitWork1>>,
+        TError,
+        {id: string},
+        TContext
+      > => {
+      return useMutation(getSubmitWork1MutationOptions(options), queryClient);
     }
-
-
-export const getMyWorkQueryOptions = <TData = Awaited<ReturnType<typeof myWork>>, TError = ResultVoid>(id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof myWork>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  getMyWorkQueryKey(id);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof myWork>>> = ({ signal }) => myWork(id, requestOptions, signal);
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: computed(() => toValue(id) !== null && toValue(id) !== undefined), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof myWork>>, TError, TData>
-}
-
-export type MyWorkQueryResult = NonNullable<Awaited<ReturnType<typeof myWork>>>
-export type MyWorkQueryError = ResultVoid
-
-
-
-export function useMyWork<TData = Awaited<ReturnType<typeof myWork>>, TError = ResultVoid>(
- id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof myWork>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
- ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getMyWorkQueryOptions(id,options)
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  query.queryKey = unref(queryOptions).queryKey as DataTag<QueryKey, TData, TError>;
-
-  return query;
-}

@@ -170,6 +170,7 @@ export * from './v1RefreshRequest';
 export * from './v1Tag';
 export * from './v1TagRequest';
 export * from './v1Task';
+export * from './v1UpdateWorkRequest';
 export * from './v1UserInfo';
 export * from './v1WorkAttachment';
 export * from './v1WorkDetail';

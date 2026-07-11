@@ -192,3 +192,8 @@
 - 新增 `POST /api/v1/me/tasks/{taskId}/completion`。
 - 仅待办所属学生可完成自己的任务，`PENDING`/`REJECTED` 才可转为 `COMPLETED`，非法状态返回 409。
 - OpenAPI/Orval 与前端类型检查同步通过；批次发布及其通知事务留待后续切片。
+
+#### 2026-07-11 portfolio 我的作品列表
+
+- 新增 `GET /api/v1/me/works`，复用现有参与作品所有权查询。
+- v1 列表 DTO 使用字符串 ID、稳定审核状态和 `+08:00` 时间；映射单元测试、OpenAPI/Orval 及前端类型检查通过。

@@ -169,6 +169,7 @@ export * from './v1Tag';
 export * from './v1TagRequest';
 export * from './v1Task';
 export * from './v1UserInfo';
+export * from './v1WorkSummary';
 export * from './workAttachment';
 export * from './workDetailVO';
 export * from './workListVO';

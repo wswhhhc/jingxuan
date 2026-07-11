@@ -135,3 +135,11 @@
 - 新增 `RequestIdFilter`，为请求生成或透传 `X-Request-Id`，并写回响应头。
 - 新增 v1 专用异常映射：业务异常、认证/授权、资源不存在、参数校验和未知异常均返回统一结构；旧接口仍由 `Result` 处理。
 - 新增 3 个契约测试；`npm run backend:test:unit` 全部通过。
+
+#### 2026-07-11 identity-access 首个垂直切片
+
+- 新增 `/api/v1/auth/login`、`/api/v1/auth/me`、`/api/v1/auth/logout`，Controller 只编排现有 `AuthService`，没有复制认证逻辑。
+- v1 登录响应使用 `V1LoginResponse` / `V1UserInfo`，雪花 ID 在 DTO 层转换为不透明字符串；注销返回 HTTP 204。
+- OpenAPI 导出和 Orval 客户端已重新生成，前端类型检查通过。
+- 当前旧服务尚未提供 refresh token 能力，本切片不伪造 refresh 接口；待认证会话基础设施完成后再补齐刷新轮换。
+- 曾发现并修复 `@V1Api` 元注解路径不会与 Controller 路径自动拼接的问题，现由 Controller 明确声明完整 `/api/v1/...` 路径。

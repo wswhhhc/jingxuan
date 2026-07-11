@@ -117,3 +117,13 @@
   - `auth`、`controller`、`mapper` 与 `modules` 之间存在循环依赖
   - 多处字段注入
 - 这说明 Modulith 骨架已经生效，但正式边界校验要等阶段 2 之后按模块逐步收敛。
+
+#### 2026-07-11 目标模块边界锚点
+
+- 新增 9 个目标模块包，并使用 `@ApplicationModule` 显式登记：
+  `identityaccess`、`referencedata`、`campaign`、`portfolio`、`evaluation`、
+  `communication`、`moderation`、`operationsreporting`、`workflow`。
+- 新增 `ApplicationModulesTest` 断言，确保上述目标模块持续可被发现。
+- 本增量不移动旧业务代码、不改变旧 API；迁移完成前不启用全量 `verify()`，避免把历史耦合一次性引入不可运行状态。
+- 详细边界决策记录在 `docs/decisions/ADR-009-目标模块包边界.md`。
+- `mvn -f backend/pom.xml -B -ntp -DskipTests compile` 与目标模块发现测试均通过。

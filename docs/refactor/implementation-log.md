@@ -127,3 +127,11 @@
 - 本增量不移动旧业务代码、不改变旧 API；迁移完成前不启用全量 `verify()`，避免把历史耦合一次性引入不可运行状态。
 - 详细边界决策记录在 `docs/decisions/ADR-009-目标模块包边界.md`。
 - `mvn -f backend/pom.xml -B -ntp -DskipTests compile` 与目标模块发现测试均通过。
+
+#### 2026-07-11 v1 Problem Details 基础
+
+- 新增 `@V1Api` 标记：标记后的 Controller 自动挂载 `/api/v1` 前缀，并使用 v1 专用错误处理器。
+- 新增 RFC Problem Details DTO，扩展 `code`、`requestId` 和 `fieldErrors` 字段。
+- 新增 `RequestIdFilter`，为请求生成或透传 `X-Request-Id`，并写回响应头。
+- 新增 v1 专用异常映射：业务异常、认证/授权、资源不存在、参数校验和未知异常均返回统一结构；旧接口仍由 `Result` 处理。
+- 新增 3 个契约测试；`npm run backend:test:unit` 全部通过。

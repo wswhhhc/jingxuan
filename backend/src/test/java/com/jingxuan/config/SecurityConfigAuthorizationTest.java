@@ -89,8 +89,7 @@ class SecurityConfigAuthorizationTest {
 
         @Bean
         PublicRateLimitFilter publicRateLimitFilter(ObjectMapper objectMapper) {
-            return new PublicRateLimitFilter(
-                    objectMapper, mock(RateLimitService.class), new TrustedProxyClientIpResolver("127.0.0.1/32"));
+            return new PublicRateLimitFilter(objectMapper);
         }
 
         @Bean
@@ -122,3 +121,4 @@ class SecurityConfigAuthorizationTest {
         }
     }
 }
+

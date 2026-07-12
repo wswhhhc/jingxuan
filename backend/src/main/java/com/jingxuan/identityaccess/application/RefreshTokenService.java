@@ -9,6 +9,8 @@ public interface RefreshTokenService {
 
     void revoke(String refreshToken);
 
+    void revokeAll(Long userId);
+
     record IssuedRefreshToken(String token, long expiresIn) {
     }
 

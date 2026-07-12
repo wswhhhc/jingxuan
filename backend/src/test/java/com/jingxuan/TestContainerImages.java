@@ -2,7 +2,7 @@ package com.jingxuan;
 
 import org.testcontainers.utility.DockerImageName;
 
-final class TestContainerImages {
+public final class TestContainerImages {
 
     static final String DEFAULT_MYSQL_IMAGE = "mysql:8.0.42";
     static final String DEFAULT_REDIS_IMAGE = "redis:7.4.5-alpine";
@@ -14,11 +14,11 @@ final class TestContainerImages {
     private TestContainerImages() {
     }
 
-    static DockerImageName mysql() {
+    public static DockerImageName mysql() {
         return parseConfiguredImage(MYSQL_IMAGE_ENV, DEFAULT_MYSQL_IMAGE);
     }
 
-    static DockerImageName redis() {
+    public static DockerImageName redis() {
         return parseConfiguredImage(REDIS_IMAGE_ENV, DEFAULT_REDIS_IMAGE);
     }
 

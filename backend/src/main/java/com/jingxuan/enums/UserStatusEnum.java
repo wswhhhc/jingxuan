@@ -13,7 +13,8 @@ import lombok.Getter;
 public enum UserStatusEnum {
 
     DISABLED(0, "禁用"),
-    ENABLED(1, "启用");
+    ENABLED(1, "启用"),
+    PENDING_APPROVAL(2, "待审核");
 
     @EnumValue
     @JsonValue
@@ -28,4 +29,3 @@ public enum UserStatusEnum {
         return DISABLED;
     }
 }
-

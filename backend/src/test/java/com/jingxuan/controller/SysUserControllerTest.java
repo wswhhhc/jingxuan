@@ -41,8 +41,7 @@ class SysUserControllerTest {
             sysUserService,
             mock(SysRoleMapper.class),
             mock(SysDictMapper.class),
-            aiUserImportService,
-            rateLimitService
+            aiUserImportService
     );
 
     @AfterEach
@@ -94,3 +93,4 @@ class SysUserControllerTest {
         verify(aiUserImportService, never()).parse(any(AiUserImportRequest.class));
     }
 }
+

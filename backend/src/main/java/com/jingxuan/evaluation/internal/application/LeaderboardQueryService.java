@@ -5,6 +5,7 @@ import com.jingxuan.evaluation.api.V1MyRank;
 import com.jingxuan.modules.adapter.StudentRankingFacade;
 import com.jingxuan.modules.adapter.TeacherWorkFacade;
 import com.jingxuan.modules.rank.dto.RankQueryRequest;
+import com.jingxuan.modules.rank.dto.RankVO;
 import com.jingxuan.modules.rank.service.RankService;
 import com.jingxuan.modules.scorebatch.service.ScoreBatchService;
 import org.springframework.stereotype.Service;

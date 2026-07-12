@@ -1,6 +1,7 @@
 package com.jingxuan.openapi;
 
 import com.jingxuan.BaseApiTest;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.springframework.beans.factory.annotation.Autowired;

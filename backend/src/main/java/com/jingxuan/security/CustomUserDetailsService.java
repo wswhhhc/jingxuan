@@ -36,6 +36,9 @@ public class CustomUserDetailsService implements UserDetailsService {
         if (sysUser.getStatus() == UserStatusEnum.DISABLED) {
             throw new UsernameNotFoundException("账号已被禁用");
         }
+        if (sysUser.getStatus() == UserStatusEnum.PENDING_APPROVAL) {
+            throw new UsernameNotFoundException("教师账号待审核，请联系管理员批准");
+        }
 
         SysRole role = sysUser.getRoleId() != null
                 ? sysRoleMapper.selectById(sysUser.getRoleId().longValue())
@@ -60,3 +63,5 @@ public class CustomUserDetailsService implements UserDetailsService {
         );
     }
 }
+
+

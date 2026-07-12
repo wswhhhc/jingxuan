@@ -28,3 +28,12 @@ logging:
   level:
     com.jingxuan: info
     com.baomidou: warn
+
+  pattern:
+    console: "{\"timestamp\":\"%d{yyyy-MM-dd'T'HH:mm:ss.SSS+08:00}\",\"level\":\"%p\",\"thread\":\"%t\",\"logger\":\"%c\",\"message\":\"%m\",\"requestId\":\"%X{requestId}\",\"duration\":\"%X{duration}\"}"
+    file: "{\"timestamp\":\"%d{yyyy-MM-dd'T'HH:mm:ss.SSS+08:00}\",\"level\":\"%p\",\"thread\":\"%t\",\"logger\":\"%c\",\"message\":\"%m\",\"requestId\":\"%X{requestId}\",\"duration\":\"%X{duration}\"}"
+
+  file:
+    name: ./logs/jingxuan-backend.log
+    max-size: 100MB
+    max-history: 30

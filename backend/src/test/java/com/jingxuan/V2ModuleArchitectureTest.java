@@ -52,7 +52,7 @@ class V2ModuleArchitectureTest {
         map.put("com.jingxuan.portfolio.web.V1CommentController", Set.of("com.jingxuan.modules.comment.", "com.jingxuan.modules.work."));
         map.put("com.jingxuan.portfolio.web.V1CommentAdminController", Set.of("com.jingxuan.modules.comment."));
         map.put("com.jingxuan.portfolio.web.V1LikeController", Set.of("com.jingxuan.modules.adapter."));
-        map.put("com.jingxuan.portfolio.web.V1PortfolioController", Set.of("com.jingxuan.modules.deleterequest.", "com.jingxuan.modules.work.", "com.jingxuan.workflow."));
+        map.put("com.jingxuan.portfolio.web.V1PortfolioController", Set.of("com.jingxuan.modules.deleterequest.", "com.jingxuan.modules.work.", "com.jingxuan.workflow.", "com.jingxuan.entity."));
         map.put("com.jingxuan.portfolio.web.V1PublicationController", Set.of("com.jingxuan.modules.publish."));
         map.put("com.jingxuan.portfolio.web.V1ShowcaseController", Set.of("com.jingxuan.modules.work.", "com.jingxuan.modules.adapter."));
         map.put("com.jingxuan.evaluation.web.V1ScoreController", Set.of("com.jingxuan.modules.score."));

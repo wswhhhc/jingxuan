@@ -40,7 +40,7 @@
     "jsdom": "^29.1.1",
     "orval": "^8.20.0",
     "prettier": "^3.8.3",
-    "typescript": "~6.0.2",
+    "typescript": "~7.0.2",
     "typescript-eslint": "^8.60.1",
     "unplugin-auto-import": "^21.0.0",
     "unplugin-vue-components": "^32.0.0",

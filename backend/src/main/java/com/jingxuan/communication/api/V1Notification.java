@@ -17,16 +17,4 @@ public record V1Notification(
     OffsetDateTime readTime,
     OffsetDateTime createdAt
 ) {
-    public static V1Notification from(SysNotification entity) {
-        return new V1Notification(
-            String.valueOf(entity.getId()),
-            entity.getTitle(),
-            entity.getContent(),
-            entity.getType(),
-            entity.getRefId() == null ? null : String.valueOf(entity.getRefId()),
-            Integer.valueOf(1).equals(entity.getIsRead()),
-            entity.getReadTime() == null ? null : entity.getReadTime().atOffset(ZoneOffset.ofHours(8)),
-            entity.getCreateTime() == null ? null : entity.getCreateTime().atOffset(ZoneOffset.ofHours(8))
-        );
-    }
 }

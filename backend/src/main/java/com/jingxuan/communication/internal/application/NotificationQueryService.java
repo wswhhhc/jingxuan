@@ -10,6 +10,8 @@ import com.jingxuan.modules.notification.service.NotificationService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZoneOffset;
+
 @Service
 public class NotificationQueryService {
 
@@ -22,8 +24,18 @@ public class NotificationQueryService {
     public V1Page<V1Notification> queryNotifications(Long userId, int page, int size, Boolean unreadOnly) {
         PageResult<SysNotification> result = notificationService.queryUserNotifications(userId, page, size, unreadOnly);
         return new V1Page<>(
-            result.getRecords().stream().map(V1Notification::from).toList(),
+            result.getRecords().stream().map(this::toV1Notification).toList(),
             V1PageInfo.of(page, size, result.getTotal())
+        );
+    }
+
+    private V1Notification toV1Notification(SysNotification entity) {
+        return new V1Notification(
+            String.valueOf(entity.getId()), entity.getTitle(), entity.getContent(), entity.getType(),
+            entity.getRefId() == null ? null : String.valueOf(entity.getRefId()),
+            Integer.valueOf(1).equals(entity.getIsRead()),
+            entity.getReadTime() == null ? null : entity.getReadTime().atOffset(ZoneOffset.ofHours(8)),
+            entity.getCreateTime() == null ? null : entity.getCreateTime().atOffset(ZoneOffset.ofHours(8))
         );
     }
 

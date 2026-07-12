@@ -32,7 +32,7 @@ public class ReferenceDataCommandService {
         Tag tag = new Tag();
         apply(tag, request);
         tagMapper.insert(tag);
-        return V1Tag.from(tag);
+        return new V1Tag(tag.getId().toString(), tag.getName(), tag.getColor(), tag.getType(), tag.getSort());
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -40,7 +40,7 @@ public class ReferenceDataCommandService {
         Tag tag = requiredTag(id);
         apply(tag, request);
         tagMapper.updateById(tag);
-        return V1Tag.from(tag);
+        return new V1Tag(tag.getId().toString(), tag.getName(), tag.getColor(), tag.getType(), tag.getSort());
     }
 
     public V1DeletionImpact tagImpact(Long id) {

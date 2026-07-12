@@ -10,6 +10,8 @@ import com.jingxuan.exception.NotFoundException;
 import com.jingxuan.modules.notice.service.NoticeService;
 import org.springframework.stereotype.Service;
 
+import java.time.ZoneOffset;
+
 @Service
 public class NoticeQueryService {
 
@@ -35,16 +37,25 @@ public class NoticeQueryService {
         if (notice == null) {
             throw new NotFoundException("公告不存在");
         }
-        // 临时查询发布者姓名
-        notice.setPublisherName(null);
-        PageResult<SysNotice> single = noticeService.queryNoticeList(1, 1, null);
-        return V1Notice.from(notice);
+        return toV1Notice(notice);
     }
 
     private static V1Page<V1Notice> toV1Page(PageResult<SysNotice> result, int page, int size) {
         return new V1Page<>(
-            result.getRecords().stream().map(V1Notice::from).toList(),
+            result.getRecords().stream().map(NoticeQueryService::toV1Notice).toList(),
             V1PageInfo.of(page, size, result.getTotal())
+        );
+    }
+
+    private static V1Notice toV1Notice(SysNotice entity) {
+        return new V1Notice(
+            String.valueOf(entity.getId()), entity.getTitle(), entity.getContent(), entity.getPublisherName(),
+            entity.getPublishTime() == null ? null : entity.getPublishTime().atOffset(ZoneOffset.ofHours(8)),
+            Integer.valueOf(1).equals(entity.getTopFlag()),
+            entity.getStatus() == null || entity.getStatus() == 0 ? "DRAFT" : "PUBLISHED",
+            entity.getTargetScope() == null ? "all" : entity.getTargetScope(),
+            entity.getCreateTime() == null ? null : entity.getCreateTime().atOffset(ZoneOffset.ofHours(8)),
+            entity.getUpdateTime() == null ? null : entity.getUpdateTime().atOffset(ZoneOffset.ofHours(8))
         );
     }
 }

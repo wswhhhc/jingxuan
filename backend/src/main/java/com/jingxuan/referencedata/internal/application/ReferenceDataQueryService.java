@@ -23,7 +23,8 @@ public class ReferenceDataQueryService {
     }
 
     public List<V1ReferenceItem> dictionaries(String type) {
-        return dictService.getByType(type).stream().map(V1ReferenceItem::from).toList();
+        return dictService.getByType(type).stream().map(s -> new V1ReferenceItem(
+                s.getId().toString(), s.getDictType(), s.getDictLabel(), s.getDictValue(), s.getSort())).toList();
     }
 
     public List<V1ReferenceItem> classes() {
@@ -35,6 +36,7 @@ public class ReferenceDataQueryService {
                         .eq(Tag::getDeleted, 0)
                         .eq(type != null && !type.isBlank(), Tag::getType, type)
                         .orderByAsc(Tag::getSort))
-                .stream().map(V1Tag::from).toList();
+                .stream().map(t -> new V1Tag(
+                        t.getId().toString(), t.getName(), t.getColor(), t.getType(), t.getSort())).toList();
     }
 }

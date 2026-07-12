@@ -19,18 +19,4 @@ public record V1Notice(
     OffsetDateTime createdAt,
     OffsetDateTime updatedAt
 ) {
-    public static V1Notice from(SysNotice entity) {
-        return new V1Notice(
-            String.valueOf(entity.getId()),
-            entity.getTitle(),
-            entity.getContent(),
-            entity.getPublisherName(),
-            entity.getPublishTime() == null ? null : entity.getPublishTime().atOffset(ZoneOffset.ofHours(8)),
-            Integer.valueOf(1).equals(entity.getTopFlag()),
-            entity.getStatus() == null || entity.getStatus() == 0 ? "DRAFT" : "PUBLISHED",
-            entity.getTargetScope() == null ? "all" : entity.getTargetScope(),
-            entity.getCreateTime() == null ? null : entity.getCreateTime().atOffset(ZoneOffset.ofHours(8)),
-            entity.getUpdateTime() == null ? null : entity.getUpdateTime().atOffset(ZoneOffset.ofHours(8))
-        );
-    }
 }

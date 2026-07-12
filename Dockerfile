@@ -3,14 +3,14 @@
 # ============================================================
 
 # ---- 阶段一：构建后端 ----
-FROM maven:3.9-eclipse-temurin-17 AS backend-build
+FROM maven:3.9-eclipse-temurin-25 AS backend-build
 WORKDIR /build
 COPY backend/pom.xml .
 COPY backend/src ./src
 RUN mvn package -Dmaven.test.skip=true -q -e
 
 # ---- 阶段二：构建前端 ----
-FROM node:20-alpine AS frontend-build
+FROM node:24-alpine AS frontend-build
 WORKDIR /build
 COPY frontend/package.json frontend/package-lock.json ./
 RUN npm ci
@@ -18,7 +18,7 @@ COPY frontend/ .
 RUN npm run build
 
 # ---- 阶段三：运行环境 ----
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:25-jre-alpine
 WORKDIR /app
 
 # 安装 Nginx
@@ -49,3 +49,4 @@ RUN chmod +x /app/start.sh
 
 EXPOSE 80
 CMD ["/app/start.sh"]
+

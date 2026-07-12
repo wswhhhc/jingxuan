@@ -51,13 +51,31 @@ const TABLE_MIGRATIONS = [
     sourceTable: "sys_role",
     targetTable: "sys_role",
     whereClause: "WHERE deleted = 0",
-    columns: ["id", "role_name", "role_code", "description", "create_time", "update_time"],
+    columns: [
+      "id",
+      "role_name",
+      "role_code",
+      "description",
+      "create_time",
+      "update_time",
+    ],
   },
   {
     sourceTable: "sys_menu",
     targetTable: "sys_menu",
     whereClause: "WHERE deleted = 0",
-    columns: ["id", "menu_name", "parent_id", "path", "permission", "type", "icon", "sort", "create_time", "update_time"],
+    columns: [
+      "id",
+      "menu_name",
+      "parent_id",
+      "path",
+      "permission",
+      "type",
+      "icon",
+      "sort",
+      "create_time",
+      "update_time",
+    ],
   },
   {
     sourceTable: "sys_role_menu",
@@ -69,7 +87,16 @@ const TABLE_MIGRATIONS = [
     sourceTable: "sys_dict",
     targetTable: "sys_dict",
     whereClause: "WHERE deleted = 0",
-    columns: ["id", "dict_type", "dict_label", "dict_value", "sort", "remark", "create_time", "update_time"],
+    columns: [
+      "id",
+      "dict_type",
+      "dict_label",
+      "dict_value",
+      "sort",
+      "remark",
+      "create_time",
+      "update_time",
+    ],
   },
   {
     sourceTable: "sys_log",
@@ -131,7 +158,8 @@ const TABLE_MIGRATIONS = [
     targetTable: "work",
     // 排除草稿和软删除，同时排除超过 7 天未绑定附件的
     whereClause: "WHERE deleted = 0 AND status != 0",
-    orphanFilter: "AND (submit_time IS NOT NULL OR " +
+    orphanFilter:
+      "AND (submit_time IS NOT NULL OR " +
       "EXISTS (SELECT 1 FROM work_attachment wa WHERE wa.work_id = work.id AND wa.deleted = 0) OR " +
       "create_time > DATE_SUB(NOW(), INTERVAL 7 DAY))",
     columns: [
@@ -158,49 +186,133 @@ const TABLE_MIGRATIONS = [
     sourceTable: "work_member",
     targetTable: "work_member",
     whereClause: "WHERE deleted = 0",
-    columns: ["id", "work_id", "student_id", "student_name", "student_no", "class_name", "is_leader", "create_time", "update_time"],
+    columns: [
+      "id",
+      "work_id",
+      "student_id",
+      "student_name",
+      "student_no",
+      "class_name",
+      "is_leader",
+      "create_time",
+      "update_time",
+    ],
   },
   {
     sourceTable: "work_attachment",
     targetTable: "work_attachment",
     whereClause: "WHERE deleted = 0 AND work_id IS NOT NULL",
-    columns: ["id", "work_id", "file_name", "file_type", "file_size", "file_url", "category", "sha256", "create_time", "update_time"],
+    columns: [
+      "id",
+      "work_id",
+      "file_name",
+      "file_type",
+      "file_size",
+      "file_url",
+      "category",
+      "sha256",
+      "create_time",
+      "update_time",
+    ],
   },
   {
     sourceTable: "work_audit",
     targetTable: "work_audit",
     whereClause: "WHERE deleted = 0",
-    columns: ["id", "work_id", "auditor_id", "result", "reason", "audit_time", "create_time", "update_time"],
+    columns: [
+      "id",
+      "work_id",
+      "auditor_id",
+      "result",
+      "reason",
+      "audit_time",
+      "create_time",
+      "update_time",
+    ],
   },
   {
     sourceTable: "work_publish",
     targetTable: "work_publish",
     whereClause: "WHERE deleted = 0",
-    columns: ["id", "work_id", "publish_status", "featured", "publish_time", "offline_time", "publisher_id", "preview_url", "create_time", "update_time"],
+    columns: [
+      "id",
+      "work_id",
+      "publish_status",
+      "featured",
+      "publish_time",
+      "offline_time",
+      "publisher_id",
+      "preview_url",
+      "create_time",
+      "update_time",
+    ],
   },
   {
     sourceTable: "work_score",
     targetTable: "work_score",
     whereClause: "WHERE deleted = 0",
-    columns: ["id", "work_id", "teacher_id", "innovation", "difficulty", "completion", "practicality", "total", "comment", "batch_id", "create_time", "update_time"],
+    columns: [
+      "id",
+      "work_id",
+      "teacher_id",
+      "innovation",
+      "difficulty",
+      "completion",
+      "practicality",
+      "total",
+      "comment",
+      "batch_id",
+      "create_time",
+      "update_time",
+    ],
   },
   {
     sourceTable: "work_comment",
     targetTable: "work_comment",
     whereClause: "WHERE deleted = 0",
-    columns: ["id", "work_id", "user_id", "guest_name", "content", "parent_id", "create_time", "update_time"],
+    columns: [
+      "id",
+      "work_id",
+      "user_id",
+      "guest_name",
+      "content",
+      "parent_id",
+      "create_time",
+      "update_time",
+    ],
   },
   {
     sourceTable: "score_batch",
     targetTable: "score_batch",
     whereClause: "WHERE deleted = 0",
-    columns: ["id", "batch_name", "start_time", "end_time", "class_scopes", "status", "rank_published", "notice_title", "notice_content", "create_time", "update_time"],
+    columns: [
+      "id",
+      "batch_name",
+      "start_time",
+      "end_time",
+      "class_scopes",
+      "status",
+      "rank_published",
+      "notice_title",
+      "notice_content",
+      "create_time",
+      "update_time",
+    ],
   },
   {
     sourceTable: "sensitive_rule",
     targetTable: "sensitive_rule",
     whereClause: "WHERE deleted = 0",
-    columns: ["id", "rule_name", "system_prompt", "enabled_categories", "on_reject_action", "status", "create_time", "update_time"],
+    columns: [
+      "id",
+      "rule_name",
+      "system_prompt",
+      "enabled_categories",
+      "on_reject_action",
+      "status",
+      "create_time",
+      "update_time",
+    ],
   },
   {
     sourceTable: "work_like",
@@ -212,7 +324,15 @@ const TABLE_MIGRATIONS = [
     sourceTable: "tag",
     targetTable: "tag",
     whereClause: "WHERE deleted = 0",
-    columns: ["id", "name", "color", "type", "sort", "create_time", "update_time"],
+    columns: [
+      "id",
+      "name",
+      "color",
+      "type",
+      "sort",
+      "create_time",
+      "update_time",
+    ],
   },
   {
     sourceTable: "work_tag",
@@ -224,31 +344,79 @@ const TABLE_MIGRATIONS = [
     sourceTable: "student_task",
     targetTable: "student_task",
     whereClause: "WHERE deleted = 0",
-    columns: ["id", "user_id", "batch_id", "work_id", "title", "content", "status", "create_time", "update_time"],
+    columns: [
+      "id",
+      "user_id",
+      "batch_id",
+      "work_id",
+      "title",
+      "content",
+      "status",
+      "create_time",
+      "update_time",
+    ],
   },
   {
     sourceTable: "delete_request",
     targetTable: "delete_request",
     whereClause: "WHERE deleted = 0",
-    columns: ["id", "work_id", "student_id", "reason", "status", "admin_reply", "create_time", "update_time"],
+    columns: [
+      "id",
+      "work_id",
+      "student_id",
+      "reason",
+      "status",
+      "admin_reply",
+      "create_time",
+      "update_time",
+    ],
   },
   {
     sourceTable: "rank_reward",
     targetTable: "rank_reward",
     whereClause: "WHERE deleted = 0",
-    columns: ["id", "batch_id", "reward_level", "reward_name", "prize_name", "prize_image", "quota", "create_time", "update_time"],
+    columns: [
+      "id",
+      "batch_id",
+      "reward_level",
+      "reward_name",
+      "prize_name",
+      "prize_image",
+      "quota",
+      "create_time",
+      "update_time",
+    ],
   },
   {
     sourceTable: "reward_issue",
     targetTable: "reward_issue",
     whereClause: "WHERE deleted = 0",
-    columns: ["id", "reward_id", "work_id", "issue_status", "issue_time", "operator_id", "remark", "create_time", "update_time"],
+    columns: [
+      "id",
+      "reward_id",
+      "work_id",
+      "issue_status",
+      "issue_time",
+      "operator_id",
+      "remark",
+      "create_time",
+      "update_time",
+    ],
   },
   {
     sourceTable: "reward_config",
     targetTable: "reward_config",
     whereClause: "WHERE deleted = 0",
-    columns: ["id", "batch_id", "reward_level", "reward_name", "prize_name", "quota", "create_time", "update_time"],
+    columns: [
+      "id",
+      "batch_id",
+      "reward_level",
+      "reward_name",
+      "prize_name",
+      "quota",
+      "create_time",
+      "update_time",
+    ],
   },
 ];
 
@@ -287,16 +455,27 @@ function validateUri(uri, label) {
     exit(1);
   }
   if (!/^mysql:\/\/.+/.test(uri)) {
-    stderr.write(`错误: ${label} 格式无效，应为 mysql://user:pass@host:port/dbname\n`);
+    stderr.write(
+      `错误: ${label} 格式无效，应为 mysql://user:pass@host:port/dbname\n`,
+    );
     exit(1);
   }
   return uri;
 }
 
 function generateInsertSql(migration, targetDb) {
-  const { sourceTable, targetTable, whereClause, columns, extraFilter, orphanFilter } = migration;
+  const {
+    sourceTable,
+    targetTable,
+    whereClause,
+    columns,
+    extraFilter,
+    orphanFilter,
+  } = migration;
   const colList = columns.join(", ");
-  const selectClauses = [`SELECT ${colList} FROM ${sourceTable} ${whereClause}`];
+  const selectClauses = [
+    `SELECT ${colList} FROM ${sourceTable} ${whereClause}`,
+  ];
 
   if (extraFilter) {
     selectClauses[0] += ` ${extraFilter}`;
@@ -309,7 +488,10 @@ function generateInsertSql(migration, targetDb) {
 INSERT INTO ${targetDb}.${targetTable} (${colList})
 ${selectClauses[0]}
 ON DUPLICATE KEY UPDATE
-${columns.filter((c) => c !== "id").map((c) => `    ${c} = VALUES(${c})`).join(",\n")};
+${columns
+  .filter((c) => c !== "id")
+  .map((c) => `    ${c} = VALUES(${c})`)
+  .join(",\n")};
 `;
 }
 
@@ -348,7 +530,7 @@ async function preflight(sourceDb, targetDb) {
 
   stdout.write("── 源表统计 ──────────────────────────────────────────\n");
   stdout.write(
-    `  ${"表名".padEnd(28)} ${"总计".padStart(8)} ${"有效".padStart(8)} ${"软删除".padStart(8)} ${"删除占比".padStart(10)}\n`
+    `  ${"表名".padEnd(28)} ${"总计".padStart(8)} ${"有效".padStart(8)} ${"软删除".padStart(8)} ${"删除占比".padStart(10)}\n`,
   );
   stdout.write("  " + "─".repeat(66) + "\n");
 
@@ -368,12 +550,17 @@ async function preflight(sourceDb, targetDb) {
 `);
     // 模拟输出（实际执行时替换为真实数字）
     const estimatedTotal = getEstimatedRowCount(table);
-    const estimatedDeleted = Math.floor(estimatedTotal * getDeletedRatio(table));
+    const estimatedDeleted = Math.floor(
+      estimatedTotal * getDeletedRatio(table),
+    );
     const estimatedValid = estimatedTotal - estimatedDeleted;
-    const pct = estimatedTotal > 0 ? ((estimatedDeleted / estimatedTotal) * 100).toFixed(1) : "0.0";
+    const pct =
+      estimatedTotal > 0
+        ? ((estimatedDeleted / estimatedTotal) * 100).toFixed(1)
+        : "0.0";
 
     stdout.write(
-      `  ${table.padEnd(28)} ${String(estimatedTotal).padStart(8)} ${String(estimatedValid).padStart(8)} ${String(estimatedDeleted).padStart(8)} ${(`${pct}%`).padStart(10)}\n`
+      `  ${table.padEnd(28)} ${String(estimatedTotal).padStart(8)} ${String(estimatedValid).padStart(8)} ${String(estimatedDeleted).padStart(8)} ${`${pct}%`.padStart(10)}\n`,
     );
 
     totalEffectiveRows += estimatedValid;
@@ -383,7 +570,7 @@ async function preflight(sourceDb, targetDb) {
 
   stdout.write("  " + "─".repeat(66) + "\n");
   stdout.write(
-    `  ${"合计".padEnd(28)} ${String(totalSourceRows).padStart(8)} ${String(totalEffectiveRows).padStart(8)} ${String(totalDeletedRows).padStart(8)}\n\n`
+    `  ${"合计".padEnd(28)} ${String(totalSourceRows).padStart(8)} ${String(totalEffectiveRows).padStart(8)} ${String(totalDeletedRows).padStart(8)}\n\n`,
   );
 
   // 文件统计
@@ -444,14 +631,18 @@ async function migrate(sourceDb, targetDb) {
     exit(1);
   }
 
-  stdout.write("-- ============================================================\n");
+  stdout.write(
+    "-- ============================================================\n",
+  );
   stdout.write(`-- 菁选 v1 → v2 迁移 SQL\n`);
   stdout.write(`-- 源数据库: ${sourceDbName}\n`);
   stdout.write(`-- 目标数据库: ${targetDbName}\n`);
   stdout.write("-- 生成时间: " + new Date().toISOString() + "\n");
   stdout.write("-- \n");
   stdout.write("-- 用法: mysql -u root -p < this_file.sql\n");
-  stdout.write("-- ============================================================\n\n");
+  stdout.write(
+    "-- ============================================================\n\n",
+  );
 
   stdout.write("SET NAMES utf8mb4;\n");
   stdout.write("SET FOREIGN_KEY_CHECKS = 0;\n\n");
@@ -469,8 +660,12 @@ async function migrate(sourceDb, targetDb) {
   }
 
   // 生成 file_asset 迁移 SQL（从 work_attachment 中提取有效文件记录）
-  stdout.write(`-- work_attachment → ${targetDbName}.file_asset（仅 SHA256 校验有效的记录）\n`);
-  stdout.write(`INSERT INTO ${targetDbName}.file_asset (id, original_name, stored_path, file_size, sha256, mime_type, create_time)\n`);
+  stdout.write(
+    `-- work_attachment → ${targetDbName}.file_asset（仅 SHA256 校验有效的记录）\n`,
+  );
+  stdout.write(
+    `INSERT INTO ${targetDbName}.file_asset (id, original_name, stored_path, file_size, sha256, mime_type, create_time)\n`,
+  );
   stdout.write(`SELECT\n`);
   stdout.write(`    wa.id,\n`);
   stdout.write(`    wa.file_name,\n`);
@@ -478,10 +673,16 @@ async function migrate(sourceDb, targetDb) {
   stdout.write(`    wa.file_size,\n`);
   stdout.write(`    wa.sha256,\n`);
   stdout.write(`    CASE\n`);
-  stdout.write(`        WHEN wa.file_type IN ('jpg','jpeg','png','gif','webp') THEN 'image/' || wa.file_type\n`);
+  stdout.write(
+    `        WHEN wa.file_type IN ('jpg','jpeg','png','gif','webp') THEN 'image/' || wa.file_type\n`,
+  );
   stdout.write(`        WHEN wa.file_type = 'pdf' THEN 'application/pdf'\n`);
-  stdout.write(`        WHEN wa.file_type IN ('zip','rar','7z','tar','gz') THEN 'application/zip'\n`);
-  stdout.write(`        WHEN wa.file_type IN ('mp4','avi','mov','wmv') THEN 'video/' || wa.file_type\n`);
+  stdout.write(
+    `        WHEN wa.file_type IN ('zip','rar','7z','tar','gz') THEN 'application/zip'\n`,
+  );
+  stdout.write(
+    `        WHEN wa.file_type IN ('mp4','avi','mov','wmv') THEN 'video/' || wa.file_type\n`,
+  );
   stdout.write(`        ELSE 'application/octet-stream'\n`);
   stdout.write(`    END,\n`);
   stdout.write(`    wa.create_time\n`);
@@ -496,8 +697,12 @@ async function migrate(sourceDb, targetDb) {
   stdout.write(`    sha256 = VALUES(sha256);\n\n`);
 
   // 生成 academic_class 迁移（从 sys_dict 提取 class 类型数据）
-  stdout.write(`-- sys_dict (dict_type='class') → ${targetDbName}.academic_class\n`);
-  stdout.write(`INSERT INTO ${targetDbName}.academic_class (id, class_name, class_code, grade, create_time, update_time)\n`);
+  stdout.write(
+    `-- sys_dict (dict_type='class') → ${targetDbName}.academic_class\n`,
+  );
+  stdout.write(
+    `INSERT INTO ${targetDbName}.academic_class (id, class_name, class_code, grade, create_time, update_time)\n`,
+  );
   stdout.write(`SELECT\n`);
   stdout.write(`    id,\n`);
   stdout.write(`    dict_label,\n`);
@@ -513,23 +718,35 @@ async function migrate(sourceDb, targetDb) {
   stdout.write(`    class_code = VALUES(class_code);\n\n`);
 
   // 生成 award_tier 迁移（合并 reward_config + rank_reward）
-  stdout.write(`-- ${targetDbName}.award_tier（合并 reward_config 与 rank_reward）\n`);
-  stdout.write(`INSERT INTO ${targetDbName}.award_tier (id, batch_id, tier_name, prize_name, quota, sort, create_time)\n`);
-  stdout.write(`SELECT id, batch_id, reward_level AS tier_name, prize_name, quota, 0 AS sort, create_time\n`);
+  stdout.write(
+    `-- ${targetDbName}.award_tier（合并 reward_config 与 rank_reward）\n`,
+  );
+  stdout.write(
+    `INSERT INTO ${targetDbName}.award_tier (id, batch_id, tier_name, prize_name, quota, sort, create_time)\n`,
+  );
+  stdout.write(
+    `SELECT id, batch_id, reward_level AS tier_name, prize_name, quota, 0 AS sort, create_time\n`,
+  );
   stdout.write(`FROM ${sourceDbName}.reward_config\n`);
   stdout.write(`WHERE deleted = 0\n`);
   stdout.write(`ON DUPLICATE KEY UPDATE\n`);
   stdout.write(`    tier_name = VALUES(tier_name);\n\n`);
 
   // 生成 score_batch_class 迁移（解析 score_batch.class_scopes JSON）
-  stdout.write(`-- score_batch.class_scopes → ${targetDbName}.score_batch_class\n`);
+  stdout.write(
+    `-- score_batch.class_scopes → ${targetDbName}.score_batch_class\n`,
+  );
   stdout.write(`-- 注意: class_scopes 为 JSON 数组，如 ["101","102"]\n`);
   stdout.write(`-- 需要手动确认解析逻辑，以下是基于 MySQL JSON_TABLE 的示例\n`);
-  stdout.write(`INSERT INTO ${targetDbName}.score_batch_class (id, batch_id, class_id)\n`);
+  stdout.write(
+    `INSERT INTO ${targetDbName}.score_batch_class (id, batch_id, class_id)\n`,
+  );
   stdout.write(`SELECT\n`);
   stdout.write(`    (sb.id * 10000 + j.idx) AS id,\n`);
   stdout.write(`    sb.id AS batch_id,\n`);
-  stdout.write(`    CAST(TRIM(BOTH '\"' FROM j.class_id_str) AS UNSIGNED) AS class_id\n`);
+  stdout.write(
+    `    CAST(TRIM(BOTH '\"' FROM j.class_id_str) AS UNSIGNED) AS class_id\n`,
+  );
   stdout.write(`FROM ${sourceDbName}.score_batch sb\n`);
   stdout.write(`CROSS JOIN JSON_TABLE(\n`);
   stdout.write(`    sb.class_scopes,\n`);
@@ -548,9 +765,13 @@ async function migrate(sourceDb, targetDb) {
   // 恢复外键检查
   stdout.write(`SET FOREIGN_KEY_CHECKS = @OLD_FK_CHECKS;\n\n`);
 
-  stdout.write("-- ============================================================\n");
+  stdout.write(
+    "-- ============================================================\n",
+  );
   stdout.write("-- 迁移 SQL 生成完成\n");
-  stdout.write("-- ============================================================\n");
+  stdout.write(
+    "-- ============================================================\n",
+  );
 }
 
 /**
@@ -569,26 +790,38 @@ async function verify(targetDb) {
 
   stdout.write("── 目标表行数统计 ────────────────────────────────────\n");
   for (const m of TABLE_MIGRATIONS) {
-    stdout.write(`  SELECT '${m.targetTable}' AS table_name, COUNT(*) AS row_count FROM ${targetDbName}.${m.targetTable};\n`);
+    stdout.write(
+      `  SELECT '${m.targetTable}' AS table_name, COUNT(*) AS row_count FROM ${targetDbName}.${m.targetTable};\n`,
+    );
   }
   for (const t of V5_NEW_TABLES) {
-    stdout.write(`  SELECT '${t}' AS table_name, COUNT(*) AS row_count FROM ${targetDbName}.${t};\n`);
+    stdout.write(
+      `  SELECT '${t}' AS table_name, COUNT(*) AS row_count FROM ${targetDbName}.${t};\n`,
+    );
   }
   stdout.write("\n");
 
   // 数据完整性校验
   stdout.write("── 数据完整性校验 ────────────────────────────────────\n");
   stdout.write("  -- 1. 用户密码不为空\n");
-  stdout.write(`  SELECT id, username FROM ${targetDbName}.sys_user WHERE password IS NULL OR password = '';\n\n`);
+  stdout.write(
+    `  SELECT id, username FROM ${targetDbName}.sys_user WHERE password IS NULL OR password = '';\n\n`,
+  );
 
   stdout.write("  -- 2. 作品提交者必须存在\n");
   stdout.write(`  SELECT w.id FROM ${targetDbName}.work w\n`);
-  stdout.write(`  LEFT JOIN ${targetDbName}.sys_user u ON u.id = w.submitter_id\n`);
+  stdout.write(
+    `  LEFT JOIN ${targetDbName}.sys_user u ON u.id = w.submitter_id\n`,
+  );
   stdout.write(`  WHERE u.id IS NULL;\n\n`);
 
   stdout.write("  -- 3. 评分教师必须存在\n");
-  stdout.write(`  SELECT DISTINCT ws.teacher_id FROM ${targetDbName}.work_score ws\n`);
-  stdout.write(`  LEFT JOIN ${targetDbName}.sys_user u ON u.id = ws.teacher_id\n`);
+  stdout.write(
+    `  SELECT DISTINCT ws.teacher_id FROM ${targetDbName}.work_score ws\n`,
+  );
+  stdout.write(
+    `  LEFT JOIN ${targetDbName}.sys_user u ON u.id = ws.teacher_id\n`,
+  );
   stdout.write(`  WHERE u.id IS NULL;\n\n`);
 
   stdout.write("  -- 4. 作品成员关联不存在\n");
@@ -603,25 +836,35 @@ async function verify(targetDb) {
 
   stdout.write("── 核心流程冒烟测试 ──────────────────────────────────\n");
   stdout.write("  -- 1. 管理员账号登录：应有 1 条记录\n");
-  stdout.write(`  SELECT id, username, real_name, role_id FROM ${targetDbName}.sys_user\n`);
+  stdout.write(
+    `  SELECT id, username, real_name, role_id FROM ${targetDbName}.sys_user\n`,
+  );
   stdout.write(`  JOIN ${targetDbName}.sys_role ON role_id = sys_role.id\n`);
   stdout.write(`  WHERE role_code = 'ROLE_ADMIN' AND status = 1;\n\n`);
 
   stdout.write("  -- 2. 教师账号登录：应 >= 1 条记录\n");
-  stdout.write(`  SELECT id, username, real_name, role_id FROM ${targetDbName}.sys_user\n`);
+  stdout.write(
+    `  SELECT id, username, real_name, role_id FROM ${targetDbName}.sys_user\n`,
+  );
   stdout.write(`  JOIN ${targetDbName}.sys_role ON role_id = sys_role.id\n`);
   stdout.write(`  WHERE role_code = 'ROLE_TEACHER' AND status = 1;\n\n`);
 
   stdout.write("  -- 3. 学生账号登录：应 >= 1 条记录\n");
-  stdout.write(`  SELECT id, username, real_name, role_id FROM ${targetDbName}.sys_user\n`);
+  stdout.write(
+    `  SELECT id, username, real_name, role_id FROM ${targetDbName}.sys_user\n`,
+  );
   stdout.write(`  JOIN ${targetDbName}.sys_role ON role_id = sys_role.id\n`);
   stdout.write(`  WHERE role_code = 'ROLE_STUDENT' AND status = 1;\n\n`);
 
   stdout.write("  -- 4. 审核过的作品：应有已通过的作品\n");
-  stdout.write(`  SELECT COUNT(*) AS published_works FROM ${targetDbName}.work_publish WHERE publish_status = 1;\n\n`);
+  stdout.write(
+    `  SELECT COUNT(*) AS published_works FROM ${targetDbName}.work_publish WHERE publish_status = 1;\n\n`,
+  );
 
   stdout.write("  -- 5. 评分数据：应有评分记录\n");
-  stdout.write(`  SELECT COUNT(*) AS scored_works, COUNT(DISTINCT work_id) AS distinct_works FROM ${targetDbName}.work_score;\n\n`);
+  stdout.write(
+    `  SELECT COUNT(*) AS scored_works, COUNT(DISTINCT work_id) AS distinct_works FROM ${targetDbName}.work_score;\n\n`,
+  );
 }
 
 /**
@@ -636,12 +879,16 @@ async function rollback(targetDb) {
     exit(1);
   }
 
-  stdout.write("-- ============================================================\n");
+  stdout.write(
+    "-- ============================================================\n",
+  );
   stdout.write("-- 菁选 v2 迁移回滚 SQL\n");
   stdout.write(`-- 目标数据库: ${targetDbName}\n`);
   stdout.write("-- \n");
   stdout.write("-- 注意: 只清理迁移数据，保留 Flyway 表结构和 V5 新表\n");
-  stdout.write("-- ============================================================\n\n");
+  stdout.write(
+    "-- ============================================================\n\n",
+  );
 
   stdout.write("SET FOREIGN_KEY_CHECKS = 0;\n\n");
 
@@ -684,10 +931,14 @@ async function rollback(targetDb) {
 
   stdout.write("\nSET FOREIGN_KEY_CHECKS = 1;\n\n");
 
-  stdout.write("-- ============================================================\n");
+  stdout.write(
+    "-- ============================================================\n",
+  );
   stdout.write("-- 回滚完成\n");
   stdout.write("-- 保留的表结构: Flyway schema_history, V1-V4 旧表, V5 新表\n");
-  stdout.write("-- ============================================================\n");
+  stdout.write(
+    "-- ============================================================\n",
+  );
 }
 
 // ─── 预估行数（仅用于 preflight 报告模拟） ──────────────────────────
@@ -768,12 +1019,22 @@ async function main() {
     default: {
       stderr.write("用法: node scripts/migrate.mjs <command> [options]\n\n");
       stderr.write("子命令:\n");
-      stderr.write("  preflight  --source-db=<uri> --target-db=<uri>    预检数据库\n");
-      stderr.write("  migrate    --source-db=<uri> --target-db=<uri>    生成迁移 SQL\n");
-      stderr.write("  verify     --target-db=<uri>                     验证迁移结果\n");
-      stderr.write("  rollback   --target-db=<uri>                     回滚迁移数据\n");
+      stderr.write(
+        "  preflight  --source-db=<uri> --target-db=<uri>    预检数据库\n",
+      );
+      stderr.write(
+        "  migrate    --source-db=<uri> --target-db=<uri>    生成迁移 SQL\n",
+      );
+      stderr.write(
+        "  verify     --target-db=<uri>                     验证迁移结果\n",
+      );
+      stderr.write(
+        "  rollback   --target-db=<uri>                     回滚迁移数据\n",
+      );
       stderr.write("\n");
-      stderr.write("数据库 URI 格式: mysql://user:password@host:port/database\n");
+      stderr.write(
+        "数据库 URI 格式: mysql://user:password@host:port/database\n",
+      );
       exit(1);
     }
   }

@@ -59,9 +59,7 @@ export function validateRepositoryToolchainFiles({
 
   const backendUsesJava25 =
     /^FROM\s+maven:[^\s]*temurin-25(?:\s|$)/imu.test(backendDocker) &&
-    /^FROM\s+eclipse-temurin:25-jre(?:-[^\s]+)?(?:\s|$)/imu.test(
-      backendDocker,
-    );
+    /^FROM\s+eclipse-temurin:25-jre(?:-[^\s]+)?(?:\s|$)/imu.test(backendDocker);
   if (!backendUsesJava25) {
     issues.push("backend/Dockerfile 必须使用 JDK 25 构建与运行镜像");
   }
@@ -169,7 +167,9 @@ export function validateOpenApiExportJvmMemory(pomXml) {
     "-XX:CompressedClassSpaceSize=128m",
   ];
 
-  if (!requiredArguments.every((argument) => normalizedProfile.includes(argument))) {
+  if (
+    !requiredArguments.every((argument) => normalizedProfile.includes(argument))
+  ) {
     return [
       "backend/pom.xml 的 openapi-export JVM 必须限制为 Xms128m/Xmx512m、MaxMetaspaceSize=256m、CompressedClassSpaceSize=128m",
     ];
@@ -196,9 +196,7 @@ export function validateRuntimeToolchain({
     );
   }
   if (javaMajor !== REQUIRED_JAVA_MAJOR) {
-    issues.push(
-      `当前 Java 必须为 25，实际为 ${javaMajor ?? "无法识别"}`,
-    );
+    issues.push(`当前 Java 必须为 25，实际为 ${javaMajor ?? "无法识别"}`);
   }
 
   return issues;

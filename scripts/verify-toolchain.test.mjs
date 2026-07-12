@@ -158,8 +158,6 @@ test("遗留扫描器可在不依赖 Unix 命令的环境中发现旧模块", as
   const violations = await scanLegacy(fixtureRoot);
 
   assert.ok(
-    violations.some(({ label }) =>
-      label.includes("旧 modules/work/ 仍有残留"),
-    ),
+    violations.some(({ label }) => label.includes("旧 modules/work/ 仍有残留")),
   );
 });

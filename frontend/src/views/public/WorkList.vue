@@ -155,8 +155,6 @@ import { Search, Picture, View, Star } from '@element-plus/icons-vue'
 import {
   getPublicWorkList,
   type PublicWorkListParams,
-  type PublicClassItem,
-  type TagItem,
 } from '@/api/public/work'
 import { classes as fetchClasses, tags as fetchTags } from '@/shared/api/generated/v1-参考数据/v1-参考数据'
 import type { V1ReferenceItem, V1Tag } from '@/shared/api/generated/models'
@@ -438,3 +436,6 @@ onMounted(() => {
   }
 }
 </style>
+
+
+

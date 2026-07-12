@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Tag(name = "注册")
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class RegistrationController {
 

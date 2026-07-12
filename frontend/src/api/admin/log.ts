@@ -17,5 +17,5 @@ export interface LogItem {
 }
 
 export function getLogList(params: { page: number; size: number; action?: string }) {
-  return request.get('/admin/log/list', { params })
+  return request.get('/api/admin/log/list', { params })
 }

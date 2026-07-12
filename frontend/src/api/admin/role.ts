@@ -9,7 +9,7 @@ export interface RoleItem {
 }
 
 export function getRoles(params: { page?: number; size?: number; excludeSystem?: boolean }) {
-  return request.get('/admin/roles', { params })
+  return request.get('/api/admin/roles', { params })
 }
 
 export function getRoleDetail(id: number) {
@@ -17,7 +17,7 @@ export function getRoleDetail(id: number) {
 }
 
 export function createRole(data: Partial<RoleItem>) {
-  return request.post('/admin/roles', data)
+  return request.post('/api/admin/roles', data)
 }
 
 export function updateRole(id: number, data: Partial<RoleItem>) {

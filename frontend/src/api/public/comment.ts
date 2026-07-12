@@ -20,7 +20,7 @@ export function getCommentList(workId: string | number, pageNum = 1, pageSize = 
 }
 
 export function addComment(workId: string | number, content: string, parentId?: string | number, guestName?: string) {
-  return request.post('/comment/add', null, { params: { workId, content, parentId, guestName } })
+  return request.post('/api/comment/add', null, { params: { workId, content, parentId, guestName } })
 }
 
 export function deleteComment(commentId: string | number) {

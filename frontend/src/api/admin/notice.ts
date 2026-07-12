@@ -13,7 +13,7 @@ export interface NoticeItem {
 }
 
 export function getNoticeList(params: { page?: number; size?: number; keyword?: string; status?: number }) {
-  return request.get('/admin/notice/list', { params })
+  return request.get('/api/admin/notice/list', { params })
 }
 
 export function getNoticeDetail(id: number) {
@@ -27,7 +27,7 @@ export function createNotice(data: {
   topFlag?: number
   targetScope?: string
 }) {
-  return request.post('/admin/notice', data)
+  return request.post('/api/admin/notice', data)
 }
 
 export function updateNotice(

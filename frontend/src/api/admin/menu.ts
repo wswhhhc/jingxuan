@@ -13,11 +13,11 @@ export interface MenuItem {
 }
 
 export function getMenuTree() {
-  return request.get<MenuItem[]>('/admin/menus/tree')
+  return request.get<MenuItem[]>('/api/admin/menus/tree')
 }
 
 export function createMenu(data: Partial<MenuItem>) {
-  return request.post('/admin/menus', data)
+  return request.post('/api/admin/menus', data)
 }
 
 export function updateMenu(id: number, data: Partial<MenuItem>) {

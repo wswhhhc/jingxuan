@@ -54,7 +54,7 @@ export interface AiImportResponse {
 }
 
 export function getUsers(params: { page?: number; size?: number; keyword?: string; roleId?: number; status?: number }) {
-  return request.get('/admin/users', { params })
+  return request.get('/api/admin/users', { params })
 }
 
 export function createUser(data: {
@@ -65,7 +65,7 @@ export function createUser(data: {
   phone?: string
   email?: string
 }) {
-  return request.post('/admin/users', data)
+  return request.post('/api/admin/users', data)
 }
 
 export function getUserDetail(id: number) {
@@ -96,17 +96,17 @@ export function deleteUser(id: number) {
 }
 
 export function getRoles() {
-  return request.get('/admin/roles')
+  return request.get('/api/admin/roles')
 }
 
 export function getClasses() {
-  return request.get('/admin/dict/classes')
+  return request.get('/api/admin/dict/classes')
 }
 
 export function batchImportUsers(users: Record<string, unknown>[]) {
-  return request.post('/admin/users/batch', users)
+  return request.post('/api/admin/users/batch', users)
 }
 
 export function parseAiImportUsers(messages: AiImportMessage[]) {
-  return request.post('/admin/users/batch/ai-parse', { messages })
+  return request.post('/api/admin/users/batch/ai-parse', { messages })
 }

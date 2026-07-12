@@ -17,7 +17,7 @@ import java.util.Map;
  */
 @Tag(name = "评分批次管理", description = "创建、更新、查询评分批次")
 @RestController
-@RequestMapping("/score-batch")
+@RequestMapping("/api/score-batch")
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('ADMIN')")
 public class ScoreBatchController {

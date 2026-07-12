@@ -9,23 +9,23 @@ export interface NotifyItem {
 }
 
 export function getNotifyList(role: string, params: { page?: number; size?: number; unreadOnly?: boolean }) {
-  return request.get<{ records: NotifyItem[]; total: number }>(`/${role}/notify/list`, { params })
+  return request.get<{ records: NotifyItem[]; total: number }>(`/api/${role}/notify/list`, { params })
 }
 
 export function markAsRead(role: string, id: number) {
-  return request.post(`/${role}/notify/read/${id}`)
+  return request.post(`/api/${role}/notify/read/${id}`)
 }
 
 export function markAllRead(role: string) {
-  return request.post(`/${role}/notify/read-all`)
+  return request.post(`/api/${role}/notify/read-all`)
 }
 
 export function getUnreadCount(role: string) {
-  return request.get<{ count: number }>(`/${role}/notify/unread-count`)
+  return request.get<{ count: number }>(`/api/${role}/notify/unread-count`)
 }
 
 export function deleteRead(role: string) {
-  return request.delete(`/${role}/notify/read`)
+  return request.delete(`/api/${role}/notify/read`)
 }
 
 /**

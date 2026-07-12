@@ -19,7 +19,7 @@ import java.util.Map;
  */
 @Tag(name = "认证管理", description = "登录、登出、获取用户信息")
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
 

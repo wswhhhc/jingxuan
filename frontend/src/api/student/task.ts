@@ -25,7 +25,7 @@ export interface BatchItem {
 }
 
 export function getMyTasks() {
-  return request.get('/student/tasks')
+  return request.get('/api/student/tasks')
 }
 
 export function completeTask(taskId: number, workId: number) {
@@ -36,5 +36,5 @@ export function completeTask(taskId: number, workId: number) {
 
 /** 获取当前学生可参与的评分批次列表 */
 export function getAvailableBatches() {
-  return request.get('/student/batch/available')
+  return request.get('/api/student/batch/available')
 }

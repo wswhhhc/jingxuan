@@ -25,11 +25,11 @@ export function getAdminCommentList(params: {
   userKeyword?: string
   contentKeyword?: string
 }) {
-  return request.get('/admin/comment/list', { params })
+  return request.get('/api/admin/comment/list', { params })
 }
 
 export function getAdminCommentWorkOptions() {
-  return request.get<CommentWorkOption[]>('/admin/comment/work-options')
+  return request.get<CommentWorkOption[]>('/api/admin/comment/work-options')
 }
 
 export function deleteAdminComment(commentId: number) {

@@ -22,7 +22,7 @@ export interface TagItem {
 
 export async function getPublicWorkList(params: PublicWorkListParams) {
   const res = await request({
-    url: '/public/works',
+    url: '/api/public/works',
     method: 'get',
     params: {
       page: params.page || 1,
@@ -46,7 +46,7 @@ export interface PublicClassItem {
 }
 
 export async function getPublicClassList() {
-  return request.get<PublicClassItem[]>('/public/classes')
+  return request.get<PublicClassItem[]>('/api/public/classes')
 }
 
 export async function getPublicWorkDetail(id: string | number) {
@@ -59,7 +59,7 @@ export async function getPublicWorkDetail(id: string | number) {
 }
 
 export async function getPublicTagList() {
-  return request.get<TagItem[]>('/public/tags')
+  return request.get<TagItem[]>('/api/public/tags')
 }
 
 export async function toggleLike(id: string | number) {

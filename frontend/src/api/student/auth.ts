@@ -10,7 +10,7 @@ export interface LoginForm {
 }
 
 export function login(data: LoginForm) {
-  return request.post('/auth/login', {
+  return request.post('/api/auth/login', {
     username: data.username,
     password: data.password,
     rememberMe: data.remember,
@@ -19,14 +19,14 @@ export function login(data: LoginForm) {
 
 export function getUserInfo() {
   return request({
-    url: '/auth/user-info',
+    url: '/api/auth/user-info',
     method: 'get',
   })
 }
 
 export function changePassword(data: { oldPassword: string; newPassword: string }) {
   return request({
-    url: '/auth/password',
+    url: '/api/auth/password',
     method: 'put',
     data,
   })
@@ -34,7 +34,7 @@ export function changePassword(data: { oldPassword: string; newPassword: string 
 
 export function updateProfile(data: Partial<UserInfo>) {
   return request({
-    url: '/auth/profile',
+    url: '/api/auth/profile',
     method: 'put',
     data,
   })

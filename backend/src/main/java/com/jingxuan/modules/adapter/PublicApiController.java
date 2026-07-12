@@ -30,7 +30,7 @@ public class PublicApiController {
     private final PublicWorkFacade publicWorkFacade;
 
     @Operation(summary = "获取已发布作品列表")
-    @GetMapping("/public/works")
+    @GetMapping("/api/public/works")
     public Result<PageResult<WorkListVO>> getPublishedWorks(
             @RequestParam(required = false, defaultValue = "1") int page,
             @RequestParam(required = false, defaultValue = "10") int size,
@@ -45,31 +45,31 @@ public class PublicApiController {
     }
 
     @Operation(summary = "获取班级列表（公开）")
-    @GetMapping("/public/classes")
+    @GetMapping("/api/public/classes")
     public Result<List<SysDict>> getPublicClassList() {
         return Result.ok(publicWorkFacade.getPublicClasses());
     }
 
     @Operation(summary = "获取标签列表（公开）")
-    @GetMapping("/public/tags")
+    @GetMapping("/api/public/tags")
     public Result<List<com.jingxuan.entity.SysDict>> getPublicTagList() {
         return Result.ok(publicWorkFacade.getPublicTags());
     }
 
     @Operation(summary = "获取已发布作品详情")
-    @GetMapping("/public/works/{id}")
+    @GetMapping("/api/public/works/{id}")
     public Result<WorkDetailVO> getPublishedWorkDetail(@PathVariable Long id) {
         return Result.ok(publicWorkFacade.getPublishedWorkDetail(id));
     }
 
     @Operation(summary = "点赞/取消点赞作品")
-    @PostMapping("/works/{id}/like")
+    @PostMapping("/api/works/{id}/like")
     public Result<Map<String, Object>> toggleLike(@PathVariable Long id) {
         return Result.ok(publicWorkFacade.toggleLike(id));
     }
 
     @Operation(summary = "获取作品点赞状态（未登录时 liked=false）")
-    @GetMapping("/public/works/{id}/like-status")
+    @GetMapping("/api/public/works/{id}/like-status")
     public Result<Map<String, Object>> getLikeStatus(@PathVariable Long id) {
         return Result.ok(publicWorkFacade.getLikeStatus(id));
     }

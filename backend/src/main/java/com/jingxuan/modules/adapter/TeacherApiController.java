@@ -43,7 +43,7 @@ public class TeacherApiController {
     private final ScoreBatchService scoreBatchService;
     private final RankService rankService;
 
-    @GetMapping("/teacher/work/list")
+    @GetMapping("/api/teacher/work/list")
     @Operation(summary = "查询作品列表（教师端，仅展示已审核通过的作品）")
     public Result<PageResult<WorkListVO>> listWorks(
             @RequestParam(defaultValue = "1") int page,
@@ -57,13 +57,13 @@ public class TeacherApiController {
                 batchId, onlyUnscored, teacherId));
     }
 
-    @GetMapping("/teacher/work/{id}")
+    @GetMapping("/api/teacher/work/{id}")
     @Operation(summary = "获取作品详情（匿名评审，隐藏学生姓名和成员信息）")
     public Result<WorkDetailVO> getWorkDetail(@PathVariable Long id) {
         return Result.ok(teacherWorkFacade.getAnonymousApprovedWorkDetail(id));
     }
 
-    @PostMapping("/teacher/score")
+    @PostMapping("/api/teacher/score")
     @Operation(summary = "提交评分")
     public Result<Void> submitScore(@Valid @RequestBody ScoreSubmitRequest request) {
         Long teacherId = SecurityUtils.requireCurrentUserId();
@@ -71,14 +71,14 @@ public class TeacherApiController {
         return Result.ok();
     }
 
-    @GetMapping("/teacher/score/{workId}")
+    @GetMapping("/api/teacher/score/{workId}")
     @Operation(summary = "获取教师对某作品的评分")
     public Result<ScoreVO> getTeacherScore(@PathVariable Long workId) {
         Long userId = SecurityUtils.requireCurrentUserId();
         return Result.ok(scoreService.getTeacherScore(workId, userId));
     }
 
-    @GetMapping("/teacher/score/history")
+    @GetMapping("/api/teacher/score/history")
     @Operation(summary = "获取评分历史")
     public Result<PageResult<TeacherScoreHistoryVO>> getScoreHistory(
             @RequestParam(defaultValue = "1") int page,
@@ -87,20 +87,20 @@ public class TeacherApiController {
         return Result.ok(teacherWorkFacade.queryScoreHistory(teacherId, page, size));
     }
 
-    @GetMapping("/teacher/dashboard/stats")
+    @GetMapping("/api/teacher/dashboard/stats")
     @Operation(summary = "获取教师工作台统计")
     public Result<Map<String, Object>> getDashboardStats() {
         Long teacherId = SecurityUtils.requireCurrentUserId();
         return Result.ok(teacherWorkFacade.getDashboardStats(teacherId));
     }
 
-    @GetMapping("/teacher/batch/list")
+    @GetMapping("/api/teacher/batch/list")
     @Operation(summary = "获取评分批次列表")
     public Result<List<ScoreBatch>> listBatches() {
         return Result.ok(scoreBatchService.list());
     }
 
-    @GetMapping("/teacher/ranking/list")
+    @GetMapping("/api/teacher/ranking/list")
     @Operation(summary = "获取排行榜（必须指定批次，且仅已公示批次可见）")
     public Result<List<RankVO>> listRanking(
             @RequestParam(required = false) Long batchId,
@@ -119,7 +119,7 @@ public class TeacherApiController {
         return Result.ok(rankService.getRankList(request));
     }
 
-    @GetMapping("/teacher/ranking/batches")
+    @GetMapping("/api/teacher/ranking/batches")
     @Operation(summary = "获取排行榜批次列表（仅返回已公示的批次）")
     public Result<List<ScoreBatch>> listRankingBatches() {
         List<ScoreBatch> all = scoreBatchService.list();
@@ -129,21 +129,21 @@ public class TeacherApiController {
         return Result.ok(published);
     }
 
-    @GetMapping("/teacher/ranking/categories")
+    @GetMapping("/api/teacher/ranking/categories")
     @Operation(summary = "获取排行分类（技术栈，仅已公示批次的分类可见）")
     public Result<List<Map<String, String>>> listRankingCategories(
             @RequestParam(required = false) Long batchId) {
         return Result.ok(teacherWorkFacade.listRankingCategories(batchId));
     }
 
-    @PostMapping("/teacher/ranking/refresh")
+    @PostMapping("/api/teacher/ranking/refresh")
     @Operation(summary = "刷新排行榜缓存")
     public Result<Void> refreshRanking(@RequestParam(required = false) Long batchId) {
         rankService.refreshRankCache(batchId);
         return Result.ok();
     }
 
-    @PostMapping("/teacher/ranking/refresh/{batchId}")
+    @PostMapping("/api/teacher/ranking/refresh/{batchId}")
     @Operation(summary = "刷新排行榜缓存（按批次）")
     public Result<Void> refreshRankingByBatch(@PathVariable Long batchId) {
         rankService.refreshRankCache(batchId);

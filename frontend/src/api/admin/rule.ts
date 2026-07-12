@@ -11,7 +11,7 @@ export interface RuleItem {
 }
 
 export function getRuleList(params: { page?: number; size?: number }) {
-  return request.get('/admin/rule/list', { params })
+  return request.get('/api/admin/rule/list', { params })
 }
 
 export function getRuleDetail(id: number) {
@@ -19,7 +19,7 @@ export function getRuleDetail(id: number) {
 }
 
 export function createRule(data: Partial<RuleItem>) {
-  return request.post('/admin/rule', data)
+  return request.post('/api/admin/rule', data)
 }
 
 export function updateRule(id: number, data: Partial<RuleItem>) {
@@ -31,5 +31,5 @@ export function deleteRule(id: number) {
 }
 
 export function testConnection() {
-  return request.post('/admin/rule/test-connection')
+  return request.post('/api/admin/rule/test-connection')
 }

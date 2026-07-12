@@ -145,7 +145,7 @@ function getUploadedVideoUrl(form: WorkForm) {
 
 export function createWork(data: WorkForm) {
   return request({
-    url: '/student/works',
+    url: '/api/student/works',
     method: 'post',
     data: toCreateRequest(data),
   })
@@ -182,7 +182,7 @@ export async function getMyWorks(params: WorkListParams) {
   if (statusNum !== undefined) queryParams.status = statusNum
 
   const res = await request({
-    url: '/student/works',
+    url: '/api/student/works',
     method: 'get',
     params: queryParams,
   })
@@ -206,7 +206,7 @@ export function uploadFile(file: File, workId?: string | number) {
   const formData = new FormData()
   formData.append('file', file)
   return request({
-    url: '/file/upload',
+    url: '/api/file/upload',
     method: 'post',
     data: formData,
     params: {

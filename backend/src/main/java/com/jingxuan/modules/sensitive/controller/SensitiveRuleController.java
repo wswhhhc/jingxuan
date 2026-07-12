@@ -23,7 +23,7 @@ import java.util.Map;
 
 @Tag(name = "敏感规则管理", description = "管理端维护内容审核规则")
 @RestController
-@RequestMapping("/admin/rule")
+@RequestMapping("/api/admin/rule")
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('ADMIN')")
 public class SensitiveRuleController {

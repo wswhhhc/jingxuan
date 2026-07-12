@@ -19,7 +19,7 @@ export interface DashboardStats {
 }
 
 export function getDashboardStats() {
-  return request.get<DashboardStats>('/admin/dashboard/stats')
+  return request.get<DashboardStats>('/api/admin/dashboard/stats')
 }
 
 export interface ChartData {
@@ -29,5 +29,5 @@ export interface ChartData {
 }
 
 export function getDashboardCharts() {
-  return request.get<ChartData>('/admin/dashboard/charts')
+  return request.get<ChartData>('/api/admin/dashboard/charts')
 }

@@ -31,7 +31,7 @@ export interface AuditHistoryItem {
 }
 
 export function getAuditList(params: AuditQuery) {
-  return request.get<{ records: WorkListVO[]; total: number }>('/admin/audit/list', { params })
+  return request.get<{ records: WorkListVO[]; total: number }>('/api/admin/audit/list', { params })
 }
 
 export function getAuditDetail(id: number) {
@@ -39,7 +39,7 @@ export function getAuditDetail(id: number) {
 }
 
 export function doAudit(data: AuditAction) {
-  return request.post('/admin/audit', data)
+  return request.post('/api/admin/audit', data)
 }
 
 export function getAuditHistory(workId: number) {

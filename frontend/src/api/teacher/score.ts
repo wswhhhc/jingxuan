@@ -24,17 +24,17 @@ export interface ScoreRecord {
 }
 
 export function submitScore(data: ScoreSubmit) {
-  return request.post('/teacher/score', data)
+  return request.post('/api/teacher/score', data)
 }
 
 export function getMyScore(workId: number) {
-  return request.get(`/teacher/score/${workId}`)
+  return request.get(`/api/teacher/score/${workId}`)
 }
 
 export function getScoreHistory(params: { page?: number; size?: number }) {
-  return request.get('/teacher/score/history', { params })
+  return request.get('/api/teacher/score/history', { params })
 }
 
 export function getBatchList() {
-  return request.get('/teacher/batch/list')
+  return request.get('/api/teacher/batch/list')
 }

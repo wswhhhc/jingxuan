@@ -14,15 +14,15 @@ export interface ScoreBatchItem {
 }
 
 export function getBatchList(pageNum: number, pageSize: number) {
-  return request.post('/score-batch/list', null, { params: { pageNum, pageSize } })
+  return request.post('/api/score-batch/list', null, { params: { pageNum, pageSize } })
 }
 
 export function createBatch(data: Partial<ScoreBatchItem>) {
-  return request.post('/score-batch/create', data)
+  return request.post('/api/score-batch/create', data)
 }
 
 export function updateBatch(data: Partial<ScoreBatchItem>) {
-  return request.put('/score-batch/update', data)
+  return request.put('/api/score-batch/update', data)
 }
 
 export function deleteBatch(id: number) {
@@ -30,7 +30,7 @@ export function deleteBatch(id: number) {
 }
 
 export function getActiveBatch() {
-  return request.get('/score-batch/active')
+  return request.get('/api/score-batch/active')
 }
 
 export interface TeacherScoreItem {

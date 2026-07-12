@@ -12,7 +12,7 @@ export interface DictItem {
 
 /** 获取所有字典（按类型分组） */
 export function getAllDicts() {
-  return request.get('/admin/dict/all')
+  return request.get('/api/admin/dict/all')
 }
 
 /** 创建字典项 */
@@ -23,7 +23,7 @@ export function createDict(data: {
   sort?: number
   remark?: string
 }) {
-  return request.post('/admin/dict/create', data)
+  return request.post('/api/admin/dict/create', data)
 }
 
 /** 更新字典项 */
@@ -35,7 +35,7 @@ export function updateDict(data: {
   sort?: number
   remark?: string
 }) {
-  return request.put('/admin/dict/update', data)
+  return request.put('/api/admin/dict/update', data)
 }
 
 /** 删除字典项 */

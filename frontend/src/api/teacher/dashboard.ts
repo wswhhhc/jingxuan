@@ -10,5 +10,5 @@ export interface TeacherDashboardStats {
 }
 
 export function getTeacherDashboardStats() {
-  return request.get<TeacherDashboardStats>('/teacher/dashboard/stats')
+  return request.get<TeacherDashboardStats>('/api/teacher/dashboard/stats')
 }

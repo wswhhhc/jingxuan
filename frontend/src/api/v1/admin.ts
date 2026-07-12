@@ -242,3 +242,44 @@ export function createMenu(data: { menuName: string; parentId?: string; path?: s
 export function updateMenu(id: string | number, data: { menuName?: string; parentId?: string; path?: string; permission?: string; type?: string; icon?: string; sort?: number }) {
   return request.put(`/api/v1/menus/${id}`, data)
 }
+
+
+export function deleteMenu(id: string | number) {
+  return request.delete(`/api/v1/menus/${id}`)
+}
+
+export function deleteUser(id: string | number) {
+  return request.delete(`/api/v1/users/${id}`)
+}
+
+
+// ===== 字典管理 =====
+
+export interface DictItem {
+  id: number
+  dictType: string
+  dictLabel: string
+  dictValue: string
+  sort?: number
+  status?: number
+}
+
+export function getAllDicts() {
+  return request.get('/api/v1/dictionaries')
+}
+
+export function getDictList(params: { page?: number; size?: number; dictType?: string }) {
+  return request.get('/api/v1/dictionaries', { params })
+}
+
+export function createDict(data: { dictType: string; dictLabel: string; dictValue: string; sort?: number; status?: number }) {
+  return request.post('/api/v1/dictionaries', data)
+}
+
+export function updateDict(data: { id: number; dictType?: string; dictLabel?: string; dictValue?: string; sort?: number; status?: number }) {
+  return request.put(`/api/v1/dictionaries/${data.id}`, data)
+}
+
+export function deleteDict(id: number) {
+  return request.delete(`/api/v1/dictionaries/${id}`)
+}

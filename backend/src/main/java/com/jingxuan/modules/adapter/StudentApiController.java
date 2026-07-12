@@ -40,14 +40,14 @@ public class StudentApiController {
     private final DeleteRequestService deleteRequestService;
 
     @Operation(summary = "创建作品")
-    @PostMapping("/student/works")
+    @PostMapping("/api/student/works")
     public Result<Long> createWork(@Valid @RequestBody WorkRequest request) {
         Long workId = workService.createWork(request);
         return Result.ok(workId);
     }
 
     @Operation(summary = "获取我的作品列表")
-    @GetMapping("/student/works")
+    @GetMapping("/api/student/works")
     public Result<PageResult<WorkListVO>> getMyWorks(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -62,14 +62,14 @@ public class StudentApiController {
     }
 
     @Operation(summary = "获取作品详情")
-    @GetMapping("/student/works/{id}")
+    @GetMapping("/api/student/works/{id}")
     public Result<WorkDetailVO> getWorkDetail(@PathVariable Long id) {
         WorkDetailVO vo = workService.getCurrentStudentWorkDetail(id);
         return Result.ok(vo);
     }
 
     @Operation(summary = "更新作品")
-    @PutMapping("/student/works/{id}")
+    @PutMapping("/api/student/works/{id}")
     public Result<Void> updateWork(@PathVariable Long id,
                                    @Valid @RequestBody WorkRequest request) {
         workService.updateWork(id, request);
@@ -77,42 +77,42 @@ public class StudentApiController {
     }
 
     @Operation(summary = "删除作品")
-    @DeleteMapping("/student/works/{id}")
+    @DeleteMapping("/api/student/works/{id}")
     public Result<Void> deleteWork(@PathVariable Long id) {
         workService.deleteWork(id);
         return Result.ok();
     }
 
     @Operation(summary = "提交作品审核")
-    @PostMapping("/student/works/{id}/submit")
+    @PostMapping("/api/student/works/{id}/submit")
     public Result<Void> submitWork(@PathVariable Long id) {
         workService.submitWork(id);
         return Result.ok();
     }
 
     @Operation(summary = "获取当前学生可参与的评分批次列表")
-    @GetMapping("/student/batch/available")
+    @GetMapping("/api/student/batch/available")
     public Result<List<ScoreBatch>> getAvailableBatches() {
         Long userId = SecurityUtils.requireCurrentUserId();
         return Result.ok(scoreBatchService.getAvailableBatchesForStudent(userId));
     }
 
     @Operation(summary = "获取我的评分与排名（仅排行榜已公示时返回）")
-    @GetMapping("/student/score/my-ranks")
+    @GetMapping("/api/student/score/my-ranks")
     public Result<List<MyRankVO>> getMyRanks() {
         Long userId = SecurityUtils.requireCurrentUserId();
         return Result.ok(studentRankingFacade.getPublishedRanks(userId));
     }
 
     @Operation(summary = "获取我的待办列表")
-    @GetMapping("/student/tasks")
+    @GetMapping("/api/student/tasks")
     public Result<List<StudentTask>> getMyTasks() {
         Long userId = SecurityUtils.requireCurrentUserId();
         return Result.ok(studentTaskService.getStudentTasks(userId));
     }
 
     @Operation(summary = "提交作品后标记待办为已完成")
-    @PostMapping("/student/tasks/{taskId}/complete")
+    @PostMapping("/api/student/tasks/{taskId}/complete")
     public Result<Void> completeTask(@PathVariable Long taskId,
                                      @RequestParam Long workId) {
         studentTaskService.completeTask(taskId, workId);
@@ -120,7 +120,7 @@ public class StudentApiController {
     }
 
     @Operation(summary = "申请删除已审核通过的作品")
-    @PostMapping("/student/work/{workId}/delete-request")
+    @PostMapping("/api/student/work/{workId}/delete-request")
     public Result<Long> submitDeleteRequest(@PathVariable Long workId,
                                             @RequestBody Map<String, String> body) {
         Long userId = SecurityUtils.requireCurrentUserId();

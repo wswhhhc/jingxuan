@@ -11,11 +11,11 @@ export interface PrizeItem {
 }
 
 export function getPrizeList(params: { page?: number; size?: number; batchId?: number }) {
-  return request.get('/admin/prize/list', { params })
+  return request.get('/api/admin/prize/list', { params })
 }
 
 export function createPrize(data: Partial<PrizeItem>) {
-  return request.post('/admin/prize', data)
+  return request.post('/api/admin/prize', data)
 }
 
 export function updatePrize(id: number, data: Partial<PrizeItem>) {
@@ -27,7 +27,7 @@ export function deletePrize(id: number) {
 }
 
 export function getPrizeBatches() {
-  return request.get('/admin/prize/batches')
+  return request.get('/api/admin/prize/batches')
 }
 
 export interface IssueItem {
@@ -43,11 +43,11 @@ export interface IssueItem {
 }
 
 export function getIssueList(params: { page?: number; size?: number; rewardId?: number }) {
-  return request.get('/admin/prize/issue/list', { params })
+  return request.get('/api/admin/prize/issue/list', { params })
 }
 
 export function issuePrize(data: { rewardId: number; workId: number; operatorId: number }) {
-  return request.post('/admin/prize/issue', data)
+  return request.post('/api/admin/prize/issue', data)
 }
 
 export function cancelIssue(id: number) {
@@ -63,5 +63,5 @@ export interface RankedWork {
 }
 
 export function getRankedWorks(params: { batchId: number; topN?: number }) {
-  return request.get<RankedWork[]>('/admin/prize/ranked-works', { params })
+  return request.get<RankedWork[]>('/api/admin/prize/ranked-works', { params })
 }

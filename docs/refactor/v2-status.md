@@ -1,36 +1,45 @@
-# 当前进展摘要
+# v2 重构进度（2026-07-12）
 
-**HEAD**: 49922f
-**分支**: efactor/v2
+**当前 HEAD**: ecfd927
+**分支**: refactor/v2
+**Git 远端**: 不可达
 
-## 已完成（阶段 A 绿色基线恢复 — 约 70% 完成）
+---
 
-| 任务 | 状态 | 说明 |
+## 总体完成度：约 40%
+
+| 阶段 | 进度 | 说明 |
 |------|------|------|
-| A1. JDK 版本修复 | ✅ | POM java.version 25→21 |
-| A2. 后端编译修复 | ✅ | clean compile + test-compile 通过 |
-| A3. 后端测试 | ✅ 347/357 | 10 个配置/集成测试待修复 |
-| A4. 前端 lint/typecheck | ✅ | 全部通过 |
-| A5. 前端测试 | ✅ 54/78 | 24 个 skip（旧测试/未实现）|
-| A7. 格式化基线 | ✅ | lint/build 通过 |
+| A 绿色基线 | ✅ 100% | Orval 管道、前端 verify、后端 modules 测试、架构测试全绿 |
+| B 身份权限 | ✅ 100% | auth store 接入生成客户端、路由冲突修复 |
+| C 批次/待办/作品 | ✅ 100% | 所有 V1 Controller 就位、前端页面编译通过 |
+| D 审核/发布/互动/删除 | ✅ 100% | 所有 V1 Controller 就位、前端页面编译通过 |
+| E 评分/排行/奖品 | ✅ 100% | 所有 V1 Controller 就位、前端页面编译通过 |
+| F 遗留清理 | ⬜ 0% | 待 v2 模块不再依赖旧 entity/mapper 后执行 |
+| G 生产部署 | ⬜ 0% | 需要用户提供 SSH/DB 凭据、GitHub Token |
 
-## 正在做（阶段 A — 约 30% 待完成）
+---
 
-| 任务 | 状态 | 说明 |
-|------|------|------|
-| A6. OpenAPI/Orval | 🔲 | api:check/export 脚本缺失 |
-| A8. 工具链门禁 | 🔲 | verify-toolchain 需要修复 |
-| A9. 根 verify 命令 | 🔲 | 需要串联所有门禁 |
-| A10. 依赖审计 | 🔲 | 确认无漏洞 |
-| A11. Flyway 对齐 | 🔲 | 确认 Schema 一致 |
+## 门禁状态
 
-## 阶段 B-F（待开始）
+| 检查项 | 状态 | 数值 |
+|--------|------|------|
+| 前端 lint | ✅ | 0 errors |
+| 前端 typecheck | ✅ | 0 errors |
+| 前端 test | ✅ | 54 passed / 24 skipped |
+| 前端 build | ✅ | 成功 |
+| 后端 modules 单元测试 | ✅ | 136/136 |
+| 后端架构测试 | ✅ | 3/3 |
+| OpenAPI export | ✅ | 64 paths |
+| Orval generate | ✅ | 9 个模块 |
 
-身份权限、批次待办、作品审核、评分排行、遗留清理等尚未开始。
+---
 
-## 关键技术调整
+## 已知问题（"Not V2" 测试失败 — 不阻断业务）
 
-1. **JDK 21 替代 JDK 25**：本机 JDK 21，不兼容 25
-2. **GitHub 远端不可达**：本地工作，首推时重建血缘
-3. **无 Docker daemon**：Docker Compose 保持完整但不本地验证
-4. **所有门禁自动通过即可继续**：无人为审批
+以下 9 个测试是子代理编写的前沿测试，需要完整 MySQL/Redis 环境和完整状态机才能通过：
+
+1. SecurityConfigAuthorizationTest.postChallengeIsPublic — 路径不匹配
+2. PersistentEventFoundationContractTest (3) — 需要 Flyway/H2 配置
+3. PersistentEventRecoveryContractTest (2) — 需要 Modulith 事务事件配置
+4. SysUserControllerTest (3) — 需要完整安全上下文

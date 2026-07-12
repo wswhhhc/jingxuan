@@ -29,6 +29,11 @@ import type {
   MaybeRefOrGetter
 } from 'vue';
 
+import type {
+  V1LoginResponse,
+  V1UserInfo
+} from '../models';
+
 import { apiRequest } from '../../http';
 
 
@@ -107,7 +112,7 @@ export const postAuthLogin = (
 ) => {
 
 
-      return apiRequest<void>(
+      return apiRequest<V1LoginResponse | void>(
       {url: `/api/v1/auth/login`, method: 'POST', signal
     },
       options);
@@ -231,7 +236,7 @@ export const getAuthMe = (
 ) => {
 
 
-      return apiRequest<void>(
+      return apiRequest<V1UserInfo>(
       {url: `/api/v1/auth/me`, method: 'GET', signal
     },
       options);
@@ -301,7 +306,7 @@ export const postAuthRefresh = (
 ) => {
 
 
-      return apiRequest<void>(
+      return apiRequest<V1LoginResponse | void>(
       {url: `/api/v1/auth/refresh`, method: 'POST', signal
     },
       options);

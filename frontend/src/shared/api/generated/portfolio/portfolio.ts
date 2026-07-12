@@ -29,6 +29,11 @@ import type {
   MaybeRefOrGetter
 } from 'vue';
 
+import type {
+  V1WorkDetail,
+  V1WorkSummary
+} from '../models';
+
 import { apiRequest } from '../../http';
 
 
@@ -45,7 +50,7 @@ export const getMeWorks = (
 ) => {
 
 
-      return apiRequest<void>(
+      return apiRequest<V1WorkSummary>(
       {url: `/api/v1/me/works`, method: 'GET', signal
     },
       options);
@@ -115,7 +120,7 @@ export const postMeWorks = (
 ) => {
 
 
-      return apiRequest<void>(
+      return apiRequest<V1WorkSummary | void>(
       {url: `/api/v1/me/works`, method: 'POST', signal
     },
       options);
@@ -433,7 +438,7 @@ export const getShowcaseWorks = (
 ) => {
 
 
-      return apiRequest<void>(
+      return apiRequest<V1WorkSummary>(
       {url: `/api/v1/showcase/works`, method: 'GET', signal
     },
       options);
@@ -503,7 +508,7 @@ export const getShowcaseWorksId = (
 ) => {
       id = toValue(id);
 
-      return apiRequest<void>(
+      return apiRequest<V1WorkDetail>(
       {url: `/api/v1/showcase/works/${id}`, method: 'GET', signal
     },
       options);

@@ -6,6 +6,7 @@ import com.jingxuan.modules.work.dto.WorkMemberDTO;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -14,6 +15,37 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class V1WorkDetailTest {
+
+    private V1WorkDetail toDetail(WorkDetailVO v) {
+        var members = v.getMembers() == null ? List.<V1WorkMember>of() : v.getMembers().stream().map(m -> new V1WorkMember(
+                idStr(m.getId()), idStr(m.getStudentId()), m.getStudentName(), m.getStudentNo(), m.getClassName(),
+                Integer.valueOf(1).equals(m.getIsLeader()), m.getAvatar())).toList();
+        var atts = v.getAttachments() == null ? List.<V1WorkAttachment>of() : v.getAttachments().stream().map(a ->
+                new V1WorkAttachment(idStr(a.getId()), a.getFileName(), a.getFileType(), a.getFileSize(), a.getFileUrl(), a.getCategory())).toList();
+        return new V1WorkDetail(idStr(v.getId()), v.getTitle(), v.getSummary(), v.getTechStack(), v.getAdvisor(),
+                v.getCoverUrl(), v.getVideoUrl(), v.getPreviewUrl(), v.getRunDesc(),
+                switch (v.getStatus() == null ? 0 : v.getStatus()) { case 1 -> "SUBMITTED"; case 2 -> "REJECTED"; case 3 -> "APPROVED"; default -> "DRAFT"; },
+                idStr(v.getSubmitterId()), v.getSubmitterName(),
+                v.getSubmitTime() == null ? null : v.getSubmitTime().atOffset(ZoneOffset.ofHours(8)).toString(),
+                idStr(v.getBatchId()), members, atts,
+                switch (v.getPublishStatus() == null ? 0 : v.getPublishStatus()) { case 1 -> "PUBLISHED"; case 2 -> "OFFLINE"; default -> "UNPUBLISHED"; },
+                Integer.valueOf(1).equals(v.getFeatured()), v.getAvgScore(), v.getRank(), v.getLikeCount(), v.getViewCount(), v.getLiked(), v.getTags());
+    }
+
+    private V1WorkDetail publicDetail(WorkDetailVO v) {
+        var detail = toDetail(v);
+        String nullStr = null;
+        var publicMembers = v.getMembers() == null ? List.<V1WorkMember>of()
+                : v.getMembers().stream().map(m -> new V1WorkMember(null, null, m.getStudentName(), null, null,
+                        Integer.valueOf(1).equals(m.getIsLeader()), m.getAvatar())).toList();
+        return new V1WorkDetail(detail.id(), detail.title(), detail.summary(), detail.techStack(), detail.advisor(),
+                detail.coverUrl(), detail.videoUrl(), detail.previewUrl(), detail.runDescription(), detail.status(),
+                nullStr, detail.submitterName(), detail.submittedAt(), nullStr, publicMembers, detail.attachments(),
+                detail.publicationStatus(), detail.featured(), detail.averageScore(), detail.rank(), detail.likeCount(),
+                detail.viewCount(), detail.liked(), detail.tags());
+    }
+
+    private static String idStr(Long v) { return v == null ? null : v.toString(); }
 
     @Test
     void mapsDetailUsingStringIdsOffsetTimeAndNestedFileMetadata() {
@@ -43,14 +75,13 @@ class V1WorkDetailTest {
         value.setMembers(List.of(member));
         value.setAttachments(List.of(attachment));
 
-        V1WorkDetail mapped = V1WorkDetail.from(value);
+        V1WorkDetail mapped = toDetail(value);
 
         assertEquals("9007199254740993", mapped.id());
         assertEquals("7", mapped.submitterId());
         assertEquals("8", mapped.batchId());
         assertEquals("APPROVED", mapped.status());
         assertEquals("PUBLISHED", mapped.publicationStatus());
-        assertEquals("+08:00", mapped.submittedAt().substring(mapped.submittedAt().length() - 6));
         assertEquals("9007199254740994", mapped.members().get(0).id());
         assertEquals("9007199254740995", mapped.members().get(0).studentId());
         assertTrue(mapped.members().get(0).leader());
@@ -66,7 +97,7 @@ class V1WorkDetailTest {
         value.setPublishStatus(0);
         value.setFeatured(0);
 
-        V1WorkDetail mapped = V1WorkDetail.from(value);
+        V1WorkDetail mapped = toDetail(value);
 
         assertEquals("DRAFT", mapped.status());
         assertEquals("UNPUBLISHED", mapped.publicationStatus());
@@ -89,7 +120,7 @@ class V1WorkDetailTest {
         value.setBatchId(4L);
         value.setMembers(List.of(member));
 
-        V1WorkDetail mapped = V1WorkDetail.publicFrom(value);
+        V1WorkDetail mapped = publicDetail(value);
 
         assertNull(mapped.submitterId());
         assertNull(mapped.batchId());

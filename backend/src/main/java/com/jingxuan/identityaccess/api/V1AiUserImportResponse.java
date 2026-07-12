@@ -15,15 +15,4 @@ public record V1AiUserImportResponse(
         List<String> assumptions,
         int userCount
 ) {
-    public static V1AiUserImportResponse from(AiUserImportResponse old) {
-        return new V1AiUserImportResponse(
-                old.getAssistantReply(),
-                old.isReady(),
-                old.getRequiredFields(),
-                old.getOptionalFields(),
-                old.getMissingFields(),
-                old.getAssumptions(),
-                old.getUsers() != null ? old.getUsers().size() : 0
-        );
-    }
 }

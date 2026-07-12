@@ -1,60 +1,80 @@
-# 菁选 v2 全量重构完成度审计
+# 菁选 v2 全量重构完成度审计（当前 HEAD）
 
-审计日期：2026-07-11  
-审计基线：用户提供的《菁选校园作品展示平台 v2 全量重构计划》  
-分支：`refactor/v2`
+审计日期：2026-07-12
 
-## 结论
+审计基线：`refactor/v2` / `9e33882`
 
-当前仓库已完成原计划阶段 0–1 的仓库内工程、安全网、契约与部署基础，并完成 identity-access Task 1–2、密码/AI 加固等阶段 2 切片；但它仍不是“接近完成的 v2”。后端多数 v1 Controller 仍代理旧 Service/Facade，前端业务页面尚未全面消费生成客户端，目标数据模型、物理删除、实时排行、迁移发布和遗留清零均未形成闭环。
+验收基线：用户提供的《菁选校园作品展示平台 v2 全量重构计划》
 
-## 阶段完成度
+结论：**总体完成度约 31%（误差 ±3%），剩余约 69%**。
 
-| 原计划阶段                         | 当前判断   | 已有证据                                                                  | 主要未完成项                                                                                                                          |
-| ---------------------------------- | ---------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| 阶段 0：冻结与安全网               | 仓库内完成 | JDK 25/Node 24 统一门禁、Testcontainers/CI 接线、安全冒烟、可靠覆盖率防回退、前后端全量验证 | 当前机器无 Docker daemon，真实 Compose/Testcontainers 复跑与最终 80/80/70 覆盖率目标仍待后续环境和持续补测                         |
-| 阶段 1：工程与契约基础             | 完成       | Boot 4.1、MP 3.5.17、Modulith 2.1、Springdoc、Flyway、OpenAPI/Orval、ArchUnit、持久化事务事件、9 份 ADR | Modulith/ArchUnit 仍冻结历史桥接白名单，需随业务迁移逐项清零，而非新增债务                                                            |
-| 阶段 2：身份权限与基础数据         | 部分完成   | Refresh family/Lua、Cookie/Origin、BCrypt 12、初始密码与 AI 导入加固、标签/基础数据只读、Problem Details | Redis 通用限流与 challenge、旧哈希透明升级、教师待审核审批、权限码/portalType、新表、动态菜单和前端内存 session 尚未完成               |
-| 阶段 3：批次、待办和作品           | 少量切片   | 批次/待办只读、待办完成、作品草稿/详情/编辑/提交适配接口                  | 新数据模型、幂等发布、乐观锁、FileStorage、事务工作流、学生页面迁移均未完成                                                           |
-| 阶段 4：审核、发布、互动和删除     | 契约适配   | 审核、发布/下线/精选、评论创建/删除、幂等点赞、删除申请入口               | 队列/历史完整契约、评论分页/限流、物理级联删除、可靠文件清理、用户影响清单与公开页面迁移未完成                                        |
-| 阶段 5：评分、排行、奖品和剩余模块 | 极少量切片 | 教师评分 v1 PUT 入口                                                      | 评分历史/CSV、窗口函数排行、generation 缓存、奖品快照、通知公告、审核、日志报表及对应页面均未迁移                                     |
-| 阶段 6：移除遗留实现               | 未开始     | 无                                                                        | 旧 Controller/Adapter/Entity/Mapper/Service、`Result`、角色型路由、手写 Axios、重复 SQL 全部仍在                                      |
-| 阶段 7：性能、安全与发布候选       | 未开始     | Actuator 依赖与基础 requestId                                             | k6、查询数门禁、预算检查、Lighthouse、JSON 日志、Micrometer RED、Prometheus/Grafana、安全加固均不完整                                 |
-| 阶段 8：迁移与切换                 | 未开始     | 无                                                                        | 迁移 CLI、两次脱敏演练、清理/回滚产物、Release workflow、双模式自动部署和失败回滚均缺失                                               |
+> 该完成度不按文件数量或提交标题计分。只有实现已经接入、契约一致且有可执行证据，才可获得完整分值。当前 9 个原计划阶段均未达到各自发布检查点。
 
-## 可执行基线
+## 计分方法
 
-| 门禁                               | 结果                                                                                                                       |
-| ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| 前端 lint / 类型 / 单元测试 / 构建 | 通过；14 个文件、134 个用例，生产构建成功                                                                                  |
-| 后端单元测试                       | 通过；JDK 25 干净运行 387 个用例                                                                                           |
-| 前端覆盖率                         | Statements 28.53%、Branches 28.74%、Functions 20.88%、Lines 30.02%；仍低于最终 80/70 目标                                 |
-| 后端覆盖率                         | 单次 unit-only XML：Line 43.3005%、Method 43.1034%、Branch 35.7275%；仍只代表防回退基线，最终目标 80%/80%/70%             |
-| API 生成一致性                     | 通过；25 个 v1 路径、40 个生成文件、30 个 v1 URL 完全一致                                                                 |
-| 前端包预算                         | 通过；公共入口 84.28KB、作品列表首屏 201.93KB、初始 CSS 11.70KB gzip                                                      |
+- `0%`：不存在或与目标相反。
+- `25%`：只有文档、骨架、测试草稿或孤立组件。
+- `50%`：已有实现，但未接入主流程、遗留实现仍主导或验证失败。
+- `75%`：主流程已接入，仍缺完整集成/E2E/生产证据。
+- `100%`：目标行为、自动门禁和对应检查点全部通过。
 
-此前审计记录的后端 63.36%/68.14%/44.27% 来自未清理且默认追加的 `%TEMP%/jingxuan-backend-jacoco.exec`，并出现 class mismatch。该组数值仅用于保留问题发现的历史背景，不是当前可靠基线；当前口径要求 `clean` 删除 exec、`append=false`，且仅统计单次 unit-only 会话生成的 XML。当前 Task 2 收口后的可靠 XML 为 Line 43.3005%、Method 43.1034%、Branch 35.7275%。
+| 原阶段 | 权重 | 当前完成度 | 加权分 | 当前证据与主要缺口 |
+|---|---:|---:|---:|---|
+| 0 冻结与安全网 | 8% | 40% | 3.20 | 有矩阵、ADR、Testcontainers 和安全脚本；但 Git 血缘不真实、当前构建不绿、toolchain/coverage/smoke 元门禁失败 |
+| 1 工程与契约基础 | 12% | 45% | 5.40 | Boot 4.1、MP 3.5.17、Modulith 2.1、Springdoc、OpenAPI/Orval 已建；JDK/CI/Docker 回退，后端不可编译，契约 7/22 |
+| 2 身份权限与基础数据 | 15% | 30% | 4.50 | Refresh family、限流、challenge 等代码/测试存在；HEAD 仍使用 JSON refresh、Web Storage、角色鉴权，教师审批与规范化模型未闭环 |
+| 3 批次、待办和作品 | 14% | 38% | 5.32 | v1 入口与旧业务桥接较多；最终 Schema、乐观锁、幂等、workflow 接管和前端迁移未完成 |
+| 4 审核、发布、互动和删除 | 14% | 39% | 5.46 | 审核/发布/评论/点赞/删除入口存在；物理级联、可靠文件事件、回复分页、游客风控和完整 E2E 未完成 |
+| 5 评分、排行、奖品及剩余模块 | 14% | 29% | 4.06 | 评分/排行/奖品/通知/审核/报表已有 v1 外壳；窗口排行、generation cache、奖品快照、CSV、事件化和页面迁移缺失 |
+| 6 移除遗留 | 8% | 11% | 0.88 | 有 DTO 内迁提交；仍有 10 个旧 Adapter、25 个根 Entity、25 个根 Mapper、49 个 `Result` 文件和三套 SQL |
+| 7 性能、安全与发布候选 | 9% | 19% | 1.71 | 有 bundle/k6/Lighthouse/monitoring 草案；未接 CI，无 300 并发报告、覆盖率目标、RED 指标、JSON 日志和真实可访问性门禁 |
+| 8 迁移与切换 | 6% | 9% | 0.54 | 有模拟迁移脚本和手工 runbook；无真实五命令 CLI、演练、Release workflow、生产凭据链路或可验证回滚 |
+| **合计** | **100%** |  | **31.07%** | **四舍五入为 31%** |
 
-## 高风险缺口
+## 当前可执行证据
 
-1. `application.yml` 仍使用枚举序号和全局逻辑删除，数据语义与目标方案相反。
-2. Access Token 仍进入浏览器存储，`/logout-all` 尚未实现；登录限流/challenge、教师待审核和前端 Cookie 恢复会话仍未形成闭环。
-3. 新模块仍通过冻结白名单桥接旧 Mapper/Service；Modulith/ArchUnit 门禁能阻止新增债务，但历史边界尚未清零。
-4. Flyway 已成为运行时建表入口且资源随后端自包含；当前机器无 Docker daemon，空 MySQL、Redis family 并发与 Compose 实跑需在可用环境复验。
-5. 文件上传直接落盘，没有 SHA-256、临时生命周期、抽象存储和事务后可靠清理。
-6. 排行缓存仍使用固定 key 与 Redis `KEYS`，评分事务内刷新缓存，存在回滚后不一致风险。
-7. AI 导入限流仍是 Caffeine 单进程适配器；登录、邮件验证码、游客评论和 AI 导入尚未统一到 Redis 多实例限流与一次性算术 challenge。
+| 门禁/检查 | 当前结果 |
+|---|---|
+| `npm run verify:quick` | 失败：9 个已提交文件不符合 Prettier |
+| 前端 lint/typecheck | 失败：`WorkList.vue` 两个未使用类型 |
+| 前端 Vitest coverage | 78 项中 57 通过、21 失败，另有 3 个未处理网络错误；失败运行覆盖率约 S25.05/B26.13/F17.92/L26.23 |
+| 后端 `mvn clean test` | 失败：367 个生产源码编译阶段出现 12 个错误，当前无法重建 JAR/OpenAPI |
+| OpenAPI 语义元测试 | 7/22 通过；提交 YAML 与 HEAD Controller 双向漂移 |
+| Toolchain / coverage / smoke 元测试 | 0/1、0/3、1/23 |
+| 生成客户端/Bundle 工具自身单测 | 3/3、3/3；但没有接入根验证和 CI |
+| 前端生产依赖审计 | 0 个漏洞 |
+| 正式环境只读检查 | 未完成：高概率候选主机 SSH/HTTP 超时，无法确认现网身份和状态 |
 
-## 实施顺序
+## 关键事实
 
-1. 按 `identity-access-v2.md` 继续完成 Redis 限流/challenge/旧哈希升级、教师审批、`/logout-all` 和前端内存 session。
-2. 完成 identity-access/reference-data/campaign 的目标新表、新权限和完整前后端垂直闭环。
-3. 完成 portfolio/workflow/FileStorage，再迁移审核、发布、互动与物理删除。
-4. 完成 evaluation、communication、moderation、operations-reporting。
-5. 前端迁入 `app/features/shared`，统一 `WorkspaceShell`，删除页面直调 Axios并补 URL 状态、MSW、Playwright。
-6. 删除全部遗留实现，收紧 Modulith/ArchUnit 白名单并启用遗留扫描。
-7. 完成性能、安全、可观测性、迁移 CLI、双部署 Release workflow 与本地演练。
+1. **当前 HEAD 不是绿色基线。** 最近阶段 6 提交把目标测试、DTO 和部分模块代码提交进来，但遗漏了依赖、枚举、类型和生产实现。
+2. **Codegraph 索引漂移。** 索引实际对应不可达 WIP `d7ff9ed` 的部分内容；关键结论已改用 Git HEAD 和实跑验证。
+3. **WIP 可恢复但不可整体合并。** 已创建 `codex/recovery-wip-d7ff9ed` 保护引用。该 WIP 包含高价值实现，也包含确定的源码损坏，只能逐文件/逐 hunk 取证恢复。
+4. **Git 血缘不合格。** 本地 `refactor/v2` 是独立根历史，与远端 `master` 不共享对象；v2 未推送，GitHub 无 production Environment、Secrets、Variables 或分支保护。
+5. **模块化仍是外壳。** 九个模块都有文件，但仍约有 128 条旧包依赖；ArchUnit/Modulith 没有证明目标边界已经清零。
+6. **前端仍由旧架构主导。** 50 个文件导入旧 API，仅 5 个导入手写 v1 适配器、3 个引用生成客户端；Vue Query hooks 页面消费为 0，`features/` 为空。
+7. **Flyway 尚未成为唯一 Schema 来源。** Java V1 继续执行 14 个 legacy SQL，根/后端/classpath SQL 并存，V5 与测试版本断言漂移。
+8. **生产迁移和部署只是草案。** `migrate.mjs` 不连接数据库，runbook 与代码能力冲突；Compose、Nginx、Docker、PM2 和 GitHub Release 均未形成自动回滚闭环。
 
-## 外部验收边界
+## 子系统审计结果
 
-仓库内可以完成代码、脚本、测试、容器化演练和发布工作流。真实生产维护窗口、删除旧生产数据库/文件、GitHub `production` 人工批准、SSH 部署和校园网验收需要生产凭据与明确执行授权，不能在本地审计阶段擅自进行。
+- 后端 v2 完成度：约 **37%**。
+- 前端 v2 完成度：约 **29%**。
+- 基础设施：阶段 0/1/7/8 分别约 **58% / 62% / 25% / 12%**（资产存在度；并不代表可发布）。
+- 当前发布状态：**阻断**。后端不能编译、前端质量门禁失败、生产身份未核实。
+
+## 版本结论
+
+主版本目标无需降级：Spring Boot 4.1 支持 Java 17–26；MyBatis-Plus Boot4 3.5.17 与 Spring Modulith 2.1.0 仍为当前正式版；typescript-eslint 当前支持 TypeScript `<6.1.0`，所以 TypeScript 6.0 可保留。新版执行统一采用 JDK 25 和 Node 24 LTS，并修复当前仓库的 21/17/20 漂移。
+
+官方依据：
+
+- <https://docs.spring.io/spring-boot/system-requirements.html>
+- <https://repo1.maven.org/maven2/com/baomidou/mybatis-plus-spring-boot4-starter/maven-metadata.xml>
+- <https://docs.spring.io/spring-modulith/reference/events.html>
+- <https://nodejs.org/dist/index.json>
+- <https://typescript-eslint.io/users/dependency-versions/>
+
+## 新执行方案
+
+完整方案见 [v2-execution-plan-2026-07-12.md](./v2-execution-plan-2026-07-12.md)。方案从“恢复唯一可信绿色基线”开始，之后按身份、作品、评分等纵向闭环迁移，最终执行两次迁移演练和正式自动切换。

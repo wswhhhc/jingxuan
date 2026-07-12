@@ -5,13 +5,16 @@
 - 用户要求自行判断原 v2 全量重构计划哪些部分尚未实行，并把未完成部分补齐，最终以整份计划完成为目标。
 - Git/GitHub 相关描述必须使用中文。
 - `.env` 及其中的密码、API Key、邮件配置严禁提交。
+- 2026-07-12 新授权：完成度审计同时覆盖本地仓库与正式环境；新方案可依据兼容性和风险调整技术细节。
+- 新方案生成后不等待人工批准，自动验证通过即连续实施；GitHub production 环境也以自动门禁替代人工审批。
+- 用户授权实际连接 PM2 + Nginx 正式环境执行迁移、部署及最终旧数据/文件清理；Docker Compose 仍需保持受支持。
 
 ## 研究发现
 
 - 当前仓库是 Git 仓库，分支为 `refactor/v2`，初始工作区干净。
 - 最近提交包含 v1 精选、幂等点赞、评论创建/删除和教师评分接口，说明计划至少已部分推进，但不能据此认定对应业务闭环完成。
 - 用户计划锁定后端 JDK 25 / Spring Boot 4.1 / MyBatis-Plus Boot4 / Spring Modulith 2.1，前端 Node 24 / Vue 3.5 / Vite 8 / TypeScript 6，并要求 Flyway、Testcontainers、OpenAPI/Orval、Vue Query、MSW、Playwright、Lighthouse CI 等完整工程能力。
-- 计划包含真实生产迁移与删除旧数据等不可逆操作；当前授权范围仅足以实现和验证仓库内代码、脚本、配置及文档，不能擅自操作真实生产环境。
+- 历史记录曾把真实生产操作视为未授权；该限制已被 2026-07-12 用户明确授权替代，后续仍必须以自动校验、可回滚条件和审计证据约束破坏性步骤。
 - 根目录已经存在统一 npm 验证入口，包含工具链、安全配置、格式、前端 lint/typecheck/test/build/audit、后端单元与集成验证以及 OpenAPI 生成一致性检查。
 - 后端已升级到 Spring Boot 4.1.0、MyBatis-Plus 3.5.17、Spring Modulith 2.1.0，并引入 Flyway、Testcontainers、ArchUnit、JaCoCo 和 Springdoc；但 `backend/pom.xml` 当前仍配置 Java 21，与计划锁定的 JDK 25 不一致。
 - 前端依赖已经达到 Vue 3.5、Vite 8、TypeScript 6、Element Plus 2.14、Pinia 3，并已引入 TanStack Vue Query、Orval 与覆盖率工具。
@@ -261,3 +264,52 @@ _防止视觉信息丢失_
 
 - `CommentService.getWorkCommentsWithUserInfo` 只对顶级评论分页，但会读取该作品所有非顶级回复后在内存构建树；作品回复量增长时查询和内存都不受顶级页大小约束，未达到“评论不再加载全部回复”的性能目标。
 - 公开作品页仍调用 legacy `/comment/*`，而 v1 仅提供创建/删除评论，没有公开评论分页读取接口。下一切片应定义 v1 `items + pageInfo` 评论根分页与按父评论懒加载回复接口，并将公开页面迁移到 Orval 生成客户端。
+
+# 2026-07-12：当前 HEAD 重新基线
+
+- 会话追赶后工作区原本干净，当前分支 `refactor/v2`，HEAD `9e33882 feat: 阶段 6 — referencedata/communication DTO 内迁`；磁盘计划停留在阶段 4，不能代表真实 HEAD。
+- Codegraph 索引最新：553 个文件、10,155 个节点、20,210 条边，其中 Java 371、TypeScript 107、Vue 41。
+- 旧 `v2-completion-audit.md` 仍把 Playwright、Lighthouse、迁移 CLI、监控和生产发布描述为缺失，但当前仓库已经出现 `frontend/e2e`、`lighthouserc.json`、MSW、`scripts/migrate.mjs`、`monitoring/` 等实现，必须逐项验证后重算。
+- 同一文件清单仍存在根 `sql/`、`backend/sql/`、`backend/src/main/resources/legacy-sql/` 三套 SQL，以及四套旧 Layout、旧 `api/` 和旧视图目录；阶段 6 不能仅依据提交标题判定完成。
+- 当前完成度必须区分“文件/骨架存在”“静态门禁存在”“本地实际运行通过”“正式环境验证通过”四个证据等级。
+- 当前 `backend/pom.xml` 实际声明 Java 21、compiler 3.11.0，CI 的 API/后端 job 也配置 JDK 21；这与历史进度中“JDK 25 已闭环”的记录冲突，当前 HEAD 必须判定为回退或未合入。
+- 根 `verify` 当前没有 `api:check`、覆盖率、Playwright、Lighthouse、bundle budget、SBOM 或镜像验证；前端 package 也没有 e2e/lighthouse 脚本。对应文件存在不等于 CI 门禁已接线。
+- `.github/workflows` 当前只有 `ci.yml`，且仅在 master push/PR 运行基础契约、前端、后端、安全与依赖审查；没有 release/nightly/性能/自动生产部署工作流。
+- 当前依赖版本已到 Boot 4.1.0、MyBatis-Plus 3.5.17、Modulith 2.1.0、Vue 3.5.34、Vite 8.0.12、TypeScript 6.0.2、Element Plus 2.14.0、Pinia 3.0.4，但工具链一致性仍未完成。
+- 当前 HEAD 的 `npm run verify:quick` 实跑在 `format:check` 失败，9 个已提交文件不符合 Prettier；工具链和安全配置已通过，但该统一命令未触达前端/后端测试，不能宣称当前提交全绿。
+- `npm run verify:frontend` 在 ESLint 首步失败：`frontend/src/views/public/WorkList.vue` 的 `PublicClassItem` 与 `TagItem` 未使用，因此类型、Vitest、构建未被统一命令触达。
+- 非 clean `mvn test` 运行 378 项后出现 59 失败、39 错误；大量错误引用当前源码不存在的方法/枚举/构造器，且 Maven 报告 Nothing to compile，证明 `backend/target` 存在历史编译污染。必须以 `clean test` 重新判定当前 HEAD。
+- `mvn clean test` 已排除缓存污染并在 367 个生产源码编译阶段失败：`PrizeQueryService` 缺 `RankService`、`LeaderboardQueryService` 缺 `RankVO`，文件删除监听和事件恢复代码使用 `org.springframework.modulith.events` 类型但 POM 未提供对应依赖，共 12 个编译错误。当前 HEAD 无法重建后端 JAR、OpenAPI 或测试基线。
+- 前端 `vue-tsc` 因 `WorkList.vue` 两个未使用类型失败；`vitest --coverage` 共 78 项、21 失败、3 个未处理网络错误。新 `shared/api/http` 测试要求同源 `/api/v1`、禁止 options 覆盖和抛出 `ApiProblemError`，实际运行仍进入旧 `src/api/request.ts` 的 `Result` 逻辑。
+- 待办、日志、公告、仪表盘等目标测试 mock 新 v1 适配器，但页面仍走旧 API/真实网络；这是“测试先提交、生产迁移未闭环”的直接证据。
+- 当前失败运行的前端覆盖率为 Statements 25.05%、Branches 26.13%、Functions 17.92%、Lines 26.23%；因测试失败只能作为规模参考，不能作为发布覆盖率。
+- Git 对象库中存在未被分支引用的 WIP merge commit `d7ff9ed`（基于 `048c260`），包含此前日志描述的大量 POM/CI/认证/事件/物理删除/前端旧 API 清理等实现；当前 HEAD 的三个阶段 6 提交只恢复了其中一部分，导致测试与生产代码错位。新版方案应先把该 WIP 作为只读恢复来源逐文件评估，而不是全部重写或直接整体合并。
+- 当前仓库只有本地 `refactor/v2` 分支，远端为 `https://github.com/wswhhhc/jingxuan-.git`；不可达 WIP 尚未受分支/标签保护，后续实施前应先创建安全引用，避免 Git GC 丢失可恢复成果。
+- 已创建本地只读恢复分支 `codex/recovery-wip-d7ff9ed` 指向该 WIP；当前工作分支仍为 `refactor/v2`，工作树未因保护动作改变。
+- 后端抽查确认 WIP 是 Codegraph 陈旧索引的来源，确实含 Cookie refresh、challenge、logout-all、JDK25、Modulith JDBC、物理删除、文件事件与 CI 配置等可复用片段；但它基于旧 `048c260` 且自身 `WorkServiceImpl` 存在缺方法声明的裸语句块，无法整体编译。恢复策略必须是逐文件/逐 hunk 取证 + 当前 HEAD 测试驱动重做，禁止整体 cherry-pick/reset。
+- HEAD 静态规模：367 个后端主源码、100 个后端测试文件、41 个 Vue 文件、16 个前端单测文件、1 个 E2E 文件、4 个 Flyway migration、1 个 GitHub workflow。
+- 遗留规模仍大：10 个旧 adapter、3 个根 controller、25 个根 entity、25 个根 mapper、6 个根 service，49 个生产 Java 文件仍使用 `Result<`；目标模块内仍有 7 个文件直接 import 根 Mapper。
+- 前端消费比例明显未迁完：50 个文件导入旧 `@/api/`，只有 5 个导入 `@/api/v1/`、3 个引用生成客户端；`frontend/src/features/` 为 0 个文件，四套旧 Layout 全部保留。
+- SQL 仍有三套：根 `sql/` 15 个、`backend/sql/` 7 个、classpath `legacy-sql/` 14 个；Flyway 不是唯一 Schema 来源。
+- 页面拆分目标严重未达：`WorkDetail.vue` 1273 行、教师评分 1189 行、用户管理 740 行、批次 721 行、审核 647 行、作品提交 566 行等至少 12 个页面超过 300 行。
+- OpenAPI 静态语义测试 22 项仅 7 通过、15 失败：已提交 YAML 缺注册/邮件验证码操作，并未满足 Cookie refresh、锁定成功状态、Bearer/401/403/422、雪花 ID string 等目标语义。
+- 冒烟契约测试检测到当前 POM 继续从 `../sql` 打包资源、Compose 仍使用默认数据库密码/旧 SQL 初始化/旧镜像与端口暴露，CI 也缺 `legacy-runtime-smoke`；历史安全加固未落入 HEAD。
+- `scripts/check-legacy-removed.mjs` 在根 ESM 项目中调用 CommonJS `require()`，Node 24 直接报错，遗留清零门禁自身不可执行。
+- 官方 Spring Boot 4.1.0 系统要求确认支持 Java 17 至 26，JDK 25 无兼容性障碍：<https://docs.spring.io/spring-boot/system-requirements.html>。
+- Maven Central 官方元数据在 2026-07-08 显示 MyBatis-Plus Boot4 最新正式版仍为 3.5.17：<https://repo1.maven.org/maven2/com/baomidou/mybatis-plus-spring-boot4-starter/maven-metadata.xml>。
+- Spring Modulith 官方事件文档要求持久化 JDBC publication registry 使用 `spring-modulith-starter-jdbc`，并提供 `@ApplicationModuleListener`；当前 POM 只有 core，与编译错误一致：<https://docs.spring.io/spring-modulith/reference/events.html>。2.1.0 仍是最新正式版。
+- Node 官方发布索引显示 Node 24 最新 LTS 为 24.18.0（Krypton，npm 11.16.0）：<https://nodejs.org/dist/index.json>。Vite 8 的 Node 要求为 20.19+ 或 22.12+，Node 24 满足：<https://vite.dev/guide/>。
+- typescript-eslint 官方当前支持 TypeScript `>=4.8.4 <6.1.0`，因此 TypeScript 6.0.2 已进入正式支持范围，无需继续等待 TypeScript 7：<https://typescript-eslint.io/users/dependency-versions/>。
+- 后端按 v2 验收口径保守完成度约 37%：27 个 v2 Controller/约 101 个操作和九模块资产已形成，但目标模块仍有约 128 条旧包 import，当前 HEAD 不可编译，认证/数据库/事件/RBAC/REST/性能均未闭环。
+- 前端按 v2 验收口径完成度约 29%：工具链、Orval、部分安全/预览基础存在，但 31 个页面中约 30 个仍走旧角色 API，Vue Query hooks 消费为 0，WorkspaceShell 未使用，session 仍落 Web Storage。
+- 基础设施审计保守完成度：阶段 0 约 58%、阶段 1 约 62%、阶段 7 约 25%、阶段 8 约 12%；这些百分比只代表资产存在度，当前绿色可发布状态更低。
+- 本地 `refactor/v2` 是与远端 `master` 不共享对象的新根历史，且 v2 从未推送；GitHub 无 production environment、Actions secrets/variables、远端 v2 分支和分支保护。当前 `git fetch origin master` 又因连接重置失败，本机尚无远端 ref 可安全整合。
+- 本机唯一 known_host 与历史 SSH 记录指向一个已脱敏的高概率候选主机，但历史命令没有本项目路径上下文，因此它不是已核实生产主机；SSH BatchMode 与 HTTP/health 均超时，目前无法核验 PM2、Nginx、数据库或 Flyway。
+- Docker/部署当前不可用：Compose 带默认密码、旧 SQL 挂载、错误服务环境、后端 Java17/前端 Node20、Nginx 仍剥离 `/api`；Docker daemon 未运行，中文路径下 Compose 还缺显式 project name。
+- `scripts/migrate.mjs` 目前只输出模拟 SQL、不连接数据库，缺 `build-sanitized-rollback`/`purge`、真实文件迁移与 SHA-256 校验，并可能输出含密码 URI；不能作为生产迁移 CLI。
+- `docs/ops/production-switch.md` 声称迁移 CLI 能构建脱敏回滚库，但代码没有该能力；文档同时要求完整 v1 备份，可能违反“不备份软删/测试/废弃数据”，且示例直写含密码 URI。CLI、回滚语义和手册必须先统一为可测试契约。
+- 当前 bundle 工具可对旧 dist 计算出 87.64KB/205.98KB/12.92KB，但当前构建失败且脚本未接 package/CI，所以不能算发布预算通过。Lighthouse 全为 warn，k6/数据集无运行报告，Prometheus/Grafana 未接部署 profile。
+- 当前质量元门禁实跑：toolchain 0/1、coverage 0/3、smoke 1/23；生成客户端与 bundle 计算器自身单测各 3/3，但未被根 verify/CI 接线。前端生产依赖审计为 0 个漏洞。
+- Flyway 存在 Java `V1__Baseline`，会执行 14 个 legacy SQL，因此不能称为“完全无 V1”；问题是 POM 仍从根目录打包重复 Schema，资源契约测试与实际文件冲突，版本测试仍断言 V4 而仓库已有 V5，空库/升级路径没有当前绿色证据。
+- 新方案的无上下文对抗审查发现 8 个阻断，均判定为 valid + actionable：purge 过早、写屏障不足、回滚产物过晚、迁移校验过弱、Schema 横向切断旧消费者、审核事务冲突、发布缺并发/摘要绑定、生产可信输入缺失。方案已逐项修正。
+- 按用户“尽量减少人为干预”的既定偏好，本轮不调用外部 Gemini/Codex CLI 做跨模型复核；继续采用内部 fresh-context 审查结果。

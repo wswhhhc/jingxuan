@@ -1,5 +1,37 @@
 # 进度日志
 
+## 会话：2026-07-12（重新基线与自动实施授权）
+
+### 阶段 R：重新基线审计与新方案（进行中）
+
+- 通过逐问式访谈确认最终范围：本地与正式环境双重审计、生成新版方案、自动门禁通过后连续实施。
+- 用户明确取消方案实施和 GitHub production 的人工审批，授权实际执行 PM2 + Nginx 正式迁移、部署与最终清理；Docker Compose 仍需保持可用。
+- 完整恢复 `task_plan.md`、`findings.md`、`progress.md`；会话追赶后确认工作区干净，当前分支为 `refactor/v2`，HEAD 为 `9e33882`。
+- 发现磁盘计划落后于最近阶段 6 DTO 内迁提交，当前必须重新按源码和运行证据计算完成度，不能沿用旧百分比。
+- Codegraph 索引确认最新（553 文件、10,155 节点、20,210 边）；三路只读审计已并行覆盖后端、前端和工程/生产。
+- 首轮文件与旧审计对比发现：Playwright/Lighthouse/MSW/迁移/监控能力已新增，但重复 SQL、旧布局和遗留 API 仍存在，旧审计结论已失效。
+- 核对当前 POM/CI/根脚本后确认历史工具链闭环未落在 HEAD：Java/CI 仍为 21，统一 `verify` 未串联 API、覆盖率、E2E、Lighthouse、SBOM 或发布门禁。
+- 首次运行当前 `npm run verify:quick`：工具链与安全配置通过，随后 9 个文件因 Prettier 漂移失败，前后端测试未由该命令执行；审计期保留失败基线，不立即机械修复。
+- 分项验证：前端 ESLint 因 `WorkList.vue` 两个未使用类型失败；后端非 clean 测试 378 项中 59 失败/39 错误，并暴露 `target` 历史产物污染，下一步用 clean test 重建可靠基线。
+- 后端 clean 基线完成：367 个生产源码编译即因 evaluation 类型迁移不完整和缺 Spring Modulith events 依赖产生 12 个错误；确认当前 HEAD 无法构建，不再采用污染的非 clean 测试数作为完成证据。
+- 前端分项基线完成：typecheck 失败；Vitest coverage 78 项中 21 失败并有 3 个未处理网络错误，目标 HTTP/页面测试与旧生产实现不一致；失败覆盖率约 25.05/26.13/17.92/26.23。
+- Git 恢复审计发现不可达 WIP `d7ff9ed`，其中包含当前 HEAD 缺失的大量已实现切片；已要求前后端审计只读比对，后续方案优先安全保护并选择性恢复，禁止直接 reset/整体覆盖。
+- 按 Git 安全工作流创建 `codex/recovery-wip-d7ff9ed` 本地恢复引用，未切换当前分支、未改业务文件，消除不可达对象被回收风险。
+- WIP 抽查结论：包含大量可复用实现，但自身也不可编译且落后当前 HEAD；已锁定为逐 hunk 恢复源，不作为可直接合并的完成版本。
+- 首次 HEAD 指标汇总因 PowerShell 嵌套正则引号解析失败；已记录并改用固定字符串/分项统计方案，不重复原命令。
+- HEAD 静态指标成功汇总：后端遗留根层/Result/Mapper 仍大量存在，前端旧 API 导入 50 对 v1 适配 5、生成客户端 3，features 为空，三套 SQL 与多页超 300 行均未清零。
+- 静态质量脚本实跑：OpenAPI 7/22，冒烟契约暴露 POM/Compose/CI 回退，遗留扫描因 ESM/require 直接崩溃；门禁资产存在但未形成绿色闭环。
+- 按官方来源核对锁定版本：Boot 4.1 支持 JDK25、MP 3.5.17 与 Modulith 2.1.0 仍为最新正式版、TS 6 已获 typescript-eslint 支持；新版方案保留主版本并修正当前回退/依赖接线。
+- 三路审计已给出保守子系统结论：后端约 37%、前端约 29%，基础设施阶段0/1/7/8约58/62/25/12；总体仍需按统一阶段权重计算。
+- 正式服务器与 GitHub 生产配置当前不可连接/未配置；迁移 CLI、Compose、Nginx、Docker、监控与 Release 流程存在生产阻断。
+- 尝试获取 `origin/master` 时 GitHub 连接被重置，未创建远端 ref；已记录一次失败，不重复同一命令。
+- 补跑质量元门禁：toolchain 0/1、coverage 0/3、smoke 1/23；生成/API 与 bundle 计算器测试 3/3，前端生产依赖 audit 为 0 漏洞。
+- 完成统一阶段加权，当前总体完成度为 31%（±3%）；已重写 `docs/refactor/v2-completion-audit.md` 并新增完整执行方案 `docs/refactor/v2-execution-plan-2026-07-12.md`。
+- 新方案正在接受无上下文 adversarial review，发现闭环后即进入阶段 A 自动实施，不等待人工审批。
+- 对抗审查返回 8 个阻断并全部修正：迁移采用 expand/contract；审核移出事务；写屏障/回滚/数据不变量加强；Release 增加并发锁和 release manifest；purge 延后到 24 小时观察与完整回归后。
+- 新版执行方案已审查收口，共 59 个任务；下一步进入阶段 A，先提交审计/方案 save point，再恢复本地绿色基线。
+- **状态：** in_progress
+
 ## 会话：2026-07-12
 
 ### 阶段 3：Task 4 注册与教师审批（进行中）

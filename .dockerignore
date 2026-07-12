@@ -1,0 +1,44 @@
+# 版本控制与本地工具状态
+.git
+**/.git
+.github
+.idea
+**/.idea
+.vscode
+**/.vscode
+.codegraph
+.codex
+
+# 环境文件、证书和密钥
+.env
+.env.*
+**/.env
+**/.env.*
+*.pem
+*.key
+**/*.pem
+**/*.key
+secrets
+**/secrets
+
+# 依赖、构建结果和运行时数据
+node_modules
+**/node_modules
+dist
+**/dist
+coverage
+**/coverage
+target
+**/target
+uploads
+**/uploads
+output
+**/output
+artifacts
+**/artifacts
+test-results
+**/test-results
+playwright-report
+**/playwright-report
+*.log
+**/*.log

@@ -30,7 +30,7 @@ import type {
 } from 'vue';
 
 import type {
-  ResultVoid,
+  ProblemDetails,
   V1Batch,
   V1CompleteTaskRequest,
   V1Task
@@ -40,142 +40,6 @@ import { apiRequest } from '../../http';
 
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
-
-
-
-/**
- * @summary 提交作品后完成我的待办
- */
-export const completeTask1 = (
-    taskId: MaybeRefOrGetter<number>,
-    v1CompleteTaskRequest: MaybeRefOrGetter<V1CompleteTaskRequest>,
- options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
-) => {
-      taskId = toValue(taskId);
-v1CompleteTaskRequest = toValue(v1CompleteTaskRequest);
-
-      return apiRequest<void>(
-      {url: `/api/v1/me/tasks/${taskId}/completion`, method: 'POST',
-      headers: {'Content-Type': 'application/json', },
-      data: v1CompleteTaskRequest, signal
-    },
-      options);
-    }
-
-
-
-
-export const getCompleteTask1MutationOptions = <TError = ResultVoid,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof completeTask1>>, TError,{taskId: number;data: V1CompleteTaskRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof completeTask1>>, TError,{taskId: number;data: V1CompleteTaskRequest}, TContext> => {
-
-const mutationKey = ['completeTask1'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof completeTask1>>, {taskId: number;data: V1CompleteTaskRequest}> = (props) => {
-          const {taskId,data} = props ?? {};
-
-          return  completeTask1(taskId,data,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type CompleteTask1MutationResult = NonNullable<Awaited<ReturnType<typeof completeTask1>>>
-    export type CompleteTask1MutationBody = V1CompleteTaskRequest
-    export type CompleteTask1MutationError = ResultVoid
-
-    /**
- * @summary 提交作品后完成我的待办
- */
-export const useCompleteTask1 = <TError = ResultVoid,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof completeTask1>>, TError,{taskId: number;data: V1CompleteTaskRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient): UseMutationReturnType<
-        Awaited<ReturnType<typeof completeTask1>>,
-        TError,
-        {taskId: number;data: V1CompleteTaskRequest},
-        TContext
-      > => {
-      return useMutation(getCompleteTask1MutationOptions(options), queryClient);
-    }
-    /**
- * @summary 获取我的待办
- */
-export const tasks = (
-
- options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
-) => {
-
-
-      return apiRequest<V1Task[]>(
-      {url: `/api/v1/me/tasks`, method: 'GET', signal
-    },
-      options);
-    }
-
-
-
-
-export const getTasksQueryKey = () => {
-    return [
-    'api','v1','me','tasks'
-    ] as const;
-    }
-
-
-export const getTasksQueryOptions = <TData = Awaited<ReturnType<typeof tasks>>, TError = ResultVoid>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof tasks>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  getTasksQueryKey();
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof tasks>>> = ({ signal }) => tasks(requestOptions, signal);
-
-
-
-
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof tasks>>, TError, TData>
-}
-
-export type TasksQueryResult = NonNullable<Awaited<ReturnType<typeof tasks>>>
-export type TasksQueryError = ResultVoid
-
-
-/**
- * @summary 获取我的待办
- */
-
-export function useTasks<TData = Awaited<ReturnType<typeof tasks>>, TError = ResultVoid>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof tasks>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
- ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getTasksQueryOptions(options)
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  query.queryKey = unref(queryOptions).queryKey as DataTag<QueryKey, TData, TError>;
-
-  return query;
-}
-
-
-
 
 
 
@@ -204,7 +68,7 @@ export const getBatchesQueryKey = () => {
     }
 
 
-export const getBatchesQueryOptions = <TData = Awaited<ReturnType<typeof batches>>, TError = ResultVoid>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof batches>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export const getBatchesQueryOptions = <TData = Awaited<ReturnType<typeof batches>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof batches>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -223,14 +87,14 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type BatchesQueryResult = NonNullable<Awaited<ReturnType<typeof batches>>>
-export type BatchesQueryError = ResultVoid
+export type BatchesQueryError = ProblemDetails
 
 
 /**
  * @summary 获取当前用户可参与批次
  */
 
-export function useBatches<TData = Awaited<ReturnType<typeof batches>>, TError = ResultVoid>(
+export function useBatches<TData = Awaited<ReturnType<typeof batches>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof batches>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
  ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -243,3 +107,145 @@ export function useBatches<TData = Awaited<ReturnType<typeof batches>>, TError =
 
   return query;
 }
+
+
+
+
+
+
+/**
+ * @summary 获取我的待办
+ */
+export const tasks = (
+
+ options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
+) => {
+
+
+      return apiRequest<V1Task[]>(
+      {url: `/api/v1/me/tasks`, method: 'GET', signal
+    },
+      options);
+    }
+
+
+
+
+export const getTasksQueryKey = () => {
+    return [
+    'api','v1','me','tasks'
+    ] as const;
+    }
+
+
+export const getTasksQueryOptions = <TData = Awaited<ReturnType<typeof tasks>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof tasks>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  getTasksQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof tasks>>> = ({ signal }) => tasks(requestOptions, signal);
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof tasks>>, TError, TData>
+}
+
+export type TasksQueryResult = NonNullable<Awaited<ReturnType<typeof tasks>>>
+export type TasksQueryError = ProblemDetails
+
+
+/**
+ * @summary 获取我的待办
+ */
+
+export function useTasks<TData = Awaited<ReturnType<typeof tasks>>, TError = ProblemDetails>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof tasks>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getTasksQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = unref(queryOptions).queryKey as DataTag<QueryKey, TData, TError>;
+
+  return query;
+}
+
+
+
+
+
+
+/**
+ * @summary 提交作品后完成我的待办
+ */
+export const completeTask = (
+    taskId: MaybeRefOrGetter<string>,
+    v1CompleteTaskRequest: MaybeRefOrGetter<V1CompleteTaskRequest>,
+ options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
+) => {
+      taskId = toValue(taskId);
+v1CompleteTaskRequest = toValue(v1CompleteTaskRequest);
+
+      return apiRequest<void>(
+      {url: `/api/v1/me/tasks/${taskId}/completion`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: v1CompleteTaskRequest, signal
+    },
+      options);
+    }
+
+
+
+
+export const getCompleteTaskMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof completeTask>>, TError,{taskId: string;data: V1CompleteTaskRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof completeTask>>, TError,{taskId: string;data: V1CompleteTaskRequest}, TContext> => {
+
+const mutationKey = ['completeTask'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof completeTask>>, {taskId: string;data: V1CompleteTaskRequest}> = (props) => {
+          const {taskId,data} = props ?? {};
+
+          return  completeTask(taskId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CompleteTaskMutationResult = NonNullable<Awaited<ReturnType<typeof completeTask>>>
+    export type CompleteTaskMutationBody = V1CompleteTaskRequest
+    export type CompleteTaskMutationError = ProblemDetails
+
+    /**
+ * @summary 提交作品后完成我的待办
+ */
+export const useCompleteTask = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof completeTask>>, TError,{taskId: string;data: V1CompleteTaskRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient): UseMutationReturnType<
+        Awaited<ReturnType<typeof completeTask>>,
+        TError,
+        {taskId: string;data: V1CompleteTaskRequest},
+        TContext
+      > => {
+      return useMutation(getCompleteTaskMutationOptions(options), queryClient);
+    }

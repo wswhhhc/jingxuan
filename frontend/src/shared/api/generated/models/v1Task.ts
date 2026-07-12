@@ -7,12 +7,12 @@
  */
 
 export interface V1Task {
-  id?: string;
   batchId?: string;
-  workId?: string;
-  title?: string;
-  content?: string;
-  status?: string;
   batchName?: string;
+  content?: string;
   endAt?: string;
+  id?: string;
+  status?: string;
+  title?: string;
+  workId?: string;
 }

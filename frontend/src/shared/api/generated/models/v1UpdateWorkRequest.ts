@@ -8,18 +8,18 @@
 import type { WorkMemberDTO } from './workMemberDTO';
 
 export interface V1UpdateWorkRequest {
+  advisor?: string;
+  /** @items.pattern [0-9]{1,19} */
+  attachmentIds?: string[];
+  coverUrl?: string;
+  members?: WorkMemberDTO[];
+  previewUrl?: string;
+  runDescription?: string;
+  summary?: string;
+  techStack?: string;
   /**
      * @minLength 0
      * @maxLength 200
      */
   title?: string;
-  summary?: string;
-  techStack?: string;
-  advisor?: string;
-  coverUrl?: string;
-  previewUrl?: string;
-  runDescription?: string;
-  members?: WorkMemberDTO[];
-  /** @items.pattern [0-9]{1,19} */
-  attachmentIds?: string[];
 }

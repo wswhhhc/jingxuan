@@ -7,8 +7,8 @@
  */
 
 export interface V1DeletionImpact {
-  resourceType?: string;
-  resourceId?: string;
   referenceCount?: number;
   references?: string[];
+  resourceId?: string;
+  resourceType?: string;
 }

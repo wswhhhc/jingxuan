@@ -7,11 +7,11 @@
  */
 
 export interface V1WorkMember {
-  id?: string;
-  studentId?: string;
-  name?: string;
-  studentNumber?: string;
-  className?: string;
-  leader?: boolean;
   avatarUrl?: string;
+  className?: string;
+  id?: string;
+  leader?: boolean;
+  name?: string;
+  studentId?: string;
+  studentNumber?: string;
 }

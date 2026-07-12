@@ -7,16 +7,16 @@
  */
 
 export interface V1UserInfo {
-  id?: string;
-  username?: string;
-  realName?: string;
-  roleId?: number;
-  roleCode?: string;
-  roleName?: string;
   avatar?: string;
-  firstLogin?: boolean;
   classId?: string;
   className?: string;
-  phone?: string;
   email?: string;
+  firstLogin?: boolean;
+  id?: string;
+  phone?: string;
+  realName?: string;
+  roleCode?: string;
+  roleId?: string;
+  roleName?: string;
+  username?: string;
 }

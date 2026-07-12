@@ -7,17 +7,17 @@
  */
 
 export interface V1TagRequest {
+  /** @pattern #[0-9A-Fa-f]{6} */
+  color?: string;
   /**
      * @minLength 0
      * @maxLength 64
      */
   name: string;
-  /** @pattern #[0-9A-Fa-f]{6} */
-  color?: string;
+  sort?: number;
   /**
      * @minLength 1
      * @pattern [A-Za-z0-9_-]{1,64}
      */
   type: string;
-  sort?: number;
 }

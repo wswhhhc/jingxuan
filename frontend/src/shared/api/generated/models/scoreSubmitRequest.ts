@@ -10,20 +10,8 @@
  * 评分提交请求
  */
 export interface ScoreSubmitRequest {
-  /** 作品ID */
-  workId: number;
-  /**
-     * 创新性（满分25）
-     * @minimum 0
-     * @maximum 25
-     */
-  innovation: number;
-  /**
-     * 技术难度（满分25）
-     * @minimum 0
-     * @maximum 25
-     */
-  difficulty: number;
+  /** 教师评语 */
+  comment?: string;
   /**
      * 完成度（满分30）
      * @minimum 0
@@ -31,11 +19,23 @@ export interface ScoreSubmitRequest {
      */
   completion: number;
   /**
+     * 技术难度（满分25）
+     * @minimum 0
+     * @maximum 25
+     */
+  difficulty: number;
+  /**
+     * 创新性（满分25）
+     * @minimum 0
+     * @maximum 25
+     */
+  innovation: number;
+  /**
      * 实用性（满分20）
      * @minimum 0
      * @maximum 20
      */
   practicality: number;
-  /** 教师评语 */
-  comment?: string;
+  /** 作品ID */
+  workId: string;
 }

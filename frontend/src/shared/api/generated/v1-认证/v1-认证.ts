@@ -31,9 +31,10 @@ import type {
 
 import type {
   LoginRequest,
-  ResultVoid,
+  ProblemDetails,
+  V1ChallengeRequest,
+  V1ChallengeResponse,
   V1LoginResponse,
-  V1RefreshRequest,
   V1UserInfo
 } from '../models';
 
@@ -45,18 +46,18 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 
 /**
- * @summary 轮换刷新令牌
+ * @summary 创建一次性算术 challenge
  */
-export const refresh = (
-    v1RefreshRequest: MaybeRefOrGetter<V1RefreshRequest>,
+export const challenge = (
+    v1ChallengeRequest: MaybeRefOrGetter<V1ChallengeRequest>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {
-      v1RefreshRequest = toValue(v1RefreshRequest);
+      v1ChallengeRequest = toValue(v1ChallengeRequest);
 
-      return apiRequest<V1LoginResponse>(
-      {url: `/api/v1/auth/refresh`, method: 'POST',
+      return apiRequest<V1ChallengeResponse>(
+      {url: `/api/v1/auth/challenges`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
-      data: v1RefreshRequest, signal
+      data: v1ChallengeRequest, signal
     },
       options);
     }
@@ -64,11 +65,11 @@ export const refresh = (
 
 
 
-export const getRefreshMutationOptions = <TError = ResultVoid,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof refresh>>, TError,{data: V1RefreshRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof refresh>>, TError,{data: V1RefreshRequest}, TContext> => {
+export const getChallengeMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof challenge>>, TError,{data: V1ChallengeRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof challenge>>, TError,{data: V1ChallengeRequest}, TContext> => {
 
-const mutationKey = ['refresh'];
+const mutationKey = ['challenge'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -78,10 +79,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof refresh>>, {data: V1RefreshRequest}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof challenge>>, {data: V1ChallengeRequest}> = (props) => {
           const {data} = props ?? {};
 
-          return  refresh(data,requestOptions)
+          return  challenge(data,requestOptions)
         }
 
 
@@ -91,91 +92,27 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type RefreshMutationResult = NonNullable<Awaited<ReturnType<typeof refresh>>>
-    export type RefreshMutationBody = V1RefreshRequest
-    export type RefreshMutationError = ResultVoid
+    export type ChallengeMutationResult = NonNullable<Awaited<ReturnType<typeof challenge>>>
+    export type ChallengeMutationBody = V1ChallengeRequest
+    export type ChallengeMutationError = ProblemDetails
 
     /**
- * @summary 轮换刷新令牌
+ * @summary 创建一次性算术 challenge
  */
-export const useRefresh = <TError = ResultVoid,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof refresh>>, TError,{data: V1RefreshRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+export const useChallenge = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof challenge>>, TError,{data: V1ChallengeRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
-        Awaited<ReturnType<typeof refresh>>,
+        Awaited<ReturnType<typeof challenge>>,
         TError,
-        {data: V1RefreshRequest},
+        {data: V1ChallengeRequest},
         TContext
       > => {
-      return useMutation(getRefreshMutationOptions(options), queryClient);
-    }
-    /**
- * @summary 注销当前会话
- */
-export const logout1 = (
-    v1RefreshRequest?: MaybeRefOrGetter<V1RefreshRequest>,
- options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
-) => {
-      v1RefreshRequest = toValue(v1RefreshRequest);
-
-      return apiRequest<void>(
-      {url: `/api/v1/auth/logout`, method: 'POST',
-      headers: {'Content-Type': 'application/json', },
-      data: v1RefreshRequest, signal
-    },
-      options);
-    }
-
-
-
-
-export const getLogout1MutationOptions = <TError = ResultVoid,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof logout1>>, TError,{data?: V1RefreshRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof logout1>>, TError,{data?: V1RefreshRequest}, TContext> => {
-
-const mutationKey = ['logout1'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof logout1>>, {data?: V1RefreshRequest}> = (props) => {
-          const {data} = props ?? {};
-
-          return  logout1(data,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type Logout1MutationResult = NonNullable<Awaited<ReturnType<typeof logout1>>>
-    export type Logout1MutationBody = V1RefreshRequest | undefined
-    export type Logout1MutationError = ResultVoid
-
-    /**
- * @summary 注销当前会话
- */
-export const useLogout1 = <TError = ResultVoid,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof logout1>>, TError,{data?: V1RefreshRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient): UseMutationReturnType<
-        Awaited<ReturnType<typeof logout1>>,
-        TError,
-        {data?: V1RefreshRequest},
-        TContext
-      > => {
-      return useMutation(getLogout1MutationOptions(options), queryClient);
+      return useMutation(getChallengeMutationOptions(options), queryClient);
     }
     /**
  * @summary 用户登录
  */
-export const login1 = (
+export const login = (
     loginRequest: MaybeRefOrGetter<LoginRequest>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {
@@ -192,11 +129,11 @@ export const login1 = (
 
 
 
-export const getLogin1MutationOptions = <TError = ResultVoid,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof login1>>, TError,{data: LoginRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof login1>>, TError,{data: LoginRequest}, TContext> => {
+export const getLoginMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof login>>, TError,{data: LoginRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof login>>, TError,{data: LoginRequest}, TContext> => {
 
-const mutationKey = ['login1'];
+const mutationKey = ['login'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -206,10 +143,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof login1>>, {data: LoginRequest}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof login>>, {data: LoginRequest}> = (props) => {
           const {data} = props ?? {};
 
-          return  login1(data,requestOptions)
+          return  login(data,requestOptions)
         }
 
 
@@ -219,22 +156,146 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type Login1MutationResult = NonNullable<Awaited<ReturnType<typeof login1>>>
-    export type Login1MutationBody = LoginRequest
-    export type Login1MutationError = ResultVoid
+    export type LoginMutationResult = NonNullable<Awaited<ReturnType<typeof login>>>
+    export type LoginMutationBody = LoginRequest
+    export type LoginMutationError = ProblemDetails
 
     /**
  * @summary 用户登录
  */
-export const useLogin1 = <TError = ResultVoid,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof login1>>, TError,{data: LoginRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+export const useLogin = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof login>>, TError,{data: LoginRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
-        Awaited<ReturnType<typeof login1>>,
+        Awaited<ReturnType<typeof login>>,
         TError,
         {data: LoginRequest},
         TContext
       > => {
-      return useMutation(getLogin1MutationOptions(options), queryClient);
+      return useMutation(getLoginMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary 注销当前会话
+ */
+export const logout = (
+
+ options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
+) => {
+
+
+      return apiRequest<void>(
+      {url: `/api/v1/auth/logout`, method: 'POST', signal
+    },
+      options);
+    }
+
+
+
+
+export const getLogoutMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof logout>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof logout>>, TError,void, TContext> => {
+
+const mutationKey = ['logout'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof logout>>, void> = () => {
+
+
+          return  logout(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type LogoutMutationResult = NonNullable<Awaited<ReturnType<typeof logout>>>
+
+    export type LogoutMutationError = ProblemDetails
+
+    /**
+ * @summary 注销当前会话
+ */
+export const useLogout = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof logout>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient): UseMutationReturnType<
+        Awaited<ReturnType<typeof logout>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getLogoutMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary 注销当前账号的全部会话
+ */
+export const logoutAll = (
+
+ options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
+) => {
+
+
+      return apiRequest<void>(
+      {url: `/api/v1/auth/logout-all`, method: 'POST', signal
+    },
+      options);
+    }
+
+
+
+
+export const getLogoutAllMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof logoutAll>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof logoutAll>>, TError,void, TContext> => {
+
+const mutationKey = ['logoutAll'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof logoutAll>>, void> = () => {
+
+
+          return  logoutAll(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type LogoutAllMutationResult = NonNullable<Awaited<ReturnType<typeof logoutAll>>>
+
+    export type LogoutAllMutationError = ProblemDetails
+
+    /**
+ * @summary 注销当前账号的全部会话
+ */
+export const useLogoutAll = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof logoutAll>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient): UseMutationReturnType<
+        Awaited<ReturnType<typeof logoutAll>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getLogoutAllMutationOptions(options), queryClient);
     }
     /**
  * @summary 获取当前用户
@@ -261,7 +322,7 @@ export const getMeQueryKey = () => {
     }
 
 
-export const getMeQueryOptions = <TData = Awaited<ReturnType<typeof me>>, TError = ResultVoid>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof me>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export const getMeQueryOptions = <TData = Awaited<ReturnType<typeof me>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof me>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -280,14 +341,14 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type MeQueryResult = NonNullable<Awaited<ReturnType<typeof me>>>
-export type MeQueryError = ResultVoid
+export type MeQueryError = ProblemDetails
 
 
 /**
  * @summary 获取当前用户
  */
 
-export function useMe<TData = Awaited<ReturnType<typeof me>>, TError = ResultVoid>(
+export function useMe<TData = Awaited<ReturnType<typeof me>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof me>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
  ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -300,3 +361,71 @@ export function useMe<TData = Awaited<ReturnType<typeof me>>, TError = ResultVoi
 
   return query;
 }
+
+
+
+
+
+
+/**
+ * @summary 轮换刷新令牌
+ */
+export const refresh = (
+
+ options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
+) => {
+
+
+      return apiRequest<V1LoginResponse>(
+      {url: `/api/v1/auth/refresh`, method: 'POST', signal
+    },
+      options);
+    }
+
+
+
+
+export const getRefreshMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof refresh>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof refresh>>, TError,void, TContext> => {
+
+const mutationKey = ['refresh'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof refresh>>, void> = () => {
+
+
+          return  refresh(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RefreshMutationResult = NonNullable<Awaited<ReturnType<typeof refresh>>>
+
+    export type RefreshMutationError = ProblemDetails
+
+    /**
+ * @summary 轮换刷新令牌
+ */
+export const useRefresh = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof refresh>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient): UseMutationReturnType<
+        Awaited<ReturnType<typeof refresh>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getRefreshMutationOptions(options), queryClient);
+    }

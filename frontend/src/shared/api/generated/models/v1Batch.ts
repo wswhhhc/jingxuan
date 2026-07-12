@@ -7,10 +7,10 @@
  */
 
 export interface V1Batch {
+  endAt?: string;
   id?: string;
   name?: string;
-  startAt?: string;
-  endAt?: string;
-  status?: string;
   rankPublished?: boolean;
+  startAt?: string;
+  status?: string;
 }

@@ -27,7 +27,7 @@ import type {
 } from 'vue';
 
 import type {
-  ResultVoid,
+  ProblemDetails,
   V1WorkDetail
 } from '../models';
 
@@ -60,7 +60,7 @@ export const getWorkQueryKey = (id: MaybeRefOrGetter<string>,) => {
     }
 
 
-export const getWorkQueryOptions = <TData = Awaited<ReturnType<typeof work>>, TError = ResultVoid>(id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof work>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export const getWorkQueryOptions = <TData = Awaited<ReturnType<typeof work>>, TError = ProblemDetails>(id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof work>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -79,11 +79,11 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type WorkQueryResult = NonNullable<Awaited<ReturnType<typeof work>>>
-export type WorkQueryError = ResultVoid
+export type WorkQueryError = ProblemDetails
 
 
 
-export function useWork<TData = Awaited<ReturnType<typeof work>>, TError = ResultVoid>(
+export function useWork<TData = Awaited<ReturnType<typeof work>>, TError = ProblemDetails>(
  id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof work>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
  ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -96,3 +96,9 @@ export function useWork<TData = Awaited<ReturnType<typeof work>>, TError = Resul
 
   return query;
 }
+
+
+
+
+
+

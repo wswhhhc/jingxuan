@@ -7,9 +7,9 @@
  */
 
 export interface V1Tag {
+  color?: string;
   id?: string;
   name?: string;
-  color?: string;
-  type?: string;
   sort?: number;
+  type?: string;
 }

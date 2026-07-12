@@ -3,7 +3,7 @@ import { defineConfig } from 'orval'
 export default defineConfig({
   jingxuan: {
     input: {
-      target: '../backend/target/openapi/openapi.json',
+      target: '../openapi/jingxuan-v1.yaml',
     },
     output: {
       mode: 'tags-split',

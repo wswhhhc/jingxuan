@@ -10,10 +10,19 @@
  * 作品成员信息
  */
 export interface WorkMemberDTO {
+  /** 用户头像URL（来自 SysUser） */
+  avatar?: string;
+  /**
+     * 班级名称
+     * @minLength 1
+     */
+  className: string;
   /** 成员ID（编辑时传入） */
-  id?: number;
+  id?: string;
+  /** 是否队长 0=否 1=是 */
+  isLeader?: number;
   /** 学生用户ID（已注册用户） */
-  studentId?: number;
+  studentId?: string;
   /**
      * 学生姓名
      * @minLength 1
@@ -24,13 +33,4 @@ export interface WorkMemberDTO {
      * @minLength 1
      */
   studentNo: string;
-  /**
-     * 班级名称
-     * @minLength 1
-     */
-  className: string;
-  /** 是否队长 0=否 1=是 */
-  isLeader?: number;
-  /** 用户头像URL（来自 SysUser） */
-  avatar?: string;
 }

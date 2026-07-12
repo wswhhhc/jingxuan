@@ -23,7 +23,7 @@ import type {
 } from 'vue';
 
 import type {
-  ResultVoid,
+  ProblemDetails,
   V1FeaturedRequest
 } from '../models';
 
@@ -49,7 +49,7 @@ export const publish = (
 
 
 
-export const getPublishMutationOptions = <TError = ResultVoid,
+export const getPublishMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof publish>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
 ): UseMutationOptions<Awaited<ReturnType<typeof publish>>, TError,{id: string}, TContext> => {
 
@@ -78,9 +78,9 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type PublishMutationResult = NonNullable<Awaited<ReturnType<typeof publish>>>
 
-    export type PublishMutationError = ResultVoid
+    export type PublishMutationError = ProblemDetails
 
-    export const usePublish = <TError = ResultVoid,
+    export const usePublish = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof publish>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof publish>>,
@@ -89,62 +89,6 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
         TContext
       > => {
       return useMutation(getPublishMutationOptions(options), queryClient);
-    }
-    export const offline = (
-    id: MaybeRefOrGetter<string>,
- options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
-) => {
-      id = toValue(id);
-
-      return apiRequest<void>(
-      {url: `/api/v1/works/${id}/publication/offline`, method: 'POST', signal
-    },
-      options);
-    }
-
-
-
-
-export const getOfflineMutationOptions = <TError = ResultVoid,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof offline>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof offline>>, TError,{id: string}, TContext> => {
-
-const mutationKey = ['offline'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof offline>>, {id: string}> = (props) => {
-          const {id} = props ?? {};
-
-          return  offline(id,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type OfflineMutationResult = NonNullable<Awaited<ReturnType<typeof offline>>>
-
-    export type OfflineMutationError = ResultVoid
-
-    export const useOffline = <TError = ResultVoid,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof offline>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient): UseMutationReturnType<
-        Awaited<ReturnType<typeof offline>>,
-        TError,
-        {id: string},
-        TContext
-      > => {
-      return useMutation(getOfflineMutationOptions(options), queryClient);
     }
     export const setFeatured = (
     id: MaybeRefOrGetter<string>,
@@ -165,7 +109,7 @@ v1FeaturedRequest = toValue(v1FeaturedRequest);
 
 
 
-export const getSetFeaturedMutationOptions = <TError = ResultVoid,
+export const getSetFeaturedMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setFeatured>>, TError,{id: string;data: V1FeaturedRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
 ): UseMutationOptions<Awaited<ReturnType<typeof setFeatured>>, TError,{id: string;data: V1FeaturedRequest}, TContext> => {
 
@@ -194,9 +138,9 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type SetFeaturedMutationResult = NonNullable<Awaited<ReturnType<typeof setFeatured>>>
     export type SetFeaturedMutationBody = V1FeaturedRequest
-    export type SetFeaturedMutationError = ResultVoid
+    export type SetFeaturedMutationError = ProblemDetails
 
-    export const useSetFeatured = <TError = ResultVoid,
+    export const useSetFeatured = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setFeatured>>, TError,{id: string;data: V1FeaturedRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof setFeatured>>,
@@ -205,4 +149,60 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
         TContext
       > => {
       return useMutation(getSetFeaturedMutationOptions(options), queryClient);
+    }
+    export const offline = (
+    id: MaybeRefOrGetter<string>,
+ options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
+) => {
+      id = toValue(id);
+
+      return apiRequest<void>(
+      {url: `/api/v1/works/${id}/publication/offline`, method: 'POST', signal
+    },
+      options);
+    }
+
+
+
+
+export const getOfflineMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof offline>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof offline>>, TError,{id: string}, TContext> => {
+
+const mutationKey = ['offline'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof offline>>, {id: string}> = (props) => {
+          const {id} = props ?? {};
+
+          return  offline(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type OfflineMutationResult = NonNullable<Awaited<ReturnType<typeof offline>>>
+
+    export type OfflineMutationError = ProblemDetails
+
+    export const useOffline = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof offline>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient): UseMutationReturnType<
+        Awaited<ReturnType<typeof offline>>,
+        TError,
+        {id: string},
+        TContext
+      > => {
+      return useMutation(getOfflineMutationOptions(options), queryClient);
     }

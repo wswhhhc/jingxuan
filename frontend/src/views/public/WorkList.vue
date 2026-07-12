@@ -60,12 +60,12 @@
             @change="search"
             @clear="search"
           >
-            <el-option v-for="tag in tags" :key="tag.id" :label="tag.dictLabel" :value="tag.dictLabel" />
+            <el-option v-for="tag in tags" :key="tag.id" :label="tag.name" :value="tag.name" />
           </el-select>
         </el-form-item>
         <el-form-item>
           <el-select v-model="query.classId" placeholder="班级筛选" clearable @change="search">
-            <el-option v-for="c in classes" :key="c.id" :label="c.dictLabel" :value="c.id" />
+            <el-option v-for="c in classes" :key="c.id" :label="c.label" :value="c.id" />
           </el-select>
         </el-form-item>
         <el-form-item class="search-form__range">
@@ -154,12 +154,12 @@ import { useRouter } from 'vue-router'
 import { Search, Picture, View, Star } from '@element-plus/icons-vue'
 import {
   getPublicWorkList,
-  getPublicClassList,
-  getPublicTagList,
   type PublicWorkListParams,
   type PublicClassItem,
   type TagItem,
 } from '@/api/public/work'
+import { classes as fetchClasses, tags as fetchTags } from '@/shared/api/generated/v1-参考数据/v1-参考数据'
+import type { V1ReferenceItem, V1Tag } from '@/shared/api/generated/models'
 import type { WorkItem } from '@/api/student/work'
 import type { PageResult } from '@/api/workAdapter'
 import { useApiList } from '@/composables/useApiList'
@@ -168,8 +168,8 @@ import PaginationBar from '@/components/PaginationBar.vue'
 const router = useRouter()
 const page = ref(1)
 const pageSize = ref(12)
-const classes = ref<PublicClassItem[]>([])
-const tags = ref<TagItem[]>([])
+const classes = ref<V1ReferenceItem[]>([])
+const tags = ref<V1Tag[]>([])
 const submitTimeRange = ref<[string, string] | null>(null)
 const { loading, list, total, loadList } = useApiList<WorkItem, PublicWorkListParams, PageResult<WorkItem>>(
   getPublicWorkList,
@@ -224,8 +224,8 @@ function onDateRangeChange(val: [string, string] | null) {
 
 async function loadClasses() {
   try {
-    const res = await getPublicClassList()
-    classes.value = res.data || []
+    const res = await fetchClasses()
+    classes.value = res || []
   } catch {
     classes.value = []
   }
@@ -233,8 +233,8 @@ async function loadClasses() {
 
 async function loadTags() {
   try {
-    const res = await getPublicTagList()
-    tags.value = res.data || []
+    const res = await fetchTags()
+    tags.value = res || []
   } catch {
     tags.value = []
   }

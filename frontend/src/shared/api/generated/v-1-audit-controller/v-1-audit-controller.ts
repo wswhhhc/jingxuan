@@ -23,7 +23,7 @@ import type {
 } from 'vue';
 
 import type {
-  ResultVoid,
+  ProblemDetails,
   V1AuditDecisionRequest
 } from '../models';
 
@@ -53,7 +53,7 @@ v1AuditDecisionRequest = toValue(v1AuditDecisionRequest);
 
 
 
-export const getDecideMutationOptions = <TError = ResultVoid,
+export const getDecideMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof decide>>, TError,{id: string;data: V1AuditDecisionRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
 ): UseMutationOptions<Awaited<ReturnType<typeof decide>>, TError,{id: string;data: V1AuditDecisionRequest}, TContext> => {
 
@@ -82,9 +82,9 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type DecideMutationResult = NonNullable<Awaited<ReturnType<typeof decide>>>
     export type DecideMutationBody = V1AuditDecisionRequest
-    export type DecideMutationError = ResultVoid
+    export type DecideMutationError = ProblemDetails
 
-    export const useDecide = <TError = ResultVoid,
+    export const useDecide = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof decide>>, TError,{id: string;data: V1AuditDecisionRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof decide>>,

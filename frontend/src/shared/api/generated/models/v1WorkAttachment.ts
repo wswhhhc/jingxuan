@@ -7,10 +7,10 @@
  */
 
 export interface V1WorkAttachment {
-  id?: string;
-  fileName?: string;
+  category?: string;
   contentType?: string;
+  fileName?: string;
+  id?: string;
   size?: number;
   url?: string;
-  category?: string;
 }

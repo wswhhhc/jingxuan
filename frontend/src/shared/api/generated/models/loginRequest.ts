@@ -11,15 +11,26 @@
  */
 export interface LoginRequest {
   /**
-     * 用户名
-     * @minLength 1
+     * 登录风控要求 challenge 时填写的答案
+     * @minimum 0
+     * @maximum 100
      */
-  username: string;
+  challengeAnswer?: number;
+  /**
+     * 登录风控要求 challenge 时填写的 ID
+     * @pattern [A-Za-z0-9_-]{22}
+     */
+  challengeId?: string;
   /**
      * 密码
      * @minLength 1
      */
   password: string;
-  /** 记住登录状态（7天） */
+  /** 记住登录状态（30天） */
   rememberMe?: boolean;
+  /**
+     * 用户名
+     * @minLength 1
+     */
+  username: string;
 }

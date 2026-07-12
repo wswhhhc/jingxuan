@@ -8,8 +8,8 @@
 
 export interface V1ReferenceItem {
   id?: string;
-  type?: string;
   label?: string;
-  value?: string;
   sort?: number;
+  type?: string;
+  value?: string;
 }

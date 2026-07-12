@@ -7,13 +7,13 @@
  */
 
 export interface V1WorkSummary {
+  batchId?: string;
   id?: string;
-  title?: string;
-  summary?: string;
   status?: string;
+  submittedAt?: string;
   submitterId?: string;
   submitterName?: string;
-  batchId?: string;
-  submittedAt?: string;
+  summary?: string;
   tags?: string[];
+  title?: string;
 }

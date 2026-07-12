@@ -72,3 +72,4 @@ public class V1AuthController {
         return ResponseEntity.noContent().build();
     }
 }
+

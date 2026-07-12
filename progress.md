@@ -30,6 +30,7 @@
 - 新方案正在接受无上下文 adversarial review，发现闭环后即进入阶段 A 自动实施，不等待人工审批。
 - 对抗审查返回 8 个阻断并全部修正：迁移采用 expand/contract；审核移出事务；写屏障/回滚/数据不变量加强；Release 增加并发锁和 release manifest；purge 延后到 24 小时观察与完整回归后。
 - 新版执行方案已审查收口，共 59 个任务；下一步进入阶段 A，先提交审计/方案 save point，再恢复本地绿色基线。
+- 已创建中文 docs save point `af702da`；发现 cached diff check 未 fail-fast 且提交含 Markdown 行尾空格，当前正以独立格式提交修复，并强化后续提交链退出码检查。
 - **状态：** in_progress
 
 ## 会话：2026-07-12

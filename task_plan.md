@@ -120,6 +120,8 @@
 | 新审计文档首次 `git diff --check` 发现 3 处 Markdown 行尾空格          | 1        | 改为独立空行排版并立即复验，不混入业务修改                                                                                                   |
 | 首次组合补丁把 task_plan 上下文误写到审计文件                         | 1        | 确认无半应用状态，拆成正确目标文件后重新应用                                                                                                 |
 | 初次 adversarial reviewer 长时间未返回                                | 1        | 中断长任务并发起只返回 8 个阻断的有界 follow-up，成功收口                                                                                    |
+| 首个 docs 提交未在 cached diff check 失败时 fail-fast                  | 1        | 立即独立清理已提交行尾；后续 PowerShell 提交链在每个门禁后显式检查 `$LASTEXITCODE`                                                           |
+| Prettier 保留 Markdown 双空格强制换行，无法消除 diff-check 告警       | 1        | 使用一次性机械格式转换把强制换行改成空行，再由 `git diff --check` 复验                                                                       |
 | 首次并行读取多个技能时输出被截断                                           | 1        | 单独完整读取被截断的 TDD 与 Git 技能文件                                                                                                      |
 | 探测不存在的 `cg` 备用命令导致 shell 返回 1                                | 1        | 使用已确认的 `codegraph` CLI                                                                                                                  |
 | Codegraph 首次初始化因 1 秒超时被终止                                      | 1        | 查看初始化参数并改用更长但可控的执行方式                                                                                                      |

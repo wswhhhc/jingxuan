@@ -1,4 +1,4 @@
-const REQUIRED_JAVA_MAJOR = 25;
+const REQUIRED_JAVA_MAJOR = 21;
 const REQUIRED_NODE_MAJOR = 24;
 
 module.exports = {
@@ -11,3 +11,4 @@ module.exports = {
     }
   ]
 };
+

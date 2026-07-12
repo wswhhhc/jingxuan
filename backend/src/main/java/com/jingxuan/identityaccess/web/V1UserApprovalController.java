@@ -49,12 +49,12 @@ public class V1UserApprovalController {
         return userDeletionService.impact(V1Ids.parse(id, "id"));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}/with-confirm")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAuthority('user:delete')")
     @Operation(summary = "确认后物理删除用户")
     @ApiResponse(responseCode = "204", description = "用户已物理删除")
-    public void delete(@PathVariable String id, @RequestParam(defaultValue = "false") boolean confirm) {
+    public void deleteWithConfirm(@PathVariable String id, @RequestParam(defaultValue = "false") boolean confirm) {
         userDeletionService.delete(V1Ids.parse(id, "id"), confirm);
     }
 }

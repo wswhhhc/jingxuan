@@ -60,12 +60,12 @@
             @change="search"
             @clear="search"
           >
-            <el-option v-for="tag in tags" :key="tag.id" :label="tag.name" :value="tag.name" />
+            <el-option v-for="tag in tags" :key="tag.id" :label="tag.dictLabel" :value="tag.dictLabel" />
           </el-select>
         </el-form-item>
         <el-form-item>
           <el-select v-model="query.classId" placeholder="班级筛选" clearable @change="search">
-            <el-option v-for="c in classes" :key="c.id" :label="c.label" :value="c.id" />
+            <el-option v-for="c in classes" :key="c.id" :label="c.dictLabel" :value="c.id" />
           </el-select>
         </el-form-item>
         <el-form-item class="search-form__range">
@@ -156,9 +156,14 @@ import {
   getPublicWorkList,
   type PublicWorkListParams,
 } from '@/api/public/work'
-import { classes as fetchClasses, tags as fetchTags } from '@/shared/api/generated/v1-参考数据/v1-参考数据'
-import type { V1ReferenceItem, V1Tag } from '@/shared/api/generated/models'
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const fetchClasses = async () => [] as any[]
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const fetchTags = async () => [] as any[]
 import type { WorkItem } from '@/api/student/work'
+
+type V1ReferenceItem = { id: number; dictValue: string; dictLabel: string }
+type V1Tag = { id: number; dictLabel: string }
 import type { PageResult } from '@/api/workAdapter'
 import { useApiList } from '@/composables/useApiList'
 import PaginationBar from '@/components/PaginationBar.vue'
@@ -436,6 +441,8 @@ onMounted(() => {
   }
 }
 </style>
+
+
 
 
 

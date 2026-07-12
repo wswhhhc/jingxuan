@@ -343,7 +343,7 @@ const handleIssueSubmit = async () => {
     await issuePrize({
       rewardId: issueForm.rewardId,
       workId: selectedRankedWork.value.workId,
-      operatorId: authStore.userInfo?.id || 0,
+      operatorId: Number(authStore.userInfo?.id) || 0,
     })
     ElMessage.success(`已向「${selectedRankedWork.value.workTitle}」发放奖品`)
     issueVisible.value = false

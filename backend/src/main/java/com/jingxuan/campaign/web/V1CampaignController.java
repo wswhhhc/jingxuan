@@ -32,9 +32,9 @@ public class V1CampaignController {
         this.queryService = queryService; this.commandService = commandService;
     }
 
-    @GetMapping("/batches")
+    @GetMapping("/me/batches")
     @Operation(summary = "获取当前用户可参与批次")
-    public ResponseEntity<List<V1Batch>> batches() {
+    public ResponseEntity<List<V1Batch>> myBatches() {
         return ResponseEntity.ok(queryService.availableBatches(SecurityUtils.requireCurrentUserId()));
     }
 

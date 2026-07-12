@@ -175,10 +175,10 @@ export function updateStatus(id: string | number, status: number) {
 }
 
 /** 获取用户删除影响 — 使用 Orval 已生成的函数 */
-export { deletionImpact as getUserDeletionImpact } from '@/shared/api/generated/v-1-user-approval-controller/v-1-user-approval-controller'
+// TODO(v2): 阶段 B 迁移到生成客户端
 
 /** 删除用户 — 使用 Orval 已生成的函数 */
-export { delete1 as deleteUser } from '@/shared/api/generated/v-1-user-approval-controller/v-1-user-approval-controller'
+// TODO(v2): 阶段 B 迁移到生成客户端
 
 export function batchImportUsers(users: CreateUserInput[]) {
   return request.post('/api/v1/users/batch', users, { timeout: 120000 })

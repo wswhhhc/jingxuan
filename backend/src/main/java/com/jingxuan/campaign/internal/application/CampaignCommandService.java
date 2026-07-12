@@ -1,5 +1,6 @@
 package com.jingxuan.campaign.internal.application;
 
+import com.jingxuan.campaign.api.CampaignTaskCompletion;
 import com.jingxuan.entity.StudentTask;
 import com.jingxuan.exception.BusinessException;
 import com.jingxuan.exception.NotFoundException;
@@ -9,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 /** 学生待办状态机命令用例。 */
 @Service
-public class CampaignCommandService {
+public class CampaignCommandService implements CampaignTaskCompletion {
     private final StudentTaskMapper taskMapper;
     public CampaignCommandService(StudentTaskMapper taskMapper) { this.taskMapper = taskMapper; }
 

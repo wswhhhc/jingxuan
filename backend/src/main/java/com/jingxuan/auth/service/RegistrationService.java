@@ -112,7 +112,7 @@ public class RegistrationService {
         user.setRealName(realName);
         user.setEmail(email);
         user.setRoleId(roleId);
-        user.setStatus(UserStatusEnum.ENABLED);
+        user.setStatus(roleId == 2 ? UserStatusEnum.PENDING_APPROVAL : UserStatusEnum.ENABLED);
         user.setFirstLogin(false);
         // 学生注册时必须选择班级
         Long classId = parseOptionalLong(body.get("classId"));

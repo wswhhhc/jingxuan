@@ -3,7 +3,9 @@ package com.jingxuan.api;
 import com.jingxuan.exception.BusinessException;
 import com.jingxuan.exception.NotFoundException;
 import com.jingxuan.exception.UnauthorizedException;
+import com.jingxuan.identityaccess.api.IdentityAccessProblemException;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -34,6 +36,21 @@ public class V1ExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ProblemDetails> notFound(NotFoundException exception, HttpServletRequest request) {
         return problem(404, "NOT_FOUND", exception.getMessage(), request);
+    }
+
+    @ExceptionHandler(IdentityAccessProblemException.class)
+    public ResponseEntity<ProblemDetails> identityAccessProblem(IdentityAccessProblemException exception,
+                                                                 HttpServletRequest request) {
+        ProblemDetails details = ProblemDetails.of(exception.status(), exception.problemCode(), exception.getMessage(),
+                request.getRequestURI(), requestId(request));
+        ResponseEntity.BodyBuilder builder = ResponseEntity.status(
+                HttpStatus.resolve(exception.status()) != null
+                        ? HttpStatus.resolve(exception.status())
+                        : HttpStatus.INTERNAL_SERVER_ERROR);
+        if (exception.retryAfterSeconds() != null) {
+            builder.header(HttpHeaders.RETRY_AFTER, String.valueOf(exception.retryAfterSeconds()));
+        }
+        return builder.body(details);
     }
 
     @ExceptionHandler(AccessDeniedException.class)

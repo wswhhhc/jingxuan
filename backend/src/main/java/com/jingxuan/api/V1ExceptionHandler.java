@@ -50,6 +50,7 @@ public class V1ExceptionHandler {
         if (exception.retryAfterSeconds() != null) {
             builder.header(HttpHeaders.RETRY_AFTER, String.valueOf(exception.retryAfterSeconds()));
         }
+        builder.header("Content-Type", "application/problem+json");
         return builder.body(details);
     }
 

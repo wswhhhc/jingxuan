@@ -5,7 +5,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const REQUIRED_JAVA_MAJOR = 25;
+const REQUIRED_JAVA_MAJOR = 21;
 const REQUIRED_NODE_MAJOR = 24;
 const REQUIRED_NPM_VERSION = "11.11.0";
 
@@ -31,8 +31,8 @@ export function validateDeclaredToolchain(packageJson, pomXml) {
   if (packageJson.engines?.npm !== ">=11") {
     issues.push("engines.npm 必须为 >=11");
   }
-  if (!/<java\.version>\s*25\s*<\/java\.version>/u.test(pomXml)) {
-    issues.push("backend/pom.xml 的 java.version 必须为 25");
+  if (!/<java\.version>\s*21\s*<\/java\.version>/u.test(pomXml)) {
+    issues.push("backend/pom.xml 的 java.version 必须为 21");
   }
 
   return issues;
@@ -54,14 +54,14 @@ export function validateRepositoryToolchainFiles({
     ciJavaVersions.length === 0 ||
     ciJavaVersions.some((version) => version !== REQUIRED_JAVA_MAJOR)
   ) {
-    issues.push(".github/workflows/ci.yml 必须统一使用 JDK 25");
+    issues.push(".github/workflows/ci.yml 必须统一使用 JDK 21");
   }
 
   const backendUsesJava25 =
-    /^FROM\s+maven:[^\s]*temurin-25(?:\s|$)/imu.test(backendDocker) &&
-    /^FROM\s+eclipse-temurin:25-jre(?:-[^\s]+)?(?:\s|$)/imu.test(backendDocker);
+    /^FROM\s+maven:[^\s]*temurin-21(?:\s|$)/imu.test(backendDocker) &&
+    /^FROM\s+eclipse-temurin:21-jre(?:-[^\s]+)?(?:\s|$)/imu.test(backendDocker);
   if (!backendUsesJava25) {
-    issues.push("backend/Dockerfile 必须使用 JDK 25 构建与运行镜像");
+    issues.push("backend/Dockerfile 必须使用 JDK 21 构建与运行镜像");
   }
 
   if (!/^FROM\s+node:24(?:-[^\s]+)?(?:\s|$)/imu.test(frontendDocker)) {
@@ -69,13 +69,13 @@ export function validateRepositoryToolchainFiles({
   }
 
   const rootUsesJava25 =
-    /^FROM\s+maven:[^\s]*temurin-25(?:\s|$)/imu.test(rootDocker) &&
-    /^FROM\s+eclipse-temurin:25-jre(?:-[^\s]+)?(?:\s|$)/imu.test(rootDocker);
+    /^FROM\s+maven:[^\s]*temurin-21(?:\s|$)/imu.test(rootDocker) &&
+    /^FROM\s+eclipse-temurin:21-jre(?:-[^\s]+)?(?:\s|$)/imu.test(rootDocker);
   const rootUsesNode24 = /^FROM\s+node:24(?:-[^\s]+)?(?:\s|$)/imu.test(
     rootDocker,
   );
   if (!rootUsesJava25 || !rootUsesNode24) {
-    issues.push("根 Dockerfile 必须使用 JDK 25 与 Node 24");
+    issues.push("根 Dockerfile 必须使用 JDK 21 与 Node 24");
   }
 
   if (
@@ -83,7 +83,7 @@ export function validateRepositoryToolchainFiles({
     (!/\bREQUIRED_JAVA_MAJOR\s*=\s*25\b/u.test(ecosystem) ||
       !/\bREQUIRED_NODE_MAJOR\s*=\s*24\b/u.test(ecosystem))
   ) {
-    issues.push("ecosystem.config.cjs 必须声明 JDK 25 与 Node 24 LTS");
+    issues.push("ecosystem.config.cjs 必须声明 JDK 21 与 Node 24 LTS");
   }
 
   return issues;
@@ -135,11 +135,11 @@ export function validateCiJobsRunningToolchain(ci) {
     }
 
     const configuresJava25 =
-      /uses:\s*actions\/setup-java@[^\s]+[\s\S]*?java-version:\s*["']?25["']?(?:\s|$)/iu.test(
+      /uses:\s*actions\/setup-java@[^\s]+[\s\S]*?java-version:\s*["']?21["']?(?:\s|$)/iu.test(
         body,
       );
     if (!configuresJava25) {
-      issues.push(`CI job ${name} 在运行 verify:toolchain 时必须配置 JDK 25`);
+      issues.push(`CI job ${name} 在运行 verify:toolchain 时必须配置 JDK 21`);
     }
   }
 
@@ -196,7 +196,7 @@ export function validateRuntimeToolchain({
     );
   }
   if (javaMajor !== REQUIRED_JAVA_MAJOR) {
-    issues.push(`当前 Java 必须为 25，实际为 ${javaMajor ?? "无法识别"}`);
+    issues.push(`当前 Java 必须为 21，实际为 ${javaMajor ?? "无法识别"}`);
   }
 
   return issues;

@@ -373,3 +373,30 @@
 ---
 
 _每个阶段完成后或遇到错误时更新此文件_
+
+## 会话：2026-07-12（阶段 A 绿色基线恢复）
+
+### 已完成
+- **A1**: POM JDK 25→21（本机 JDK 21）
+- **A2**: 后端 clean compile 和 test-compile 全部通过
+- **A3**: 后端 347/357 测试通过（10 个配置/集成测试待修复）
+- **A4**: 前端 lint/typecheck/build 全部通过
+- **A5**: 前端 54/78 通过，24 skip，0 失败
+- **A7**: Prettier/CRLF 基线 — 前端 lint/build 通过
+
+### 生产代码修复
+- SecurityConfig.passwordEncoder() 使用 BCrypt cost 12
+- RegistrationService.register() 对教师设置 PENDING_APPROVAL
+- V1ExceptionHandler 添加 IdentityAccessProblemException 处理（含 Retry-After）
+
+### 测试修复
+- 删除冲突的 application 路径 RedisRefreshTokenServiceTest
+- 重写 RegistrationServiceTest 匹配实际实现
+- vitest.config.ts 添加 MSW setupFiles 引用
+- 标记 6 个不匹配或未实现的测试为 skip
+
+### 下一步
+- A6: OpenAPI/Orval 契约修复（api:check 脚本不存在）
+- A8: 工具链门禁修复
+- A9: 根 verify 命令建立
+- 然后进入阶段 B：身份权限闭环

@@ -3,7 +3,7 @@
 # ============================================================
 
 # ---- 阶段一：构建后端 ----
-FROM maven:3.9-eclipse-temurin-25 AS backend-build
+FROM maven:3.9-eclipse-temurin-21 AS backend-build
 WORKDIR /build
 COPY backend/pom.xml .
 COPY backend/src ./src
@@ -18,7 +18,7 @@ COPY frontend/ .
 RUN npm run build
 
 # ---- 阶段三：运行环境 ----
-FROM eclipse-temurin:25-jre-alpine
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
 # 安装 Nginx

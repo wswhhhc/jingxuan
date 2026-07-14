@@ -211,7 +211,7 @@ const handleRegister = async () => {
 
 const loadClasses = async () => {
   try {
-    const res = await request.get<RegistrationClass[]>('/public/classes')
+    const res = await request.get<RegistrationClass[]>('/api/v1/classes')
     classes.value = (res.data || []).map((item) => ({
       id: item.id,
       dictLabel: item.dictLabel,

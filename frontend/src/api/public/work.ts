@@ -22,7 +22,7 @@ export interface TagItem {
 
 export async function getPublicWorkList(params: PublicWorkListParams) {
   const res = await request({
-    url: '/api/public/works',
+    url: '/api/v1/showcase/works',
     method: 'get',
     params: {
       page: params.page || 1,
@@ -46,12 +46,12 @@ export interface PublicClassItem {
 }
 
 export async function getPublicClassList() {
-  return request.get<PublicClassItem[]>('/api/public/classes')
+  return request.get<PublicClassItem[]>('/api/v1/classes')
 }
 
 export async function getPublicWorkDetail(id: string | number) {
   const res = await request({
-    url: `/public/works/${id}`,
+    url: `/api/v1/showcase/works/${id}`,
     method: 'get',
   })
   res.data = adaptWorkVO(res.data)
@@ -59,13 +59,10 @@ export async function getPublicWorkDetail(id: string | number) {
 }
 
 export async function getPublicTagList() {
-  return request.get<TagItem[]>('/api/public/tags')
+  return request.get<TagItem[]>('/api/v1/tags')
 }
 
-export async function toggleLike(id: string | number) {
-  return request.post<{ liked: boolean; likeCount: number }>(`/works/${id}/like`)
-}
-
-export async function getLikeStatus(id: string | number) {
-  return request.get<{ liked: boolean; likeCount: number }>(`/public/works/${id}/like-status`)
+/** 点赞/取消点赞 */
+export function toggleLike(workId: number) {
+  return request.put(`/api/v1/works/${workId}/likes`)
 }

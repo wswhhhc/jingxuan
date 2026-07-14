@@ -36,7 +36,7 @@ vi.mock('element-plus', async () => {
   }
 })
 
-vi.mock('@/stores/student/auth', () => ({
+vi.mock('@/app/session/auth', () => ({
   useAuthStore: () => authStore,
 }))
 

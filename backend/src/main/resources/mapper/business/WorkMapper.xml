@@ -2,26 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jingxuan.mapper.WorkMapper">
 
-    <!-- 作品列表查询（带筛选条件） -->
-    <select id="selectWorkList" resultType="com.jingxuan.entity.Work">
-        SELECT w.* FROM work w
-        <where>
-            w.deleted = 0
-            <if test="status != null">AND w.status = #{status}</if>
-            <if test="submitterId != null">AND w.submitter_id = #{submitterId}</if>
-            <if test="batchId != null">AND w.batch_id = #{batchId}</if>
-            <if test="keyword != null and keyword != ''">
-                AND (w.title LIKE CONCAT('%', #{keyword}, '%')
-                OR w.tech_stack LIKE CONCAT('%', #{keyword}, '%')
-                OR w.advisor LIKE CONCAT('%', #{keyword}, '%'))
-            </if>
-            <if test="techStack != null and techStack != ''">
-                AND w.tech_stack LIKE CONCAT('%', #{techStack}, '%')
-            </if>
-        </where>
-        ORDER BY w.create_time DESC
-    </select>
-
     <!-- 综合排行榜查询（按作品维度聚合评分） -->
     <select id="selectRankList" resultType="com.jingxuan.modules.rank.dto.RankVO">
         SELECT

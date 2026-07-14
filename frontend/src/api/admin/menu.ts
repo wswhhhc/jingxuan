@@ -15,15 +15,3 @@ export interface MenuItem {
 export function getMenuTree() {
   return request.get<MenuItem[]>('/api/admin/menus/tree')
 }
-
-export function createMenu(data: Partial<MenuItem>) {
-  return request.post('/api/admin/menus', data)
-}
-
-export function updateMenu(id: number, data: Partial<MenuItem>) {
-  return request.put(`/admin/menus/${id}`, data)
-}
-
-export function deleteMenu(id: number) {
-  return request.delete(`/admin/menus/${id}`)
-}

@@ -14,10 +14,6 @@ export function getRuleList(params: { page?: number; size?: number }) {
   return request.get('/api/admin/rule/list', { params })
 }
 
-export function getRuleDetail(id: number) {
-  return request.get(`/admin/rule/${id}`)
-}
-
 export function createRule(data: Partial<RuleItem>) {
   return request.post('/api/admin/rule', data)
 }

@@ -61,7 +61,7 @@
 import { ref, reactive } from 'vue'
 import { ElMessage, type FormInstance } from 'element-plus'
 import AppThemeToggle from '@/components/AppThemeToggle.vue'
-import { useAuthStore } from '@/stores/student/auth'
+import { useAuthStore } from '@/app/session/auth'
 import { changePassword } from '@/api/student/auth'
 
 const authStore = useAuthStore()

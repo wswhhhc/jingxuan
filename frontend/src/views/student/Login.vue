@@ -71,7 +71,7 @@ import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { User, Lock } from '@element-plus/icons-vue'
 import AppThemeToggle from '@/components/AppThemeToggle.vue'
-import { useAuthStore } from '@/stores/student/auth'
+import { useAuthStore } from '@/app/session/auth'
 
 const router = useRouter()
 const authStore = useAuthStore()

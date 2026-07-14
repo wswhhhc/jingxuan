@@ -306,6 +306,7 @@ import type { AuditQuery, AuditHistoryItem } from '@/api/admin/audit'
 import type { WorkListVO, WorkDetailVO } from '@/api/types'
 import { useApiList } from '@/composables/useApiList'
 import PaginationBar from '@/components/PaginationBar.vue'
+import { formatDateTime as formatDateTimeValue } from '@/utils/format'
 
 const detail = ref<WorkDetailVO | null>(null)
 const detailVisible = ref(false)
@@ -349,10 +350,7 @@ const getRowIndex = (index: number) => {
   return (currentPage - 1) * currentSize + index + 1
 }
 
-const formatDateTime = (value?: string) => {
-  if (!value) return '未提交'
-  return value.replace('T', ' ')
-}
+const formatDateTime = (value?: string) => formatDateTimeValue(value, '未提交')
 
 async function loadClasses() {
   try {

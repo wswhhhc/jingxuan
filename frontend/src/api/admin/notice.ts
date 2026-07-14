@@ -16,10 +16,6 @@ export function getNoticeList(params: { page?: number; size?: number; keyword?: 
   return request.get('/api/admin/notice/list', { params })
 }
 
-export function getNoticeDetail(id: number) {
-  return request.get(`/admin/notice/${id}`)
-}
-
 export function createNotice(data: {
   title: string
   content: string

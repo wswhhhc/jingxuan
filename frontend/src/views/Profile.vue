@@ -149,7 +149,7 @@
 import { ref, reactive, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, type FormInstance } from 'element-plus'
-import { useAuthStore } from '@/stores/student/auth'
+import { useAuthStore } from '@/app/session/auth'
 import { updateProfile, changePassword } from '@/api/student/auth'
 import { uploadFile } from '@/api/student/work'
 

@@ -154,12 +154,10 @@ import { useRouter } from 'vue-router'
 import { Search, Picture, View, Star } from '@element-plus/icons-vue'
 import {
   getPublicWorkList,
+  getPublicClassList as fetchClasses,
+  getPublicTagList as fetchTags,
   type PublicWorkListParams,
 } from '@/api/public/work'
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const fetchClasses = async () => [] as any[]
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const fetchTags = async () => [] as any[]
 import type { WorkItem } from '@/api/student/work'
 
 type V1ReferenceItem = { id: number; dictValue: string; dictLabel: string }
@@ -441,6 +439,7 @@ onMounted(() => {
   }
 }
 </style>
+
 
 
 

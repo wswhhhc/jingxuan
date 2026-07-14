@@ -1,4 +1,4 @@
-package com.jingxuan.service.impl;
+package com.jingxuan.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
@@ -12,7 +12,6 @@ import com.jingxuan.mapper.SysMenuMapper;
 import com.jingxuan.mapper.SysRoleMapper;
 import com.jingxuan.mapper.SysRoleMenuMapper;
 import com.jingxuan.mapper.SysUserMapper;
-import com.jingxuan.service.SysRoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -85,4 +84,3 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         }
     }
 }
-

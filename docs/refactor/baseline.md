@@ -26,9 +26,9 @@
 
 2026-07-11 对本机已运行的 v1 开发环境仅执行了公开页面和只读接口检查，没有运行会创建作品的旧冒烟脚本。
 
-- [公开作品展廊截图](../../output/playwright/v1-public-works.png)
-- [公开排行榜截图](../../output/playwright/v1-public-ranking.png)
-- [学生登录页截图](../../output/playwright/v1-student-login.png)
+- [公开作品展廊截图](assets/v1-public-works.png)
+- [公开排行榜截图](assets/v1-public-ranking.png)
+- [学生登录页截图](assets/v1-student-login.png)
 - 公开作品、班级、标签接口均返回 HTTP 200。
 - 作品展廊出现 6 个封面资源 HTTP 500，说明数据库引用与本地 uploads 已存在漂移；迁移校验必须逐文件检查大小与 SHA-256。
 - 现有路由与权限入口见 [v1 路由与权限清单](routes-and-permissions.md)。

@@ -128,7 +128,7 @@ async function main() {
     ".gitleaks.toml",
     ".codegraph/.gitignore",
     "frontend/src/env.d.ts",
-    "output/playwright/baseline.png",
+    "docs/refactor/assets/v1-public-works.png",
   ];
   for (const relativePath of pathsThatMustBeCommitted) {
     if (gitCheckIgnore(relativePath)) {

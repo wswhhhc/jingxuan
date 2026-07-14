@@ -44,12 +44,25 @@ public class V1AuthOriginFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
+        // 开发环境（Vite 5173 != 后端 8080，不同源）放行同源检查
+        if (isDevelopment(request)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         if (!hasSameOrigin(request)) {
             accessDeniedHandler.handle(request, response,
                     new AccessDeniedException("认证请求必须来自同源页面"));
             return;
         }
         filterChain.doFilter(request, response);
+    }
+
+    /** 判断当前是否为开发/测试环境 */
+    private static boolean isDevelopment(HttpServletRequest request) {
+        String profiles = System.getProperty("spring.profiles.active", "");
+        String envVar = System.getenv("SPRING_PROFILES_ACTIVE");
+        return profiles.contains("dev") || profiles.contains("test")
+                || (envVar != null && (envVar.contains("dev") || envVar.contains("test")));
     }
 
     private static boolean hasSameOrigin(HttpServletRequest request) {

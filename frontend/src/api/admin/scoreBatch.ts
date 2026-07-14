@@ -29,10 +29,6 @@ export function deleteBatch(id: number) {
   return request.delete(`/score-batch/${id}`)
 }
 
-export function getActiveBatch() {
-  return request.get('/api/score-batch/active')
-}
-
 export interface TeacherScoreItem {
   teacherName: string
   innovation: number

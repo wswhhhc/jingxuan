@@ -209,13 +209,6 @@
             <resource>
                 <directory>src/main/resources</directory>
             </resource>
-            <resource>
-                <directory>${project.basedir}/../sql</directory>
-                <targetPath>legacy-sql</targetPath>
-                <includes>
-                    <include>**/*.sql</include>
-                </includes>
-            </resource>
         </resources>
         <plugins>
             <plugin>

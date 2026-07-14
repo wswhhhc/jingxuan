@@ -190,7 +190,7 @@ import { Plus } from '@element-plus/icons-vue'
 import { getMyWorks, deleteWork, type WorkItem } from '@/api/student/work'
 import type { PageResult } from '@/api/workAdapter'
 import { getAvailableBatches, type BatchItem } from '@/api/student/task'
-import { useAuthStore } from '@/stores/student/auth'
+import { useAuthStore } from '@/app/session/auth'
 import { useApiList } from '@/composables/useApiList'
 
 const router = useRouter()

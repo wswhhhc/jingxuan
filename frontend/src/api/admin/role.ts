@@ -12,10 +12,6 @@ export function getRoles(params: { page?: number; size?: number; excludeSystem?:
   return request.get('/api/admin/roles', { params })
 }
 
-export function getRoleDetail(id: number) {
-  return request.get(`/admin/roles/${id}`)
-}
-
 export function createRole(data: Partial<RoleItem>) {
   return request.post('/api/admin/roles', data)
 }

@@ -80,7 +80,7 @@
 <script setup lang="ts">
 import { computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/student/auth'
+import { useAuthStore } from '@/app/session/auth'
 import { getUnreadCount } from '@/api/notify'
 import { useNotificationPolling } from '@/composables/useNotificationPolling'
 import { ArrowDown, HomeFilled, List, Document, Trophy, Bell } from '@element-plus/icons-vue'

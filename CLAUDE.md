@@ -199,11 +199,12 @@ frontend/src/
  │   ├── request.ts   # Axios 实例 + 拦截器（token 注入、统一错误处理）
  │   ├── types.ts     # 共享类型（WorkListVO/WorkDetailVO/RankItem/UserInfo）
  │   └── student/task.ts / deleteRequest.ts  # 新增模块
+ ├── app/session/     # 全局登录会话 Pinia Store
  ├── components/      # 共享组件（NotificationList/PaginationBar/AppThemeToggle/PreviewDialog）
  ├── composables/     # 组合式函数（useApiList/useCrudDialog/useNotificationPolling）
  ├── layout/          # 四端布局（Admin/Teacher/Student/Public）
  ├── router/          # 路由配置（modules/ 下按角色拆分）
- ├── stores/          # Pinia 状态（auth, theme）
+ ├── stores/          # 其余 Pinia 状态（theme）
  └── views/           # 页面（admin 12页/teacher 4页/student 6页/public 4页）
 ```
 

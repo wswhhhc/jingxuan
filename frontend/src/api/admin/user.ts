@@ -43,16 +43,6 @@ export interface AiImportUserDraft {
   status?: number
 }
 
-export interface AiImportResponse {
-  assistantReply: string
-  ready: boolean
-  requiredFields: string[]
-  optionalFields: string[]
-  missingFields: string[]
-  assumptions: string[]
-  users: AiImportUserDraft[]
-}
-
 export function getUsers(params: { page?: number; size?: number; keyword?: string; roleId?: number; status?: number }) {
   return request.get('/api/admin/users', { params })
 }
@@ -66,10 +56,6 @@ export function createUser(data: {
   email?: string
 }) {
   return request.post('/api/admin/users', data)
-}
-
-export function getUserDetail(id: number) {
-  return request.get(`/admin/users/${id}`)
 }
 
 export function updateUser(

@@ -1,18 +1,17 @@
-package com.jingxuan.service.impl;
+package com.jingxuan.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 import com.jingxuan.entity.SysMenu;
 import com.jingxuan.exception.BusinessException;
 import com.jingxuan.mapper.SysMenuMapper;
-import com.jingxuan.service.SysMenuService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
-import java.util.Set;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,4 +53,3 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
                 .collect(Collectors.toList());
     }
 }
-

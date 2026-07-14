@@ -31,7 +31,7 @@ vi.mock('@/api/student/work', () => ({
   deleteWork: deleteWorkMock,
 }))
 
-vi.mock('@/stores/student/auth', () => ({
+vi.mock('@/app/session/auth', () => ({
   useAuthStore: () => authStore,
 }))
 

@@ -87,7 +87,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/student/auth'
+import { useAuthStore } from '@/app/session/auth'
 import { getMyWorks, type WorkItem } from '@/api/student/work'
 import { Plus, EditPen, FolderOpened, Trophy } from '@element-plus/icons-vue'
 

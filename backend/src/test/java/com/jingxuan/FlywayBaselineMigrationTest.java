@@ -53,7 +53,7 @@ class FlywayBaselineMigrationTest {
         MigrationInfo currentMigration = flyway.info().current();
         assertNotNull(currentMigration, "迁移完成后应存在当前版本");
         assertNotNull(currentMigration.getVersion(), "基线迁移应具有版本号");
-        assertEquals("4", currentMigration.getVersion().getVersion());
+        assertEquals("5", currentMigration.getVersion().getVersion());
         assertTrue(tableExists("flyway_schema_history"), "Flyway 应记录迁移历史");
         assertTrue(tableExists("sys_user"), "基础身份表应由基线创建");
         assertTrue(tableExists("work"), "作品主表应由基线创建");

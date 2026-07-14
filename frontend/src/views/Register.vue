@@ -170,7 +170,7 @@ const handleSendCode = async () => {
   }
   sendingCode.value = true
   try {
-    await request.post('/auth/send-code', {
+    await request.post('/api/auth/send-code', {
       email: form.email,
       roleId: form.roleId,
     })
@@ -199,7 +199,7 @@ const handleRegister = async () => {
     if (form.roleId === 1) {
       body.classId = form.classId
     }
-    await request.post('/auth/register', body)
+    await request.post('/api/auth/register', body)
     ElMessage.success('注册成功，请登录')
     router.push('/login')
   } catch {

@@ -10,6 +10,6 @@ export interface V1WorkAttachment {
   contentType?: string;
   fileName?: string;
   id?: string;
-  size?: number;
+  size?: string;
   url?: string;
 }

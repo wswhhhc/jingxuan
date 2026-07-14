@@ -29,6 +29,17 @@ import type {
   MaybeRefOrGetter
 } from 'vue';
 
+import type {
+  GetBatchesParams,
+  ProblemDetails,
+  V1BatchDetail,
+  V1BatchPage,
+  V1BatchRequest,
+  V1CompleteTaskRequest,
+  V1NoticeRequest,
+  V1Task
+} from '../models';
+
 import { apiRequest } from '../../http';
 
 
@@ -40,13 +51,14 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
  * @summary com/jingxuan/campaign/web/V1CampaignController.java
  */
 export const getBatches = (
-
+    params?: MaybeRefOrGetter<GetBatchesParams>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {
+      params = toValue(params);
 
-
-      return apiRequest<void>(
-      {url: `/api/v1/batches`, method: 'GET', signal
+      return apiRequest<V1BatchPage>(
+      {url: `/api/v1/batches`, method: 'GET',
+        params, signal
     },
       options);
     }
@@ -54,23 +66,23 @@ export const getBatches = (
 
 
 
-export const getGetBatchesQueryKey = () => {
+export const getGetBatchesQueryKey = (params?: MaybeRefOrGetter<GetBatchesParams>,) => {
     return [
-    'api','v1','batches'
+    'api','v1','batches', ...(params ? [params] : [])
     ] as const;
     }
 
 
-export const getGetBatchesQueryOptions = <TData = Awaited<ReturnType<typeof getBatches>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBatches>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export const getGetBatchesQueryOptions = <TData = Awaited<ReturnType<typeof getBatches>>, TError = ProblemDetails>(params?: MaybeRefOrGetter<GetBatchesParams>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBatches>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  getGetBatchesQueryKey();
+  const queryKey =  getGetBatchesQueryKey(params);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getBatches>>> = ({ signal }) => getBatches(requestOptions, signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getBatches>>> = ({ signal }) => getBatches(params, requestOptions, signal);
 
 
 
@@ -80,19 +92,19 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetBatchesQueryResult = NonNullable<Awaited<ReturnType<typeof getBatches>>>
-export type GetBatchesQueryError = void
+export type GetBatchesQueryError = ProblemDetails
 
 
 /**
  * @summary com/jingxuan/campaign/web/V1CampaignController.java
  */
 
-export function useGetBatches<TData = Awaited<ReturnType<typeof getBatches>>, TError = void>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBatches>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export function useGetBatches<TData = Awaited<ReturnType<typeof getBatches>>, TError = ProblemDetails>(
+ params?: MaybeRefOrGetter<GetBatchesParams>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBatches>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
  ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetBatchesQueryOptions(options)
+  const queryOptions = getGetBatchesQueryOptions(params,options)
 
   const query = useQuery(queryOptions, queryClient) as UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -107,138 +119,6 @@ export function useGetBatches<TData = Awaited<ReturnType<typeof getBatches>>, TE
 
 
 /**
- * @summary com/jingxuan/campaign/web/V1CampaignAdminController.java
- */
-export const getBatchesId = (
-    id: MaybeRefOrGetter<string>,
- options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
-) => {
-      id = toValue(id);
-
-      return apiRequest<void>(
-      {url: `/api/v1/batches/${id}`, method: 'GET', signal
-    },
-      options);
-    }
-
-
-
-
-export const getGetBatchesIdQueryKey = (id: MaybeRefOrGetter<string>,) => {
-    return [
-    'api','v1','batches',id
-    ] as const;
-    }
-
-
-export const getGetBatchesIdQueryOptions = <TData = Awaited<ReturnType<typeof getBatchesId>>, TError = void>(id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBatchesId>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  getGetBatchesIdQueryKey(id);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getBatchesId>>> = ({ signal }) => getBatchesId(id, requestOptions, signal);
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: computed(() => toValue(id) !== null && toValue(id) !== undefined), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getBatchesId>>, TError, TData>
-}
-
-export type GetBatchesIdQueryResult = NonNullable<Awaited<ReturnType<typeof getBatchesId>>>
-export type GetBatchesIdQueryError = void
-
-
-/**
- * @summary com/jingxuan/campaign/web/V1CampaignAdminController.java
- */
-
-export function useGetBatchesId<TData = Awaited<ReturnType<typeof getBatchesId>>, TError = void>(
- id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBatchesId>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
- ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getGetBatchesIdQueryOptions(id,options)
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  query.queryKey = unref(queryOptions).queryKey as DataTag<QueryKey, TData, TError>;
-
-  return query;
-}
-
-
-
-
-
-
-/**
- * @summary com/jingxuan/campaign/web/V1CampaignAdminController.java
- */
-export const putBatchesId = (
-    id: MaybeRefOrGetter<string>,
- options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
-) => {
-      id = toValue(id);
-
-      return apiRequest<void>(
-      {url: `/api/v1/batches/${id}`, method: 'PUT', signal
-    },
-      options);
-    }
-
-
-
-
-export const getPutBatchesIdMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putBatchesId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof putBatchesId>>, TError,{id: string}, TContext> => {
-
-const mutationKey = ['putBatchesId'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putBatchesId>>, {id: string}> = (props) => {
-          const {id} = props ?? {};
-
-          return  putBatchesId(id,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type PutBatchesIdMutationResult = NonNullable<Awaited<ReturnType<typeof putBatchesId>>>
-
-    export type PutBatchesIdMutationError = void
-
-    /**
- * @summary com/jingxuan/campaign/web/V1CampaignAdminController.java
- */
-export const usePutBatchesId = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putBatchesId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient): UseMutationReturnType<
-        Awaited<ReturnType<typeof putBatchesId>>,
-        TError,
-        {id: string},
-        TContext
-      > => {
-      return useMutation(getPutBatchesIdMutationOptions(options), queryClient);
-    }
-    /**
  * @summary com/jingxuan/campaign/web/V1CampaignAdminController.java
  */
 export const deleteBatchesId = (
@@ -256,7 +136,7 @@ export const deleteBatchesId = (
 
 
 
-export const getDeleteBatchesIdMutationOptions = <TError = void,
+export const getDeleteBatchesIdMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteBatchesId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteBatchesId>>, TError,{id: string}, TContext> => {
 
@@ -285,12 +165,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type DeleteBatchesIdMutationResult = NonNullable<Awaited<ReturnType<typeof deleteBatchesId>>>
 
-    export type DeleteBatchesIdMutationError = void
+    export type DeleteBatchesIdMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/campaign/web/V1CampaignAdminController.java
  */
-export const useDeleteBatchesId = <TError = void,
+export const useDeleteBatchesId = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteBatchesId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof deleteBatchesId>>,
@@ -303,14 +183,14 @@ export const useDeleteBatchesId = <TError = void,
     /**
  * @summary com/jingxuan/campaign/web/V1CampaignAdminController.java
  */
-export const putBatchesIdNotice = (
+export const getBatchesId = (
     id: MaybeRefOrGetter<string>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {
       id = toValue(id);
 
-      return apiRequest<void>(
-      {url: `/api/v1/batches/${id}/notice`, method: 'PUT', signal
+      return apiRequest<V1BatchDetail>(
+      {url: `/api/v1/batches/${id}`, method: 'GET', signal
     },
       options);
     }
@@ -318,9 +198,149 @@ export const putBatchesIdNotice = (
 
 
 
-export const getPutBatchesIdNoticeMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putBatchesIdNotice>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof putBatchesIdNotice>>, TError,{id: string}, TContext> => {
+export const getGetBatchesIdQueryKey = (id: MaybeRefOrGetter<string>,) => {
+    return [
+    'api','v1','batches',id
+    ] as const;
+    }
+
+
+export const getGetBatchesIdQueryOptions = <TData = Awaited<ReturnType<typeof getBatchesId>>, TError = ProblemDetails>(id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBatchesId>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  getGetBatchesIdQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getBatchesId>>> = ({ signal }) => getBatchesId(id, requestOptions, signal);
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: computed(() => toValue(id) !== null && toValue(id) !== undefined), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getBatchesId>>, TError, TData>
+}
+
+export type GetBatchesIdQueryResult = NonNullable<Awaited<ReturnType<typeof getBatchesId>>>
+export type GetBatchesIdQueryError = ProblemDetails
+
+
+/**
+ * @summary com/jingxuan/campaign/web/V1CampaignAdminController.java
+ */
+
+export function useGetBatchesId<TData = Awaited<ReturnType<typeof getBatchesId>>, TError = ProblemDetails>(
+ id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBatchesId>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetBatchesIdQueryOptions(id,options)
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = unref(queryOptions).queryKey as DataTag<QueryKey, TData, TError>;
+
+  return query;
+}
+
+
+
+
+
+
+/**
+ * @summary com/jingxuan/campaign/web/V1CampaignAdminController.java
+ */
+export const putBatchesId = (
+    id: MaybeRefOrGetter<string>,
+    v1BatchRequest: MaybeRefOrGetter<V1BatchRequest>,
+ options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
+) => {
+      id = toValue(id);
+v1BatchRequest = toValue(v1BatchRequest);
+
+      return apiRequest<V1BatchDetail>(
+      {url: `/api/v1/batches/${id}`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: v1BatchRequest, signal
+    },
+      options);
+    }
+
+
+
+
+export const getPutBatchesIdMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putBatchesId>>, TError,{id: string;data: V1BatchRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof putBatchesId>>, TError,{id: string;data: V1BatchRequest}, TContext> => {
+
+const mutationKey = ['putBatchesId'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putBatchesId>>, {id: string;data: V1BatchRequest}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  putBatchesId(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PutBatchesIdMutationResult = NonNullable<Awaited<ReturnType<typeof putBatchesId>>>
+    export type PutBatchesIdMutationBody = V1BatchRequest
+    export type PutBatchesIdMutationError = ProblemDetails
+
+    /**
+ * @summary com/jingxuan/campaign/web/V1CampaignAdminController.java
+ */
+export const usePutBatchesId = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putBatchesId>>, TError,{id: string;data: V1BatchRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient): UseMutationReturnType<
+        Awaited<ReturnType<typeof putBatchesId>>,
+        TError,
+        {id: string;data: V1BatchRequest},
+        TContext
+      > => {
+      return useMutation(getPutBatchesIdMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary com/jingxuan/campaign/web/V1CampaignAdminController.java
+ */
+export const putBatchesIdNotice = (
+    id: MaybeRefOrGetter<string>,
+    v1NoticeRequest: MaybeRefOrGetter<V1NoticeRequest>,
+ options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
+) => {
+      id = toValue(id);
+v1NoticeRequest = toValue(v1NoticeRequest);
+
+      return apiRequest<void>(
+      {url: `/api/v1/batches/${id}/notice`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: v1NoticeRequest, signal
+    },
+      options);
+    }
+
+
+
+
+export const getPutBatchesIdNoticeMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putBatchesIdNotice>>, TError,{id: string;data: V1NoticeRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof putBatchesIdNotice>>, TError,{id: string;data: V1NoticeRequest}, TContext> => {
 
 const mutationKey = ['putBatchesIdNotice'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -332,10 +352,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putBatchesIdNotice>>, {id: string}> = (props) => {
-          const {id} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putBatchesIdNotice>>, {id: string;data: V1NoticeRequest}> = (props) => {
+          const {id,data} = props ?? {};
 
-          return  putBatchesIdNotice(id,requestOptions)
+          return  putBatchesIdNotice(id,data,requestOptions)
         }
 
 
@@ -346,18 +366,18 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type PutBatchesIdNoticeMutationResult = NonNullable<Awaited<ReturnType<typeof putBatchesIdNotice>>>
-
-    export type PutBatchesIdNoticeMutationError = void
+    export type PutBatchesIdNoticeMutationBody = V1NoticeRequest
+    export type PutBatchesIdNoticeMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/campaign/web/V1CampaignAdminController.java
  */
-export const usePutBatchesIdNotice = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putBatchesIdNotice>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
+export const usePutBatchesIdNotice = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putBatchesIdNotice>>, TError,{id: string;data: V1NoticeRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof putBatchesIdNotice>>,
         TError,
-        {id: string},
+        {id: string;data: V1NoticeRequest},
         TContext
       > => {
       return useMutation(getPutBatchesIdNoticeMutationOptions(options), queryClient);
@@ -380,7 +400,7 @@ export const postBatchesIdRankingPublish = (
 
 
 
-export const getPostBatchesIdRankingPublishMutationOptions = <TError = void,
+export const getPostBatchesIdRankingPublishMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postBatchesIdRankingPublish>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postBatchesIdRankingPublish>>, TError,{id: string}, TContext> => {
 
@@ -409,12 +429,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type PostBatchesIdRankingPublishMutationResult = NonNullable<Awaited<ReturnType<typeof postBatchesIdRankingPublish>>>
 
-    export type PostBatchesIdRankingPublishMutationError = void
+    export type PostBatchesIdRankingPublishMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/campaign/web/V1CampaignAdminController.java
  */
-export const usePostBatchesIdRankingPublish = <TError = void,
+export const usePostBatchesIdRankingPublish = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postBatchesIdRankingPublish>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof postBatchesIdRankingPublish>>,
@@ -442,7 +462,7 @@ export const postBatchesIdRankingUnpublish = (
 
 
 
-export const getPostBatchesIdRankingUnpublishMutationOptions = <TError = void,
+export const getPostBatchesIdRankingUnpublishMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postBatchesIdRankingUnpublish>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postBatchesIdRankingUnpublish>>, TError,{id: string}, TContext> => {
 
@@ -471,12 +491,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type PostBatchesIdRankingUnpublishMutationResult = NonNullable<Awaited<ReturnType<typeof postBatchesIdRankingUnpublish>>>
 
-    export type PostBatchesIdRankingUnpublishMutationError = void
+    export type PostBatchesIdRankingUnpublishMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/campaign/web/V1CampaignAdminController.java
  */
-export const usePostBatchesIdRankingUnpublish = <TError = void,
+export const usePostBatchesIdRankingUnpublish = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postBatchesIdRankingUnpublish>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof postBatchesIdRankingUnpublish>>,
@@ -504,7 +524,7 @@ export const postBatchesIdTasksPublish = (
 
 
 
-export const getPostBatchesIdTasksPublishMutationOptions = <TError = void,
+export const getPostBatchesIdTasksPublishMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postBatchesIdTasksPublish>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postBatchesIdTasksPublish>>, TError,{id: string}, TContext> => {
 
@@ -533,12 +553,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type PostBatchesIdTasksPublishMutationResult = NonNullable<Awaited<ReturnType<typeof postBatchesIdTasksPublish>>>
 
-    export type PostBatchesIdTasksPublishMutationError = void
+    export type PostBatchesIdTasksPublishMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/campaign/web/V1CampaignAdminController.java
  */
-export const usePostBatchesIdTasksPublish = <TError = void,
+export const usePostBatchesIdTasksPublish = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postBatchesIdTasksPublish>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof postBatchesIdTasksPublish>>,
@@ -557,7 +577,7 @@ export const getMeTasks = (
 ) => {
 
 
-      return apiRequest<void>(
+      return apiRequest<V1Task[]>(
       {url: `/api/v1/me/tasks`, method: 'GET', signal
     },
       options);
@@ -573,7 +593,7 @@ export const getGetMeTasksQueryKey = () => {
     }
 
 
-export const getGetMeTasksQueryOptions = <TData = Awaited<ReturnType<typeof getMeTasks>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMeTasks>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export const getGetMeTasksQueryOptions = <TData = Awaited<ReturnType<typeof getMeTasks>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMeTasks>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -592,14 +612,14 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetMeTasksQueryResult = NonNullable<Awaited<ReturnType<typeof getMeTasks>>>
-export type GetMeTasksQueryError = void
+export type GetMeTasksQueryError = ProblemDetails
 
 
 /**
  * @summary com/jingxuan/campaign/web/V1CampaignController.java
  */
 
-export function useGetMeTasks<TData = Awaited<ReturnType<typeof getMeTasks>>, TError = void>(
+export function useGetMeTasks<TData = Awaited<ReturnType<typeof getMeTasks>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMeTasks>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
  ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -623,12 +643,16 @@ export function useGetMeTasks<TData = Awaited<ReturnType<typeof getMeTasks>>, TE
  */
 export const postMeTasksTaskIdCompletion = (
     taskId: MaybeRefOrGetter<string>,
+    v1CompleteTaskRequest: MaybeRefOrGetter<V1CompleteTaskRequest>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {
       taskId = toValue(taskId);
+v1CompleteTaskRequest = toValue(v1CompleteTaskRequest);
 
       return apiRequest<void>(
-      {url: `/api/v1/me/tasks/${taskId}/completion`, method: 'POST', signal
+      {url: `/api/v1/me/tasks/${taskId}/completion`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: v1CompleteTaskRequest, signal
     },
       options);
     }
@@ -636,9 +660,9 @@ export const postMeTasksTaskIdCompletion = (
 
 
 
-export const getPostMeTasksTaskIdCompletionMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postMeTasksTaskIdCompletion>>, TError,{taskId: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof postMeTasksTaskIdCompletion>>, TError,{taskId: string}, TContext> => {
+export const getPostMeTasksTaskIdCompletionMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postMeTasksTaskIdCompletion>>, TError,{taskId: string;data: V1CompleteTaskRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof postMeTasksTaskIdCompletion>>, TError,{taskId: string;data: V1CompleteTaskRequest}, TContext> => {
 
 const mutationKey = ['postMeTasksTaskIdCompletion'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -650,10 +674,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postMeTasksTaskIdCompletion>>, {taskId: string}> = (props) => {
-          const {taskId} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postMeTasksTaskIdCompletion>>, {taskId: string;data: V1CompleteTaskRequest}> = (props) => {
+          const {taskId,data} = props ?? {};
 
-          return  postMeTasksTaskIdCompletion(taskId,requestOptions)
+          return  postMeTasksTaskIdCompletion(taskId,data,requestOptions)
         }
 
 
@@ -664,18 +688,18 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type PostMeTasksTaskIdCompletionMutationResult = NonNullable<Awaited<ReturnType<typeof postMeTasksTaskIdCompletion>>>
-
-    export type PostMeTasksTaskIdCompletionMutationError = void
+    export type PostMeTasksTaskIdCompletionMutationBody = V1CompleteTaskRequest
+    export type PostMeTasksTaskIdCompletionMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/campaign/web/V1CampaignController.java
  */
-export const usePostMeTasksTaskIdCompletion = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postMeTasksTaskIdCompletion>>, TError,{taskId: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
+export const usePostMeTasksTaskIdCompletion = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postMeTasksTaskIdCompletion>>, TError,{taskId: string;data: V1CompleteTaskRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof postMeTasksTaskIdCompletion>>,
         TError,
-        {taskId: string},
+        {taskId: string;data: V1CompleteTaskRequest},
         TContext
       > => {
       return useMutation(getPostMeTasksTaskIdCompletionMutationOptions(options), queryClient);

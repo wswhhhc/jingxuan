@@ -26,7 +26,7 @@ class StudentApiTest extends BaseApiTest {
         @Test
         @DisplayName("创建作品成功（使用无作品测试学生）")
         void createWorkSuccess() {
-            ApiResponse resp = testStuApi.post("/student/works", Map.of(
+            ApiResponse resp = testStuApi.post("/api/student/works", Map.of(
                     "title", "集成测试作品",
                     "summary", "通过集成测试创建的作品",
                     "techStack", "Java/Spring Boot",
@@ -39,7 +39,7 @@ class StudentApiTest extends BaseApiTest {
         @Test
         @DisplayName("标题为空返回 400")
         void emptyTitle() {
-            ApiResponse resp = testStuApi.post("/student/works", Map.of(
+            ApiResponse resp = testStuApi.post("/api/student/works", Map.of(
                     "title", "", "summary", "测试"
             ));
             resp.assertCode(400);
@@ -53,7 +53,7 @@ class StudentApiTest extends BaseApiTest {
         @Test
         @DisplayName("返回当前学生的作品")
         void listMyWorks() {
-            ApiResponse resp = studentApi.get("/student/works");
+            ApiResponse resp = studentApi.get("/api/student/works");
             resp.assertOk();
             assertTrue(resp.getDataInt("total") >= 1, "张三至少应有 1 个作品");
         }
@@ -61,7 +61,7 @@ class StudentApiTest extends BaseApiTest {
         @Test
         @DisplayName("按状态筛选草稿")
         void filterByStatus() {
-            ApiResponse resp = studentApi.get("/student/works", Map.of("status", "0"));
+            ApiResponse resp = studentApi.get("/api/student/works", Map.of("status", "0"));
             resp.assertOk();
         }
     }
@@ -73,7 +73,7 @@ class StudentApiTest extends BaseApiTest {
         @Test
         @DisplayName("查看自己的草稿作品")
         void ownDraftDetail() {
-            ApiResponse resp = studentApi.get("/student/works/6");
+            ApiResponse resp = studentApi.get("/api/student/works/6");
             resp.assertOk();
             assertEquals("在线考试系统", resp.getDataText("title"));
         }
@@ -81,7 +81,7 @@ class StudentApiTest extends BaseApiTest {
         @Test
         @DisplayName("查看不存在的作品返回 400/404")
         void notFound() {
-            ApiResponse resp = studentApi.get("/student/works/999");
+            ApiResponse resp = studentApi.get("/api/student/works/999");
             assertTrue(resp.getCode() == 400 || resp.getCode() == 404);
         }
     }
@@ -93,7 +93,7 @@ class StudentApiTest extends BaseApiTest {
         @Test
         @DisplayName("更新自己的草稿作品成功")
         void updateDraft() {
-            ApiResponse resp = studentApi.put("/student/works/6", Map.of(
+            ApiResponse resp = studentApi.put("/api/student/works/6", Map.of(
                     "title", "更新后的考试系统"
             ));
             resp.assertOk();
@@ -107,17 +107,17 @@ class StudentApiTest extends BaseApiTest {
         @Test
         @DisplayName("先创建再删除自己的草稿")
         void createThenDelete() {
-            ApiResponse createResp = testStuApi.post("/student/works", Map.of("title", "临时作品-可清理"));
+            ApiResponse createResp = testStuApi.post("/api/student/works", Map.of("title", "临时作品-可清理"));
             createResp.assertOk();
             long newId = createResp.getDataNode().asLong();
-            ApiResponse delResp = testStuApi.delete("/student/works/" + newId);
+            ApiResponse delResp = testStuApi.delete("/api/student/works/" + newId);
             delResp.assertOk();
         }
 
         @Test
         @DisplayName("删除已发布作品返回 400")
         void deletePublishedWorkRejected() {
-            ApiResponse resp = studentApi.delete("/student/works/1");
+            ApiResponse resp = studentApi.delete("/api/student/works/1");
             assertEquals(400, resp.getCode(), "已发布作品不应允许删除");
         }
     }
@@ -129,7 +129,7 @@ class StudentApiTest extends BaseApiTest {
         @Test
         @DisplayName("无附件提交返回 400")
         void submitWithoutAttachment() {
-            ApiResponse resp = studentApi.post("/student/works/6/submit", null);
+            ApiResponse resp = studentApi.post("/api/student/works/6/submit", null);
             assertEquals(400, resp.getCode(), "无附件提交应返回 400");
         }
 
@@ -137,7 +137,7 @@ class StudentApiTest extends BaseApiTest {
         @DisplayName("上传附件后提交审核成功")
         void submitWithAttachment() {
             String title = "提交审核测试-" + System.currentTimeMillis();
-            ApiResponse createResp = testStuApi.post("/student/works", Map.of(
+            ApiResponse createResp = testStuApi.post("/api/student/works", Map.of(
                     "title", title,
                     "summary", "用于提交流程验证",
                     "techStack", "Java/Spring Boot",
@@ -149,12 +149,12 @@ class StudentApiTest extends BaseApiTest {
             String attachmentId = uploadAttachmentForWork(workId, "submit-flow.zip");
             String videoId = uploadAttachmentForWork(workId, "demo.mp4");
 
-            ApiResponse updateResp = testStuApi.put("/student/works/" + workId, Map.of(
+            ApiResponse updateResp = testStuApi.put("/api/student/works/" + workId, Map.of(
                     "attachmentIds", java.util.List.of(attachmentId, videoId)
             ));
             updateResp.assertOk();
 
-            ApiResponse submitResp = testStuApi.post("/student/works/" + workId + "/submit", null);
+            ApiResponse submitResp = testStuApi.post("/api/student/works/" + workId + "/submit", null);
             submitResp.assertOk();
         }
     }
@@ -166,7 +166,7 @@ class StudentApiTest extends BaseApiTest {
         @Test
         @DisplayName("已公示批次返回个人排名")
         void getPublishedRanks() {
-            ApiResponse resp = studentApi.get("/student/score/my-ranks");
+            ApiResponse resp = studentApi.get("/api/student/score/my-ranks");
             resp.assertOk();
             assertTrue(resp.getDataNode().isArray());
             assertTrue(resp.getDataNode().size() >= 1, "应至少返回一个已公示批次排名");
@@ -180,7 +180,7 @@ class StudentApiTest extends BaseApiTest {
         @Test
         @DisplayName("返回当前学生可参与的批次")
         void available() {
-            ApiResponse resp = studentApi.get("/student/batch/available");
+            ApiResponse resp = studentApi.get("/api/student/batch/available");
             resp.assertOk();
             assertTrue(resp.getDataNode().isArray());
         }
@@ -193,7 +193,7 @@ class StudentApiTest extends BaseApiTest {
         @Test
         @DisplayName("获取通知列表")
         void listNotifications() {
-            ApiResponse resp = studentApi.get("/student/notify/list");
+            ApiResponse resp = studentApi.get("/api/student/notify/list");
             assertTrue(resp.getCode() == 200 || resp.getCode() == 500,
                     "期望 200 或 500，实际: " + resp.getCode());
         }

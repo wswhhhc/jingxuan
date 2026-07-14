@@ -125,7 +125,7 @@ export SPRING_DATA_REDIS_HOST=127.0.0.1
 export SPRING_DATA_REDIS_PORT=6379
 
 backend_url=http://127.0.0.1:8080
-backend_health_url="$backend_url/public/works?pageNum=1&pageSize=1"
+backend_health_url="$backend_url/api/public/works?pageNum=1&pageSize=1"
 
 step "启动后端"
 if port_open 8080; then

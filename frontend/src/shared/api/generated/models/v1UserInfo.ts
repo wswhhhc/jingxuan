@@ -15,7 +15,7 @@ export interface V1UserInfo {
   phone?: string;
   realName?: string;
   roleCode?: string;
-  roleId?: string;
+  roleId?: number;
   roleName?: string;
   username?: string;
 }

@@ -9,6 +9,10 @@ import com.jingxuan.security.JwtTokenProvider;
 import com.jingxuan.identityaccess.api.V1LoginResponse;
 import com.jingxuan.identityaccess.api.V1UserInfo;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +37,13 @@ public class V1AuthController {
 
     @PostMapping("/login")
     @Operation(summary = "用户登录")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "登录成功",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = V1LoginResponse.class))),
+            @ApiResponse(responseCode = "401", description = "用户名或密码错误"),
+            @ApiResponse(responseCode = "403", description = "认证请求来源不受信任")
+    })
     public ResponseEntity<V1LoginResponse> login(@Valid @RequestBody LoginRequest request) {
         var legacy = authService.login(request);
         var user = legacy.getUserInfo();
@@ -45,6 +56,13 @@ public class V1AuthController {
 
     @PostMapping("/refresh")
     @Operation(summary = "轮换刷新令牌")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "刷新成功",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = V1LoginResponse.class))),
+            @ApiResponse(responseCode = "401", description = "刷新令牌无效、过期或已被使用"),
+            @ApiResponse(responseCode = "403", description = "认证请求来源不受信任")
+    })
     public ResponseEntity<V1LoginResponse> refresh(@Valid @RequestBody V1RefreshRequest request) {
         var rotated = refreshTokenService.rotate(request.refreshToken());
         String accessToken = jwtTokenProvider.generateV1AccessToken(rotated.userId(), rotated.username(), rotated.role());

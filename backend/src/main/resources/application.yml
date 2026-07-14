@@ -75,7 +75,7 @@ mybatis-plus:
 
 # Spring Security 忽略路径（无需认证）
 ignored:
-  paths: /auth/login,/api/auth/login,/api/v1/auth/login,/api/v1/auth/refresh,/auth/register,/api/auth/register,/auth/send-code,/api/auth/send-code,/api/v1/classes,/api/v1/dictionaries/**,/api/v1/tags,/swagger-ui/**,/v3/api-docs/**,/doc.html,/webjars/**,/favicon.ico,/uploads/**,/public/**,/comment/list/**
+  paths: /auth/login,/api/auth/login,/api/v1/auth/login,/api/v1/auth/refresh,/auth/register,/api/auth/register,/auth/send-code,/api/auth/send-code,/api/v1/classes,/api/v1/dictionaries/**,/api/v1/tags,/swagger-ui/**,/v3/api-docs/**,/doc.html,/webjars/**,/favicon.ico,/uploads/**,/api/comment/list/**
 
 # JWT 配置
 jwt:
@@ -101,6 +101,8 @@ deepseek:
 jingxuan:
   upload:
     path: ${JINGXUAN_UPLOAD_PATH:./uploads}
+  security:
+    trusted-proxy-cidrs: ${JINGXUAN_SECURITY_TRUSTED_PROXY_CIDRS:127.0.0.1/32,::1/128}
   events:
     recovery:
       enabled: ${EVENT_RECOVERY_ENABLED:true}

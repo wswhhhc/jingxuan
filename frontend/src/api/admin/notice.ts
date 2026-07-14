@@ -30,9 +30,9 @@ export function updateNotice(
   id: number,
   data: { title?: string; content?: string; status?: number; topFlag?: number; targetScope?: string },
 ) {
-  return request.put(`/admin/notice/${id}`, data)
+  return request.put(`/api/admin/notice/${id}`, data)
 }
 
 export function deleteNotice(id: number) {
-  return request.delete(`/admin/notice/${id}`)
+  return request.delete(`/api/admin/notice/${id}`)
 }

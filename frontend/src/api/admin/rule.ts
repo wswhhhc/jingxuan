@@ -19,11 +19,11 @@ export function createRule(data: Partial<RuleItem>) {
 }
 
 export function updateRule(id: number, data: Partial<RuleItem>) {
-  return request.put(`/admin/rule/${id}`, data)
+  return request.put(`/api/admin/rule/${id}`, data)
 }
 
 export function deleteRule(id: number) {
-  return request.delete(`/admin/rule/${id}`)
+  return request.delete(`/api/admin/rule/${id}`)
 }
 
 export function testConnection() {

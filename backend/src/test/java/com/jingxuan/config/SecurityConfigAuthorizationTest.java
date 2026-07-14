@@ -9,6 +9,7 @@ import com.jingxuan.security.RestAccessDeniedHandler;
 import com.jingxuan.security.RestAuthenticationEntryPoint;
 import com.jingxuan.security.TokenBlacklistService;
 import com.jingxuan.security.TrustedProxyClientIpResolver;
+import jakarta.servlet.DispatcherType;
 import jakarta.servlet.Filter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
@@ -65,6 +67,27 @@ class SecurityConfigAuthorizationTest {
                 .andExpect(status().isUnauthorized());
     }
 
+    @Test
+    void registrationAndEmailVerificationArePublic() throws Exception {
+        mockMvc.perform(post("/api/v1/auth/email-verifications"))
+                .andExpect(status().isNoContent());
+
+        mockMvc.perform(post("/api/v1/auth/registrations"))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    void errorDispatcherIsPublicButDirectErrorRequestRemainsAuthenticated() throws Exception {
+        mockMvc.perform(get("/error").with(request -> {
+                    request.setDispatcherType(DispatcherType.ERROR);
+                    return request;
+                }))
+                .andExpect(status().isNoContent());
+
+        mockMvc.perform(get("/error"))
+                .andExpect(status().isUnauthorized());
+    }
+
     @Configuration(proxyBeanMethods = false)
     @EnableWebMvc
     @Import(SecurityConfig.class)
@@ -88,8 +111,14 @@ class SecurityConfigAuthorizationTest {
         }
 
         @Bean
-        PublicRateLimitFilter publicRateLimitFilter(ObjectMapper objectMapper) {
-            return new PublicRateLimitFilter(objectMapper);
+        PublicRateLimitFilter publicRateLimitFilter(
+                ObjectMapper objectMapper, TrustedProxyClientIpResolver clientIpResolver) {
+            return new PublicRateLimitFilter(objectMapper, clientIpResolver, 20, 1000);
+        }
+
+        @Bean
+        TrustedProxyClientIpResolver trustedProxyClientIpResolver() {
+            return new TrustedProxyClientIpResolver("127.0.0.1/32,::1/128");
         }
 
         @Bean
@@ -118,6 +147,21 @@ class SecurityConfigAuthorizationTest {
 
         @GetMapping("/api/v1/auth/challenges")
         void getChallenge() {
+        }
+
+        @PostMapping("/api/v1/auth/email-verifications")
+        @ResponseStatus(HttpStatus.NO_CONTENT)
+        void createEmailVerification() {
+        }
+
+        @PostMapping("/api/v1/auth/registrations")
+        @ResponseStatus(HttpStatus.CREATED)
+        void createRegistration() {
+        }
+
+        @RequestMapping("/error")
+        @ResponseStatus(HttpStatus.NO_CONTENT)
+        void error() {
         }
     }
 }

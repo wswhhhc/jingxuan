@@ -35,7 +35,7 @@ export function getAuditList(params: AuditQuery) {
 }
 
 export function getAuditDetail(id: number) {
-  return request.get<WorkDetailVO>(`/admin/audit/${id}`)
+  return request.get<WorkDetailVO>(`/api/admin/audit/${id}`)
 }
 
 export function doAudit(data: AuditAction) {
@@ -43,19 +43,19 @@ export function doAudit(data: AuditAction) {
 }
 
 export function getAuditHistory(workId: number) {
-  return request.get<{ records: AuditHistoryItem[]; total: number }>(`/admin/audit/${workId}/history`)
+  return request.get<{ records: AuditHistoryItem[]; total: number }>(`/api/admin/audit/${workId}/history`)
 }
 
 export function publishWork(workId: number) {
-  return request.post(`/admin/audit/${workId}/publish`)
+  return request.post(`/api/admin/audit/${workId}/publish`)
 }
 
 export function offlineWork(workId: number) {
-  return request.post(`/admin/audit/${workId}/offline`)
+  return request.post(`/api/admin/audit/${workId}/offline`)
 }
 
 export function setFeatured(workId: number, featured: 0 | 1, previewUrl?: string) {
-  return request.post(`/admin/audit/${workId}/featured`, null, {
+  return request.post(`/api/admin/audit/${workId}/featured`, null, {
     params: { featured, previewUrl: previewUrl || undefined },
   })
 }

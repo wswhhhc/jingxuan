@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **菁选校园作品展示平台** — IT 学院学生作品展示、教师评分、管理员审核的全流程管理平台。
 
 - **前端**：Vue 3 + TypeScript + Element Plus + Vite 8 SPA
-- **后端**：Spring Boot 3.2.5 + Java 17 + MyBatis-Plus 3.5.7
+- **后端**：Spring Boot 4.1.0 + Java 21 + MyBatis-Plus 3.5.17
 - **数据库**：MySQL 8 + Redis 7
 - **部署**：Docker / PM2 + Nginx
 - **CI/CD**：GitHub Actions（push 自动跑测试 + 构建）
@@ -37,11 +37,12 @@ npx vue-tsc --noEmit                # TypeScript 类型检查
 
 # 后端（需在 backend/ 目录下）
 mvn compile                           # 编译
-mvn test                              # 全部测试（含集成测试，需 MySQL+Redis）
-mvn test -Dtest="WorkServiceImplTest" # 单个测试类
-mvn test -Dtest="AdminApiTest,FileUploadTest"  # 多个测试类
-mvn test -Dtest="com.jingxuan.modules.work.**" # 按包运行
-mvn test -DfailIfNoTests=false        # 无测试不报错
+mvn test                              # 全部单元测试（Surefire）
+mvn test -Dtest="WorkServiceImplTest" # 单个单元测试类
+mvn test -Dtest="com.jingxuan.modules.work.**" # 按包运行单元测试
+mvn verify                            # 单元测试 + Testcontainers 集成测试（需 Docker）
+mvn verify -DskipUnitTests=true -Dit.test="AdminApiTest,FileUploadTest" # 指定集成测试类
+mvn test -DfailIfNoTests=false        # 无单元测试不报错
 mvn compile -q                        # 编译检查
 mvn package -Dmaven.test.skip=true    # 打包 JAR
 
@@ -75,21 +76,27 @@ docker compose up -d --build backend  # 重新构建并启动后端
 ### CI/CD
 
 ```bash
-git push  # 自动触发 GitHub Actions：编译 → 单元测试 → 打包（.github/workflows/ci.yml）
+git push  # 自动触发：API 契约、前端质量、后端单元/集成测试、Legacy Docker 冒烟与安全门禁
 ```
 
-注意：CI 只跑后端单元测试（不含集成测试），需要 MySQL+Redis 的测试在本地运行。
+注意：CI 的 `backend:verify` 会通过 Testcontainers 同时运行单元测试和集成测试，无需预置 MySQL/Redis 服务，但 Runner 必须可用 Docker。
 
 ## 环境变量
 
 | 变量 | 说明 | 默认值 |
 |------|------|--------|
-| `DB_PASSWORD` | MySQL 数据库密码 | `jingxuan123` |
+| `DB_ROOT_PASSWORD` | Docker MySQL root 密码 | — |
+| `DB_LEGACY_ROOT_PASSWORD` | 旧 Docker 卷迁移时的一次性原 root 密码 | — |
+| `DB_USER` | 应用数据库用户 | `jingxuan` |
+| `DB_PASSWORD` | 应用数据库密码 | — |
+| `JWT_SECRET` | JWT 签名密钥（至少 32 字符） | — |
 | `DEEPSEEK_API_KEY` | DeepSeek API 密钥（留空 dev 环境 bypass） | — |
 | `MAIL_HOST` | 邮件服务器地址 | `smtp.qq.com` |
 | `MAIL_USERNAME` | 邮箱用户名 | — |
 | `MAIL_PASSWORD` | 邮箱密码/授权码 | — |
 | `MAIL_FROM` | 发件人地址 | — |
+| `JINGXUAN_SECURITY_TRUSTED_PROXY_CIDRS` | 可采信 `X-Real-IP` 的反向代理 CIDR | `127.0.0.1/32,::1/128` |
+| `JINGXUAN_DOCKER_TRUSTED_PROXY_CIDRS` | Docker 固定 Nginx 代理 CIDR | `127.0.0.1/32,::1/128,172.31.250.2/32` |
 
 定义在项目根目录 `.env` 文件中。
 
@@ -99,14 +106,16 @@ git push  # 自动触发 GitHub Actions：编译 → 单元测试 → 打包（.
 |------|------|
 | `backend/src/main/resources/application.yml` | 主配置（数据源、JWT、Redis、上传路径、DeepSeek） |
 | `application-dev.yml` | 开发环境（DeepSeek bypass） |
-| `application-test.yml` | 测试环境（独立数据库 jingxuan_test） |
+| `application-test.yml` | 测试 profile（数据库/Redis 由 Testcontainers 动态注入） |
 | `application-prod.yml` | 生产环境（DeepSeek reject） |
 | `frontend/vite.config.ts` | Vite 构建 + 开发代理配置 |
 | `nginx-jingxuan.conf` | Nginx 反代配置（安全头、Gzip、缓存策略） |
 | `ecosystem.config.cjs` | PM2 进程配置（JVM 参数） |
 | `docker-compose.yml` | Docker 编排 |
 | `.env` | 敏感配置（**不提交 Git**） |
-| `sql/` | 数据库迁移脚本（按日期命名） |
+| `backend/src/main/java/db/migration/V1__Baseline.java` | Flyway V1 兼容基线 |
+| `backend/src/main/resources/legacy-sql/` | V1 基线引用的历史 SQL 资源 |
+| `backend/src/main/resources/db/migration/V*.sql` | Flyway 后续增量迁移 |
 
 ## 架构概览
 
@@ -115,8 +124,8 @@ git push  # 自动触发 GitHub Actions：编译 → 单元测试 → 打包（.
 ```
 用户 → Nginx (80)
  ├── /            → frontend/dist/（SPA 静态文件）
- ├── /api/*       → localhost:8080/*（Nginx 剥离 /api 前缀）
- ├── /api/file/*  → localhost:8080/api/file/*（文件上传保留前缀）
+ ├── /api/*       → localhost:8080/api/*（Nginx 保留 /api 前缀）
+ ├── /api/file/*  → localhost:8080/api/file/*（文件上传同样保留前缀）
  └── /uploads/*   → localhost:8080/uploads/*（用户上传文件）
 ```
 
@@ -124,20 +133,20 @@ git push  # 自动触发 GitHub Actions：编译 → 单元测试 → 打包（.
 
 ### 开发代理（Vite）
 
-前端开发服务器 (`localhost:5173`) 通过 vite.config.ts 中的 proxy 将 `/api/*` 转发到后端 `localhost:8080`，请求路径中 `/api` 前缀会被剥离（文件上传路径保留）。
+前端开发服务器 (`localhost:5173`) 通过 vite.config.ts 中的 proxy 将 `/api/*` 原样转发到后端 `localhost:8080`，请求路径始终保留 `/api` 前缀。
 
 ### Adapter 控制器模式
 
-所有前端请求 → Nginx（剥离 `/api`）→ Adapter 控制器 → Service：
+所有前端请求 → Nginx（保留 `/api`）→ Adapter 控制器 → Service：
 
 | 控制器 | 路径 | 角色 |
 |--------|------|------|
-| `AdminApiController` | `/admin/*` | 管理员 |
-| `TeacherApiController` | `/teacher/*` | 教师 |
-| `StudentApiController` | `/student/*` | 学生 |
-| `PublicApiController` | `/public/*` | 游客 |
-| `AuthController` | `/auth/*` | 认证（登录/注册/验证码） |
-| NotificationController | `/{role}/notify/*` | 三端通知 |
+| `AdminApiController` | `/api/admin/*` | 管理员 |
+| `TeacherApiController` | `/api/teacher/*` | 教师 |
+| `StudentApiController` | `/api/student/*` | 学生 |
+| `PublicApiController` | `/api/public/*` | 游客 |
+| `AuthController` | `/api/auth/*` | 认证（登录/注册/验证码） |
+| NotificationController | `/api/{role}/notify/*` | 三端通知 |
 
 Adapter 控制器（`modules/adapter/`）负责接收前端请求，调用 Facade / Service 执行业务逻辑，返回 `Result<T>` 统一响应。
 
@@ -254,23 +263,18 @@ frontend/src/
 
 **后端单元测试**：扩展 `BaseServiceTest`，使用 Mockito 模拟 Mapper 层。注意：`@RequiredArgsConstructor` 新增依赖时需要同步更新测试类的构造函数调用和 `@Mock` 字段。
 
-**集成测试依赖**：需运行中的 MySQL（数据库 `jingxuan_test`）+ Redis。CI 环境中不跑集成测试。
-
-```bash
-# 运行集成测试时需设置数据库密码
-export DB_PASSWORD=252629
-mvn test
-```
+**集成测试依赖**：`BaseApiTest` 自动启动 MySQL 8 与 Redis 7 Testcontainers，并由 Maven Failsafe 在 `verify` 阶段运行；本地和 CI 只需可用 Docker，无需设置 `DB_PASSWORD` 或预建 `jingxuan_test`。
 
 ### 测试状态（当前）
 
 | 类型 | 通过率 | 运行方式 |
 |------|--------|---------|
-| 前端单元测试 | 56/56 100% | `npm run test` |
-| 后端单元测试 | 299/299 100% | `mvn test -Dtest="com.jingxuan.modules.**"` |
-| 集成测试 | 全部通过 | `mvn test`（需 MySQL+Redis） |
-| 全部后端测试 | 317/317 100% | `mvn test`（需 MySQL+Redis） |
-| 冒烟测试 | 14/14 100% | `bash scripts/smoke-test.sh` |
+| 前端自动化测试 | 79 通过 / 24 既有跳过 | `npm run frontend:test` |
+| 后端单元测试 | 385/385 | `npm run backend:test:unit` |
+| 后端集成测试 | 209/209 | `npm run backend:test:integration`（需 Docker） |
+| 全部后端测试 | 594/594 | `npm run backend:verify`（需 Docker） |
+| 冒烟契约测试 | 26/26 | `npm run smoke:test` |
+| OpenAPI 专项测试 | 21/21 | `npm run api:check` |
 
 ### 关键测试文件
 
@@ -286,9 +290,9 @@ mvn test
 
 ## 数据库迁移
 
-- 基础表：`sql/base/init_schema.sql`
-- 业务表：`sql/business/work_schema.sql`
-- 增量迁移：`sql/business/yyyy-MM-dd-描述.sql`
+- Flyway V1 兼容基线：`backend/src/main/java/db/migration/V1__Baseline.java`
+- V1 引用的历史脚本：`backend/src/main/resources/legacy-sql/`
+- 后续增量迁移：`backend/src/main/resources/db/migration/V*.sql`
 - 所有实体继承 `BaseEntity`（雪花算法 id、createTime、updateTime、逻辑删除 deleted）
 - 新增唯一索引注意兼容软删除：`UNIQUE KEY uk_email_role_deleted (email, role_id, deleted)`
 

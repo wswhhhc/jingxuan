@@ -23,7 +23,7 @@ class PublicApiTest extends BaseApiTest {
         @Test
         @DisplayName("默认分页返回已发布作品")
         void defaultQuery() {
-            ApiResponse resp = publicApi.get("/public/works");
+            ApiResponse resp = publicApi.get("/api/public/works");
             resp.assertOk();
             int total = resp.getDataInt("total");
             assertTrue(total >= 3, "应至少包含 3 个已发布作品，实际: " + total);
@@ -33,7 +33,7 @@ class PublicApiTest extends BaseApiTest {
         @Test
         @DisplayName("关键词搜索")
         void searchByKeyword() {
-            ApiResponse resp = publicApi.get("/public/works?keyword=校园");
+            ApiResponse resp = publicApi.get("/api/public/works?keyword=校园");
             resp.assertOk();
             assertTrue(resp.getDataInt("total") > 0);
         }
@@ -41,7 +41,7 @@ class PublicApiTest extends BaseApiTest {
         @Test
         @DisplayName("空结果查询")
         void emptyResult() {
-            ApiResponse resp = publicApi.get("/public/works?keyword=不存在的内容xxxx");
+            ApiResponse resp = publicApi.get("/api/public/works?keyword=不存在的内容xxxx");
             resp.assertOk();
             assertEquals(0, resp.getDataInt("total"));
         }
@@ -54,7 +54,7 @@ class PublicApiTest extends BaseApiTest {
         @Test
         @DisplayName("已发布作品详情含计数")
         void publishedDetail() {
-            ApiResponse resp = publicApi.get("/public/works/1");
+            ApiResponse resp = publicApi.get("/api/public/works/1");
             resp.assertOk();
             assertEquals("校园二手书交易平台", resp.getDataText("title"));
             assertTrue(resp.getDataInt("viewCount") > 0, "浏览计数应递增");
@@ -63,14 +63,14 @@ class PublicApiTest extends BaseApiTest {
         @Test
         @DisplayName("未发布作品返回 404")
         void notPublished() {
-            ApiResponse resp = publicApi.get("/public/works/4");
+            ApiResponse resp = publicApi.get("/api/public/works/4");
             resp.assertCode(404);
         }
 
         @Test
         @DisplayName("不存在的作品返回 404")
         void notFound() {
-            ApiResponse resp = publicApi.get("/public/works/999");
+            ApiResponse resp = publicApi.get("/api/public/works/999");
             resp.assertCode(404);
         }
     }
@@ -83,15 +83,27 @@ class PublicApiTest extends BaseApiTest {
         @DisplayName("已登录可点赞和取消")
         void likeAndUnlike() {
             // 点赞
-            ApiResponse likeResp = studentApi.post("/works/1/like", null);
+            ApiResponse likeResp = studentApi.post("/api/works/1/like", null);
             likeResp.assertOk();
             boolean liked = likeResp.getDataBool("liked");
             int count1 = likeResp.getDataInt("likeCount");
 
             // 取消点赞
-            ApiResponse unlikeResp = studentApi.post("/works/1/like", null);
+            ApiResponse unlikeResp = studentApi.post("/api/works/1/like", null);
             unlikeResp.assertOk();
             assertEquals(!liked, unlikeResp.getDataBool("liked"));
+        }
+
+        @Test
+        @DisplayName("登录用户访问公开详情时保留个性化点赞状态")
+        void authenticatedPublicDetailKeepsLikeState() {
+            ApiResponse likeResp = studentApi.post("/api/works/1/like", null);
+            likeResp.assertOk();
+
+            ApiResponse detailResp = studentApi.get("/api/public/works/1");
+
+            detailResp.assertOk();
+            assertTrue(detailResp.getDataBool("liked"));
         }
     }
 
@@ -102,7 +114,7 @@ class PublicApiTest extends BaseApiTest {
         @Test
         @DisplayName("排行榜列表（默认批次）")
         void rankingList() {
-            ApiResponse resp = publicApi.get("/public/ranking/list?batchId=1&topN=5");
+            ApiResponse resp = publicApi.get("/api/public/ranking/list?batchId=1&topN=5");
             assertTrue(resp.getCode() == 200 || resp.getCode() == 500,
                     "期望 200 或 500（缓存未就绪），实际: " + resp.getCode());
         }
@@ -110,7 +122,7 @@ class PublicApiTest extends BaseApiTest {
         @Test
         @DisplayName("已公示批次列表")
         void rankingBatches() {
-            ApiResponse resp = publicApi.get("/public/ranking/batches");
+            ApiResponse resp = publicApi.get("/api/public/ranking/batches");
             resp.assertOk();
             assertNotNull(resp.getDataNode());
         }
@@ -118,7 +130,7 @@ class PublicApiTest extends BaseApiTest {
         @Test
         @DisplayName("排行榜技术栈分类")
         void rankingCategories() {
-            ApiResponse resp = publicApi.get("/public/ranking/categories?batchId=1");
+            ApiResponse resp = publicApi.get("/api/public/ranking/categories?batchId=1");
             assertTrue(resp.getCode() == 200 || resp.getCode() == 500);
         }
     }
@@ -131,7 +143,7 @@ class PublicApiTest extends BaseApiTest {
         @DisplayName("公开作品列表响应时间满足轻量基线")
         void worksListResponseTime() {
             long start = System.currentTimeMillis();
-            ApiResponse resp = publicApi.get("/public/works");
+            ApiResponse resp = publicApi.get("/api/public/works");
             long duration = System.currentTimeMillis() - start;
             resp.assertOk();
             assertTrue(duration < 3000, "公开作品列表响应时间应小于 3s，实际: " + duration + "ms");
@@ -141,7 +153,7 @@ class PublicApiTest extends BaseApiTest {
         @DisplayName("公开作品详情响应时间满足轻量基线")
         void workDetailResponseTime() {
             long start = System.currentTimeMillis();
-            ApiResponse resp = publicApi.get("/public/works/1");
+            ApiResponse resp = publicApi.get("/api/public/works/1");
             long duration = System.currentTimeMillis() - start;
             resp.assertOk();
             assertTrue(duration < 3000, "公开作品详情响应时间应小于 3s，实际: " + duration + "ms");
@@ -151,7 +163,7 @@ class PublicApiTest extends BaseApiTest {
         @DisplayName("公开排行榜响应时间满足轻量基线")
         void rankingResponseTime() {
             long start = System.currentTimeMillis();
-            ApiResponse resp = publicApi.get("/public/ranking/list?batchId=1&topN=5");
+            ApiResponse resp = publicApi.get("/api/public/ranking/list?batchId=1&topN=5");
             long duration = System.currentTimeMillis() - start;
             assertTrue(resp.getCode() == 200 || resp.getCode() == 500,
                     "排行榜接口期望 200/500，实际: " + resp.getCode());
@@ -162,7 +174,7 @@ class PublicApiTest extends BaseApiTest {
         @DisplayName("公开接口短时间连续访问不崩溃")
         void burstAccessShouldNotCrash() {
             for (int i = 0; i < 10; i++) {
-                ApiResponse resp = publicApi.get("/public/works");
+                ApiResponse resp = publicApi.get("/api/public/works");
                 assertEquals(200, resp.getCode(), "第 " + (i + 1) + " 次访问失败");
             }
         }
@@ -175,20 +187,17 @@ class PublicApiTest extends BaseApiTest {
             ResponseEntity<String> lastResp = null;
             for (int i = 0; i <= 21; i++) {
                 lastResp = restTemplate.exchange(
-                        "http://localhost:" + port + "/public/works",
+                        "http://localhost:" + port + "/api/public/works",
                         HttpMethod.GET,
                         new HttpEntity<>(headers),
                         String.class);
             }
             assertNotNull(lastResp);
+            assertEquals(429, lastResp.getStatusCode().value());
             String body = lastResp.getBody();
-            if (lastResp.getStatusCode().value() == 429) {
-                assertTrue(body.contains("\"code\":429") || body.contains("访问过于频繁"),
-                        "应返回频率保护提示，实际: " + body);
-            } else {
-                // 偶发性不触发限流（并发低时），标记不影响结论
-                System.out.println("限流测试未触发 429（可能窗口内未满 20 次），跳过断言");
-            }
+            assertNotNull(body);
+            assertTrue(body.contains("\"code\":429") || body.contains("访问过于频繁"),
+                    "应返回频率保护提示，实际: " + body);
         }
     }
 
@@ -199,7 +208,7 @@ class PublicApiTest extends BaseApiTest {
         @Test
         @DisplayName("获取班级列表")
         void classList() {
-            ApiResponse resp = publicApi.get("/public/classes");
+            ApiResponse resp = publicApi.get("/api/public/classes");
             resp.assertOk();
             assertNotNull(resp.getDataNode());
             assertTrue(resp.getDataNode().isArray());
@@ -208,7 +217,7 @@ class PublicApiTest extends BaseApiTest {
         @Test
         @DisplayName("获取标签列表")
         void tagList() {
-            ApiResponse resp = publicApi.get("/public/tags");
+            ApiResponse resp = publicApi.get("/api/public/tags");
             resp.assertOk();
             assertNotNull(resp.getDataNode());
         }

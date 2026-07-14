@@ -20,6 +20,12 @@ import {
   unref
 } from 'vue';
 
+import type {
+  ProblemDetails,
+  V1ChartData,
+  V1DashboardStats
+} from '../models';
+
 import { apiRequest } from '../../http';
 
 
@@ -28,6 +34,7 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 
 /**
+ * 获取技术栈分布、作品状态分布、评分分布等图表数据
  * @summary com/jingxuan/operationsreporting/web/V1DashboardController.java
  */
 export const getDashboardCharts = (
@@ -36,7 +43,7 @@ export const getDashboardCharts = (
 ) => {
 
 
-      return apiRequest<void>(
+      return apiRequest<V1ChartData>(
       {url: `/api/v1/dashboard/charts`, method: 'GET', signal
     },
       options);
@@ -52,7 +59,7 @@ export const getGetDashboardChartsQueryKey = () => {
     }
 
 
-export const getGetDashboardChartsQueryOptions = <TData = Awaited<ReturnType<typeof getDashboardCharts>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDashboardCharts>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export const getGetDashboardChartsQueryOptions = <TData = Awaited<ReturnType<typeof getDashboardCharts>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDashboardCharts>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -71,14 +78,14 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetDashboardChartsQueryResult = NonNullable<Awaited<ReturnType<typeof getDashboardCharts>>>
-export type GetDashboardChartsQueryError = void
+export type GetDashboardChartsQueryError = ProblemDetails
 
 
 /**
  * @summary com/jingxuan/operationsreporting/web/V1DashboardController.java
  */
 
-export function useGetDashboardCharts<TData = Awaited<ReturnType<typeof getDashboardCharts>>, TError = void>(
+export function useGetDashboardCharts<TData = Awaited<ReturnType<typeof getDashboardCharts>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDashboardCharts>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
  ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -98,6 +105,7 @@ export function useGetDashboardCharts<TData = Awaited<ReturnType<typeof getDashb
 
 
 /**
+ * 获取作品总数、待审核数、活跃批次等统计数据
  * @summary com/jingxuan/operationsreporting/web/V1DashboardController.java
  */
 export const getDashboardStats = (
@@ -106,7 +114,7 @@ export const getDashboardStats = (
 ) => {
 
 
-      return apiRequest<void>(
+      return apiRequest<V1DashboardStats>(
       {url: `/api/v1/dashboard/stats`, method: 'GET', signal
     },
       options);
@@ -122,7 +130,7 @@ export const getGetDashboardStatsQueryKey = () => {
     }
 
 
-export const getGetDashboardStatsQueryOptions = <TData = Awaited<ReturnType<typeof getDashboardStats>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDashboardStats>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export const getGetDashboardStatsQueryOptions = <TData = Awaited<ReturnType<typeof getDashboardStats>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDashboardStats>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -141,14 +149,14 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetDashboardStatsQueryResult = NonNullable<Awaited<ReturnType<typeof getDashboardStats>>>
-export type GetDashboardStatsQueryError = void
+export type GetDashboardStatsQueryError = ProblemDetails
 
 
 /**
  * @summary com/jingxuan/operationsreporting/web/V1DashboardController.java
  */
 
-export function useGetDashboardStats<TData = Awaited<ReturnType<typeof getDashboardStats>>, TError = void>(
+export function useGetDashboardStats<TData = Awaited<ReturnType<typeof getDashboardStats>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDashboardStats>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
  ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {

@@ -14,10 +14,14 @@ const requiredTemplateKeys = new Set([
   "DB_PORT",
   "DB_NAME",
   "DB_USER",
+  "DB_ROOT_PASSWORD",
+  "DB_LEGACY_ROOT_PASSWORD",
   "DB_PASSWORD",
   "REDIS_HOST",
   "REDIS_PORT",
   "JINGXUAN_UPLOAD_PATH",
+  "JINGXUAN_SECURITY_TRUSTED_PROXY_CIDRS",
+  "JINGXUAN_DOCKER_TRUSTED_PROXY_CIDRS",
   "JWT_SECRET",
   "JWT_EXPIRATION_MS",
   "DEEPSEEK_API_KEY",
@@ -29,6 +33,8 @@ const requiredTemplateKeys = new Set([
 ]);
 
 const keysThatMustStayEmpty = new Set([
+  "DB_ROOT_PASSWORD",
+  "DB_LEGACY_ROOT_PASSWORD",
   "DB_PASSWORD",
   "JWT_SECRET",
   "DEEPSEEK_API_KEY",
@@ -38,10 +44,15 @@ const keysThatMustStayEmpty = new Set([
 ]);
 
 const requiredTemplateDefaults = new Map([
-  ["DB_USER", "root"],
+  ["DB_USER", "jingxuan"],
   ["REDIS_HOST", "localhost"],
   ["REDIS_PORT", "6379"],
   ["JINGXUAN_UPLOAD_PATH", "./uploads"],
+  ["JINGXUAN_SECURITY_TRUSTED_PROXY_CIDRS", "127.0.0.1/32,::1/128"],
+  [
+    "JINGXUAN_DOCKER_TRUSTED_PROXY_CIDRS",
+    "127.0.0.1/32,::1/128,172.31.250.2/32",
+  ],
 ]);
 
 function gitCheckIgnore(relativePath) {
@@ -99,6 +110,38 @@ export function validateEnvExample(envExample) {
   return failures;
 }
 
+export function validateComposeProxyBoundary(compose) {
+  const failures = [];
+
+  if (!compose.includes("JINGXUAN_DOCKER_TRUSTED_PROXY_CIDRS")) {
+    failures.push(
+      "docker-compose.yml 必须使用独立的 Docker 可信代理变量，避免被裸机配置覆盖",
+    );
+  }
+
+  if (/172\.16\.0\.0\/12/u.test(compose)) {
+    failures.push("docker-compose.yml 不得信任整个 Docker 私网网段");
+  }
+
+  if (!compose.includes("172.31.250.2/32")) {
+    failures.push("docker-compose.yml 必须仅信任固定的 Nginx 代理地址");
+  }
+
+  if (!compose.includes("ipv4_address: 172.31.250.2")) {
+    failures.push("docker-compose.yml 必须为 Nginx 配置固定代理地址");
+  }
+
+  if (!compose.includes("subnet: 172.31.250.0/29")) {
+    failures.push("docker-compose.yml 必须为代理网络配置固定小网段");
+  }
+
+  if (!compose.includes('"127.0.0.1:8080:8080"')) {
+    failures.push("docker-compose.yml 的后端 8080 端口必须仅绑定 127.0.0.1");
+  }
+
+  return failures;
+}
+
 async function main() {
   const failures = [];
   const fail = (message) => failures.push(message);
@@ -141,6 +184,12 @@ async function main() {
     "utf8",
   );
   failures.push(...validateEnvExample(envExample));
+
+  const compose = await readFile(
+    path.join(workspaceRoot, "docker-compose.yml"),
+    "utf8",
+  );
+  failures.push(...validateComposeProxyBoundary(compose));
 
   const applicationYamlPath = path.join(
     workspaceRoot,

@@ -498,13 +498,13 @@ async function handleWizardSubmit() {
 
     // 保存并可选发布待办
     if (noticeTitle.value && noticeContent.value) {
-      await request.put(`/score-batch/${batchId}/notice`, {
+      await request.put(`/api/score-batch/${batchId}/notice`, {
         noticeTitle: noticeTitle.value,
         noticeContent: noticeContent.value,
       })
       if (publishAfterSave.value) {
         try {
-          await request.post(`/score-batch/${batchId}/publish-task`)
+          await request.post(`/api/score-batch/${batchId}/publish-task`)
         } catch {
           /* may fail if no students yet */
         }
@@ -530,7 +530,7 @@ function editNotice(row: ScoreBatchItem) {
 
 async function saveNoticeOnly() {
   try {
-    await request.put(`/score-batch/${noticeBatchId.value}/notice`, {
+    await request.put(`/api/score-batch/${noticeBatchId.value}/notice`, {
       noticeTitle: noticeTitle.value,
       noticeContent: noticeContent.value,
     })
@@ -544,11 +544,11 @@ async function saveNoticeOnly() {
 
 async function saveAndPublishNotice() {
   try {
-    await request.put(`/score-batch/${noticeBatchId.value}/notice`, {
+    await request.put(`/api/score-batch/${noticeBatchId.value}/notice`, {
       noticeTitle: noticeTitle.value,
       noticeContent: noticeContent.value,
     })
-    await request.post(`/score-batch/${noticeBatchId.value}/publish-task`)
+    await request.post(`/api/score-batch/${noticeBatchId.value}/publish-task`)
     ElMessage.success('待办已保存并发布')
     noticeVisible.value = false
     reload()
@@ -591,7 +591,7 @@ const viewScores = async (row: ScoreBatchItem) => {
 
 const publishRanking = async (batchId: number) => {
   try {
-    await request.post(`/score-batch/${batchId}/publish-ranking`)
+    await request.post(`/api/score-batch/${batchId}/publish-ranking`)
     ElMessage.success('排行榜已公示')
     rankingPublished.value = true
     reload()
@@ -602,7 +602,7 @@ const publishRanking = async (batchId: number) => {
 
 const unpublishRanking = async (batchId: number) => {
   try {
-    await request.post(`/score-batch/${batchId}/unpublish-ranking`)
+    await request.post(`/api/score-batch/${batchId}/unpublish-ranking`)
     ElMessage.success('已取消公示')
     rankingPublished.value = false
     reload()

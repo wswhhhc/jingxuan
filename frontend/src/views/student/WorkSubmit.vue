@@ -294,7 +294,7 @@ async function loadWork(id: string | number) {
 
 async function loadTags() {
   try {
-    const res = await request.get<{ id: number; dictLabel: string }[]>('/public/tags')
+    const res = await request.get<{ id: number; dictLabel: string }[]>('/api/public/tags')
     tagOptions.value = res.data || []
   } catch {
     tagOptions.value = []

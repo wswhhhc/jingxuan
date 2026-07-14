@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/wswhhhc/jingxuan-/actions/workflows/ci.yml/badge.svg)](https://github.com/wswhhhc/jingxuan-/actions/workflows/ci.yml)
 
-基于 **Spring Boot 3.2.5 + Vue 3** 的全栈校园作品展示平台，支持学生提交作品、教师匿名评分、管理员审核发布、前台公开展示。集成 DeepSeek AI 内容安全审核、Redis 排行榜缓存、Docker 一键部署、GitHub Actions CI/CD 流水线。
+基于 **Spring Boot 4.1 + Vue 3** 的全栈校园作品展示平台，支持学生提交作品、教师匿名评分、管理员审核发布、前台公开展示。集成 DeepSeek AI 内容安全审核、Redis 排行榜缓存、Docker 一键部署、GitHub Actions CI/CD 流水线。
 
 ---
 
@@ -10,12 +10,12 @@
 
 | 层 | 技术 |
 |---|---|
-| 后端框架 | Spring Boot 3.2.5 / Java 17 |
-| ORM | MyBatis-Plus 3.5.7（雪花 ID + 逻辑删除） |
+| 后端框架 | Spring Boot 4.1.0 / Java 21 |
+| ORM | MyBatis-Plus 3.5.17（雪花 ID + 逻辑删除） |
 | 数据库 | MySQL 8.0+（utf8mb4） |
 | 缓存 | Redis 7+（Lettuce，排行榜缓存 + 限流计数器） |
 | 安全 | Spring Security + JWT（jjwt 0.12.5） |
-| API 文档 | Knife4j 4.5.0（OpenAPI 3） |
+| API 文档 | Springdoc 3.0.3（OpenAPI 3.1） |
 | 内容审核 | DeepSeek API + DFA 敏感词 |
 | 前端 | Vue 3 + TypeScript + Vite 8 |
 | UI | Element Plus 2.14 + Pinia 3 |
@@ -46,29 +46,24 @@ git clone https://github.com/wswhhhc/jingxuan-.git && cd jingxuan-
 
 # 2. 配置环境变量
 cp .env.example .env
-# 编辑 .env，填入 DB_PASSWORD、DEEPSEEK_API_KEY、邮件配置
+# 编辑 .env，至少填入 DB_ROOT_PASSWORD、DB_PASSWORD、JWT_SECRET
+# DeepSeek 与邮件配置按需填写
 
 # 3. 一键启动（MySQL + Redis + 后端 + Nginx）
 docker compose up -d
 
-# 4. 初始化数据库（首次部署）
-docker compose exec mysql bash -c "mysql -uroot -p\$DB_PASSWORD jingxuan < /docker-entrypoint-initdb.d/01-init-schema.sql"
-
-# 5. 访问
+# 4. 访问（数据库由 Flyway 自动初始化）
 # 前端: http://localhost
-# API 文档: http://localhost:8080/doc.html
+# API 文档: http://localhost:8080/swagger-ui.html
 ```
 
 ### 手动部署（PM2）
 
 ```bash
-# 环境要求：JDK 17+ / MySQL 8.0+ / Redis 7+ / Node.js 20+
+# 环境要求：JDK 21 / MySQL 8.0+ / Redis 7+ / Node.js 24
 
-# 1. 建库 & 导入 SQL
+# 1. 建库（应用启动时由 Flyway 自动迁移）
 mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS jingxuan CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-mysql -u root -p jingxuan < sql/base/init_schema.sql
-mysql -u root -p jingxuan < sql/business/work_schema.sql
-# 按时间顺序执行 sql/business/ 下的增量迁移
 
 # 2. 配置环境变量
 cp .env.example .env
@@ -87,11 +82,11 @@ npm install && npm run build
 ### 本地开发
 
 ```bash
-# 环境要求：JDK 17+ / MySQL 8.0+ / Redis 7+ / Node.js 20+
+# 环境要求：JDK 21 / MySQL 8.0+ / Redis 7+ / Node.js 24
 
 # 1. 配置环境变量
 cp .env.example .env
-# 编辑 .env，填入 DB_PASSWORD
+# 编辑 .env，同时填入 DB_PASSWORD 与 JWT_SECRET
 
 # 2. 后端开发（终端 1）
 cd backend
@@ -111,7 +106,7 @@ npm run dev                          # Vite HMR（端口 5173，自动代理 /ap
 |------|------|
 | 前端页面 | `http://服务器IP/` |
 | 后端 API | `http://127.0.0.1:8080/` |
-| API 文档 | `http://127.0.0.1:8080/doc.html` |
+| API 文档 | `http://127.0.0.1:8080/swagger-ui.html` |
 
 ### 测试账号
 
@@ -131,23 +126,23 @@ npm run dev                          # Vite HMR（端口 5173，自动代理 /ap
 ```
 用户 → Nginx (80)
           ├── / → frontend/dist/（SPA 静态文件）
-          ├── /api/* → 后端 localhost:8080/*（代理剥离 /api 前缀）
+          ├── /api/* → 后端 localhost:8080/api/*（保留 /api 前缀）
           ├── /api/file/* → 后端 /api/file/*（上传保留前缀）
           └── /uploads/* → 后端 /uploads/*（用户文件）
 ```
 
 ### Adapter 控制器模式
 
-采用 Adapter 控制器桥接前端 URL 与后端业务模块，前端请求经 Nginx 去 `/api` 前缀后，由各角色 Adapter 分发：
+采用 Adapter 控制器桥接前端 URL 与后端业务模块，前端请求经 Nginx 原样转发 `/api` 路径后，由各角色 Adapter 分发：
 
 | 控制器 | 路径 | 职责 |
 |--------|------|------|
-| `AdminApiController` | `/admin/*` | 审核、评论、公告、字典、日志、批次、奖品、标签、仪表盘、用户、角色、菜单、规则（48端点） |
-| `TeacherApiController` | `/teacher/*` | 评分、排行榜、历史、仪表盘、批次、通知（14端点） |
-| `StudentApiController` | `/student/*` | 作品 CRUD、提交、排名、批次、通知（14端点） |
-| `PublicApiController` | `/public/*` | 作品浏览、详情、排行榜、评论、标签、班级（16端点） |
-| `AuthController` | `/auth/*` | 登录、注册、验证码、密码修改、个人信息（9端点） |
-| `NotificationController` | `/{role}/notify/*` | 三端通知统一查询/已读 |
+| `AdminApiController` | `/api/admin/*` | 审核、评论、公告、字典、日志、批次、奖品、标签、仪表盘、用户、角色、菜单、规则（48端点） |
+| `TeacherApiController` | `/api/teacher/*` | 评分、排行榜、历史、仪表盘、批次、通知（14端点） |
+| `StudentApiController` | `/api/student/*` | 作品 CRUD、提交、排名、批次、通知（14端点） |
+| `PublicApiController` | `/api/public/*` | 作品浏览、详情、排行榜、评论、标签、班级（16端点） |
+| `AuthController` | `/api/auth/*` | 登录、注册、验证码、密码修改、个人信息（9端点） |
+| `NotificationController` | `/api/{role}/notify/*` | 三端通知统一查询/已读 |
 
 ### 业务模块
 
@@ -178,11 +173,14 @@ modules/
 ├── backend/                     # Spring Boot 后端
 │   ├── src/main/java/com/jingxuan/
 │   │   ├── common/              # Result/PageResult/BaseEntity
-│   │   ├── config/              # 安全/Jackson/Knife4j/MyBatis-Plus
+│   │   ├── config/              # 安全/Jackson/Springdoc/MyBatis-Plus
 │   │   ├── modules/adapter/     # Adapter 控制器（4 角色 + 公共）
 │   │   ├── modules/             # 14 个业务模块（work/audit/score/rank…）
 │   │   ├── security/            # JWT 认证链 + 限流过滤器
 │   │   └── exception/           # 全局异常处理 + 404
+│   ├── src/main/resources/
+│   │   ├── db/migration/        # Flyway 增量迁移
+│   │   └── legacy-sql/          # Flyway V1 基线引用的历史脚本
 │   └── pom.xml
 ├── frontend/                    # Vue 3 + TypeScript SPA
 │   ├── src/
@@ -190,9 +188,6 @@ modules/
 │   │   ├── views/               # 页面（admin 12页/teacher 4页/student 5页/public 4页）
 │   │   └── composables/         # useApiList / useCrudDialog / useNotificationPolling
 │   └── vite.config.ts
-├── sql/                         # 数据库迁移脚本
-│   ├── base/init_schema.sql     # 基础表
-│   └── business/                # 业务表 + 增量迁移
 ├── docs/                        # 16 份项目文档
 ├── docker-compose.yml           # Docker 编排
 ├── nginx-jingxuan.conf          # Nginx 反代配置
@@ -207,10 +202,11 @@ modules/
 
 | 测试类型 | 结果 | 覆盖 |
 |---------|------|------|
-| 前端单元测试 | 56/56 ✅ 100% | 组件逻辑、API 适配、路由 |
-| 后端单元测试 | 97/97 ✅ 100% | 14 个业务模块 Service 层 |
-| 集成测试 | 77/77 ✅ 100% | 10 个 Adapter 测试类 + 9 条 E2E |
-| 接口测试 | 109/109 ✅ 100% | 全部 API 端点 |
+| 前端自动化测试 | 79 通过 / 24 既有跳过 | 组件逻辑、API 路径、路由、错误契约 |
+| 后端单元测试 | 385/385 ✅ | Service、边界与安全配置 |
+| 后端集成测试 | 209/209 ✅ | Testcontainers + 全量 API/E2E |
+| 冒烟契约测试 | 26/26 ✅ | 三角色流程、清理恢复、CI/Docker 契约 |
+| OpenAPI 专项测试 | 21/21 ✅ | 实时语义、快照与生成物洁净性 |
 | 手工测试 | 38/38 ✅ 100% | 四端功能全覆盖 |
 | 性能测试 | ~220 req/s | 100 并发 0 失败 |
 | 安全测试 | ✅ XSS / SQL 注入 / 越权 / 文件魔数 / DeepSeek 实测 |
@@ -230,14 +226,16 @@ npm run test         # Vitest 单元测试
 # 后端
 cd backend
 mvn compile          # 编译
-mvn test             # 运行测试
+mvn test             # Surefire：运行全部单元测试
+mvn verify           # Surefire 单元测试 + Failsafe Testcontainers 集成测试（需 Docker）
+mvn verify -DskipUnitTests=true -Dit.test="AdminApiTest,FileUploadTest"  # 指定集成测试类
 mvn package -Dmaven.test.skip=true  # 打包 JAR
 
 # 冒烟测试（部署后验证）
 bash scripts/smoke-test.sh http://localhost:8080
 
 # CI/CD（GitHub Actions）
-git push  # 自动触发：类型检查 → 单元测试 → 集成测试 → 构建 → Docker
+git push  # 自动触发：API 契约 → 前端质量 → 后端单元/集成测试 → Legacy Docker 冒烟 → 安全门禁
 ```
 
 ---
@@ -272,22 +270,28 @@ git push  # 自动触发：类型检查 → 单元测试 → 集成测试 → �
 
 | 变量 | 说明 | 默认值 |
 |------|------|--------|
-| `DB_PASSWORD` | MySQL 数据库密码 | `jingxuan123` |
+| `DB_ROOT_PASSWORD` | Docker MySQL root 密码 | — |
+| `DB_LEGACY_ROOT_PASSWORD` | 旧 Docker 卷迁移时的一次性原 root 密码 | — |
+| `DB_USER` | 应用数据库用户 | `jingxuan` |
+| `DB_PASSWORD` | 应用数据库密码 | — |
+| `JWT_SECRET` | JWT 签名密钥（至少 32 字符） | — |
 | `DEEPSEEK_API_KEY` | DeepSeek API 密钥 | — |
 | `MAIL_HOST` | 邮件服务器地址 | `smtp.qq.com` |
 | `MAIL_PORT` | 邮件服务器端口 | `587` |
 | `MAIL_USERNAME` | 邮箱用户名 | — |
 | `MAIL_PASSWORD` | 邮箱密码/授权码 | — |
+| `JINGXUAN_SECURITY_TRUSTED_PROXY_CIDRS` | 裸机可信代理 CIDR | `127.0.0.1/32,::1/128` |
+| `JINGXUAN_DOCKER_TRUSTED_PROXY_CIDRS` | Docker 固定 Nginx 代理 CIDR | `127.0.0.1/32,::1/128,172.31.250.2/32` |
 
 ---
 
 ## 数据库迁移规范
 
-- 基础表：`sql/base/init_schema.sql`
-- 业务表：`sql/business/work_schema.sql`
-- 增量迁移：`sql/business/yyyy-MM-dd-描述.sql`
+- Flyway V1 兼容基线：`backend/src/main/java/db/migration/V1__Baseline.java`
+- V1 引用的历史脚本：`backend/src/main/resources/legacy-sql/`
+- 后续增量迁移：`backend/src/main/resources/db/migration/V*.sql`
 - 所有实体继承 `BaseEntity`（雪花算法 id、createTime、updateTime、逻辑删除 deleted）
-- `init_schema.sql` 和 `work_schema.sql` 内含 `USE jingxuan;`，导入测试库时需用 `sed` 剔除
+- 运行时只允许 Flyway 建表，不再手工执行仓库外置 SQL
 
 ---
 

@@ -21,7 +21,7 @@ class StudentSubmitApiTest extends BaseApiTest {
     @Test
     @DisplayName("无附件提交返回 400")
     void submitWithoutAttachment() {
-        ApiResponse resp = studentApi.post("/student/works/6/submit", null);
+        ApiResponse resp = studentApi.post("/api/student/works/6/submit", null);
         assertEquals(400, resp.getCode(), "无附件提交应返回 400");
     }
 
@@ -29,7 +29,7 @@ class StudentSubmitApiTest extends BaseApiTest {
     @DisplayName("上传附件后提交审核成功")
     void submitWithAttachment() {
         String title = "提交审核测试-" + System.currentTimeMillis();
-        ApiResponse createResp = testStuApi.post("/student/works", Map.of(
+        ApiResponse createResp = testStuApi.post("/api/student/works", Map.of(
                 "title", title,
                 "summary", "用于提交流程验证",
                 "techStack", "Java/Spring Boot",
@@ -41,12 +41,12 @@ class StudentSubmitApiTest extends BaseApiTest {
         String attachmentId = uploadAttachmentForWork(workId, "submit-flow.zip");
         String videoId = uploadAttachmentForWork(workId, "demo.mp4");
 
-        ApiResponse updateResp = testStuApi.put("/student/works/" + workId, Map.of(
+        ApiResponse updateResp = testStuApi.put("/api/student/works/" + workId, Map.of(
                 "attachmentIds", java.util.List.of(attachmentId, videoId)
         ));
         updateResp.assertOk();
 
-        ApiResponse submitResp = testStuApi.post("/student/works/" + workId + "/submit", null);
+        ApiResponse submitResp = testStuApi.post("/api/student/works/" + workId + "/submit", null);
         submitResp.assertOk();
     }
 

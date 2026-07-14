@@ -19,7 +19,7 @@ class AdminApiTest extends BaseApiTest {
         @Test
         @DisplayName("返回统计字段")
         void stats() {
-            ApiResponse resp = adminApi.get("/admin/dashboard/stats");
+            ApiResponse resp = adminApi.get("/api/admin/dashboard/stats");
             resp.assertOk();
             assertTrue(resp.getDataInt("totalWorks") >= 7);
             assertTrue(resp.getDataInt("publishedWorks") >= 3);
@@ -28,14 +28,14 @@ class AdminApiTest extends BaseApiTest {
         @Test
         @DisplayName("图表数据")
         void charts() {
-            ApiResponse resp = adminApi.get("/admin/dashboard/charts");
+            ApiResponse resp = adminApi.get("/api/admin/dashboard/charts");
             resp.assertOk();
         }
 
         @Test
         @DisplayName("教师访问返回 403")
         void teacherForbidden() {
-            ApiResponse resp = teacherApi.get("/admin/dashboard/stats");
+            ApiResponse resp = teacherApi.get("/api/admin/dashboard/stats");
             assertEquals(403, resp.getCode());
         }
     }
@@ -47,28 +47,28 @@ class AdminApiTest extends BaseApiTest {
         @Test
         @DisplayName("审核列表")
         void auditList() {
-            ApiResponse resp = adminApi.get("/admin/audit/list");
+            ApiResponse resp = adminApi.get("/api/admin/audit/list");
             resp.assertOk();
         }
 
         @Test
         @DisplayName("按状态筛选")
         void filterByStatus() {
-            ApiResponse resp = adminApi.get("/admin/audit/list?status=1");
+            ApiResponse resp = adminApi.get("/api/admin/audit/list?status=1");
             resp.assertOk();
         }
 
         @Test
         @DisplayName("审核历史查询")
         void auditHistory() {
-            ApiResponse resp = adminApi.get("/admin/audit/1/history");
+            ApiResponse resp = adminApi.get("/api/admin/audit/1/history");
             resp.assertOk();
         }
 
         @Test
         @DisplayName("审核驳回已提交作品")
         void rejectSubmittedWork() {
-            ApiResponse resp = adminApi.post("/admin/audit", Map.of(
+            ApiResponse resp = adminApi.post("/api/admin/audit", Map.of(
                     "workId", 5,
                     "result", "rejected",
                     "reason", "测试驳回"
@@ -80,7 +80,7 @@ class AdminApiTest extends BaseApiTest {
         @DisplayName("审核通过新提交作品")
         void approveSubmittedWork() {
             String title = "审核通过测试-" + System.currentTimeMillis();
-            ApiResponse createResp = testStuApi.post("/student/works", Map.of(
+            ApiResponse createResp = testStuApi.post("/api/student/works", Map.of(
                     "title", title,
                     "summary", "审核通过流程验证",
                     "techStack", "Java/Spring Boot",
@@ -91,10 +91,10 @@ class AdminApiTest extends BaseApiTest {
 
             attachFileToWorkAsTestStu(workId, "admin-audit.zip");
             attachFileToWorkAsTestStu(workId, "demo.mp4");
-            ApiResponse submitResp = testStuApi.post("/student/works/" + workId + "/submit", null);
+            ApiResponse submitResp = testStuApi.post("/api/student/works/" + workId + "/submit", null);
             submitResp.assertOk();
 
-            ApiResponse auditResp = adminApi.post("/admin/audit", Map.of(
+            ApiResponse auditResp = adminApi.post("/api/admin/audit", Map.of(
                     "workId", workId,
                     "result", "approved",
                     "reason", "测试通过"
@@ -110,23 +110,23 @@ class AdminApiTest extends BaseApiTest {
         @Test
         @DisplayName("发布已通过作品")
         void publishWork() {
-            ApiResponse resp = adminApi.post("/admin/audit/4/publish", null);
+            ApiResponse resp = adminApi.post("/api/admin/audit/4/publish", null);
             assertTrue(resp.getCode() == 200 || resp.getCode() == 400);
         }
 
         @Test
         @DisplayName("下线已发布作品")
         void offlineWork() {
-            ApiResponse resp = adminApi.post("/admin/audit/3/offline", null);
+            ApiResponse resp = adminApi.post("/api/admin/audit/3/offline", null);
             assertTrue(resp.getCode() == 200 || resp.getCode() == 400);
-            adminApi.post("/admin/audit/3/publish", null); // 恢复
+            adminApi.post("/api/admin/audit/3/publish", null); // 恢复
         }
 
         @Test
         @DisplayName("设为精选")
         void setFeatured() {
             ApiResponse resp = adminApi.post(
-                    "/admin/audit/1/featured?featured=1&previewUrl=http://test.com", null);
+                    "/api/admin/audit/1/featured?featured=1&previewUrl=http://test.com", null);
             assertTrue(resp.getCode() == 200 || resp.getCode() == 400);
         }
     }
@@ -138,7 +138,7 @@ class AdminApiTest extends BaseApiTest {
         @Test
         @DisplayName("标签列表")
         void listTags() {
-            ApiResponse resp = adminApi.get("/admin/tags");
+            ApiResponse resp = adminApi.get("/api/admin/tags");
             resp.assertOk();
             assertTrue(resp.getDataNode().isArray());
         }
@@ -146,7 +146,7 @@ class AdminApiTest extends BaseApiTest {
         @Test
         @DisplayName("创建标签")
         void createTag() {
-            ApiResponse resp = adminApi.post("/admin/tags",
+            ApiResponse resp = adminApi.post("/api/admin/tags",
                     Map.of("name", "Go-Test-" + System.currentTimeMillis(), "type", "tech", "sort", 5));
             assertTrue(resp.getCode() == 200 || resp.getCode() == 400);
         }
@@ -159,14 +159,14 @@ class AdminApiTest extends BaseApiTest {
         @Test
         @DisplayName("公告列表")
         void noticeList() {
-            ApiResponse resp = adminApi.get("/admin/notice/list");
+            ApiResponse resp = adminApi.get("/api/admin/notice/list");
             resp.assertOk();
         }
 
         @Test
         @DisplayName("创建公告")
         void createNotice() {
-            ApiResponse resp = adminApi.post("/admin/notice",
+            ApiResponse resp = adminApi.post("/api/admin/notice",
                     Map.of("title", "测试公告", "content", "测试内容", "topFlag", 0));
             resp.assertOk();
         }
@@ -174,7 +174,7 @@ class AdminApiTest extends BaseApiTest {
         @Test
         @DisplayName("更新公告")
         void updateNotice() {
-            ApiResponse resp = adminApi.put("/admin/notice/1",
+            ApiResponse resp = adminApi.put("/api/admin/notice/1",
                     Map.of("title", "已更新公告", "content", "已更新内容"));
             assertTrue(resp.getCode() == 200 || resp.getCode() == 400);
         }
@@ -182,7 +182,7 @@ class AdminApiTest extends BaseApiTest {
         @Test
         @DisplayName("公告内容包含 XSS 字符时接口不异常")
         void noticeWithXssContent() {
-            ApiResponse resp = adminApi.post("/admin/notice",
+            ApiResponse resp = adminApi.post("/api/admin/notice",
                     Map.of("title", "XSS公告",
                             "content", "<script>alert('notice')</script>",
                             "topFlag", 0));
@@ -198,7 +198,7 @@ class AdminApiTest extends BaseApiTest {
         @Test
         @DisplayName("批次列表")
         void batchList() {
-            ApiResponse resp = adminApi.get("/admin/score-batch/list");
+            ApiResponse resp = adminApi.get("/api/admin/score-batch/list");
             resp.assertOk();
             assertTrue(resp.getDataInt("total") >= 2);
         }
@@ -211,7 +211,7 @@ class AdminApiTest extends BaseApiTest {
         @Test
         @DisplayName("奖项列表")
         void prizeList() {
-            ApiResponse resp = adminApi.get("/admin/prize/list");
+            ApiResponse resp = adminApi.get("/api/admin/prize/list");
             resp.assertOk();
             assertTrue(resp.getDataInt("total") >= 3);
         }
@@ -219,7 +219,7 @@ class AdminApiTest extends BaseApiTest {
         @Test
         @DisplayName("创建奖项")
         void createPrize() {
-            ApiResponse resp = adminApi.post("/admin/prize",
+            ApiResponse resp = adminApi.post("/api/admin/prize",
                     Map.of("batchId", 1, "rewardLevel", "特等奖",
                             "rewardName", "特等奖", "prizeName", "大奖", "quota", 1));
             assertTrue(resp.getCode() == 200 || resp.getCode() == 400);
@@ -228,7 +228,7 @@ class AdminApiTest extends BaseApiTest {
         @Test
         @DisplayName("更新奖项")
         void updatePrize() {
-            ApiResponse resp = adminApi.put("/admin/prize/1",
+            ApiResponse resp = adminApi.put("/api/admin/prize/1",
                     Map.of("prizeName", "已更新奖品", "quota", 2));
             assertTrue(resp.getCode() == 200 || resp.getCode() == 400);
         }
@@ -236,7 +236,7 @@ class AdminApiTest extends BaseApiTest {
         @Test
         @DisplayName("删除奖项")
         void deletePrize() {
-            ApiResponse resp = adminApi.delete("/admin/prize/3");
+            ApiResponse resp = adminApi.delete("/api/admin/prize/3");
             assertTrue(resp.getCode() == 200 || resp.getCode() == 400);
         }
     }
@@ -248,7 +248,7 @@ class AdminApiTest extends BaseApiTest {
         @Test
         @DisplayName("按类型获取")
         void getByType() {
-            ApiResponse resp = adminApi.get("/admin/dict/type/class");
+            ApiResponse resp = adminApi.get("/api/admin/dict/type/class");
             resp.assertOk();
             assertTrue(resp.getDataNode().isArray());
         }
@@ -256,7 +256,7 @@ class AdminApiTest extends BaseApiTest {
         @Test
         @DisplayName("创建字典项")
         void createDict() {
-            ApiResponse resp = adminApi.post("/admin/dict/create",
+            ApiResponse resp = adminApi.post("/api/admin/dict/create",
                     Map.of("dictType", "test_type", "dictLabel", "测试标签",
                             "dictValue", "test_value", "sort", 1));
             assertTrue(resp.getCode() == 200 || resp.getCode() == 400);
@@ -270,7 +270,7 @@ class AdminApiTest extends BaseApiTest {
         @Test
         @DisplayName("日志列表")
         void listLogs() {
-            ApiResponse resp = adminApi.get("/admin/log/list");
+            ApiResponse resp = adminApi.get("/api/admin/log/list");
             resp.assertOk();
             assertTrue(resp.getDataNode().has("records"));
         }
@@ -278,14 +278,14 @@ class AdminApiTest extends BaseApiTest {
         @Test
         @DisplayName("按操作类型筛选")
         void filterByAction() {
-            ApiResponse resp = adminApi.get("/admin/log/list?action=提交评分");
+            ApiResponse resp = adminApi.get("/api/admin/log/list?action=提交评分");
             resp.assertOk();
         }
 
         @Test
         @DisplayName("按用户筛选")
         void filterByUser() {
-            ApiResponse resp = adminApi.get("/admin/log/list?userId=200");
+            ApiResponse resp = adminApi.get("/api/admin/log/list?userId=200");
             resp.assertOk();
         }
     }
@@ -297,27 +297,24 @@ class AdminApiTest extends BaseApiTest {
         @Test
         @DisplayName("评论列表")
         void listComments() {
-            ApiResponse resp = adminApi.get("/admin/comment/list");
+            ApiResponse resp = adminApi.get("/api/admin/comment/list");
             resp.assertOk();
         }
 
         @Test
         @DisplayName("评论涉及作品选项")
         void workOptions() {
-            ApiResponse resp = adminApi.get("/admin/comment/work-options");
+            ApiResponse resp = adminApi.get("/api/admin/comment/work-options");
             resp.assertOk();
         }
 
         @Test
         @DisplayName("删除评论")
         void deleteComment() {
-            // 先发表一条评论，再删除
-            ApiResponse addResp = studentApi.post("/comment/add?workId=1&content=待删除评论", null);
-            if (addResp.getCode() == 200) {
-                long commentId = addResp.getDataNode().asLong();
-                ApiResponse delResp = adminApi.delete("/admin/comment/" + commentId);
-                assertTrue(delResp.getCode() == 200 || delResp.getCode() == 500);
-            }
+            ApiResponse addResp = studentApi.post("/api/comment/add?workId=1&content=待删除评论", null);
+            addResp.assertOk();
+            long commentId = addResp.getDataNode().asLong();
+            adminApi.delete("/api/admin/comment/" + commentId).assertOk();
         }
     }
 
@@ -328,7 +325,7 @@ class AdminApiTest extends BaseApiTest {
         @Test
         @DisplayName("创建评分批次")
         void createBatch() {
-            ApiResponse resp = adminApi.post("/score-batch/create", Map.of(
+            ApiResponse resp = adminApi.post("/api/score-batch/create", Map.of(
                     "batchName", "测试批次-" + System.currentTimeMillis(),
                     "startTime", "2026-06-01T00:00:00",
                     "endTime", "2026-07-31T23:59:59",
@@ -341,14 +338,14 @@ class AdminApiTest extends BaseApiTest {
         @Test
         @DisplayName("获取活跃批次")
         void getActive() {
-            ApiResponse resp = adminApi.get("/score-batch/active");
+            ApiResponse resp = adminApi.get("/api/score-batch/active");
             assertTrue(resp.getCode() == 200 || resp.getCode() == 500);
         }
 
         @Test
         @DisplayName("更新评分批次")
         void updateBatch() {
-            ApiResponse resp = adminApi.put("/score-batch/update",
+            ApiResponse resp = adminApi.put("/api/score-batch/update",
                     Map.of("id", 1, "batchName", "已更新批次名称"));
             assertTrue(resp.getCode() == 200 || resp.getCode() == 400);
         }
@@ -356,9 +353,9 @@ class AdminApiTest extends BaseApiTest {
         @Test
         @DisplayName("公示/取消公示排名")
         void publishAndUnpublishRanking() {
-            ApiResponse publishResp = adminApi.post("/score-batch/2/publish-ranking", null);
+            ApiResponse publishResp = adminApi.post("/api/score-batch/2/publish-ranking", null);
             assertTrue(publishResp.getCode() == 200 || publishResp.getCode() == 400);
-            ApiResponse unpublishResp = adminApi.post("/score-batch/2/unpublish-ranking", null);
+            ApiResponse unpublishResp = adminApi.post("/api/score-batch/2/unpublish-ranking", null);
             assertTrue(unpublishResp.getCode() == 200 || unpublishResp.getCode() == 400);
         }
     }
@@ -370,53 +367,54 @@ class AdminApiTest extends BaseApiTest {
         @Test
         @DisplayName("用户列表（分页）")
         void userList() {
-            ApiResponse resp = adminApi.get("/admin/users");
-            resp.assertOk();
-            assertTrue(resp.getDataInt("total") >= 8); // 至少 8 个用户
+            var resp = adminApi.exchange(org.springframework.http.HttpMethod.GET, "/api/v1/users", null);
+            assertEquals(200, resp.getStatusCode().value());
+            assertTrue(jsonBody(resp).get("pageInfo").get("total").asLong() >= 8);
         }
 
         @Test
         @DisplayName("按角色筛选")
         void filterByRole() {
-            ApiResponse resp = adminApi.get("/admin/users?roleId=1");
-            resp.assertOk();
+            var resp = adminApi.exchange(org.springframework.http.HttpMethod.GET, "/api/v1/users?roleId=1", null);
+            assertEquals(200, resp.getStatusCode().value());
+            jsonBody(resp).get("items").forEach(user -> assertEquals(1, user.get("roleId").asInt()));
         }
 
         @Test
         @DisplayName("用户详情")
         void userDetail() {
-            ApiResponse resp = adminApi.get("/admin/users/1");
-            resp.assertOk();
-            assertEquals("admin", resp.getDataText("username"));
+            var resp = adminApi.exchange(org.springframework.http.HttpMethod.GET, "/api/v1/users/1", null);
+            assertEquals(200, resp.getStatusCode().value());
+            assertEquals("admin", jsonBody(resp).get("username").asText());
         }
 
         @Test
         @DisplayName("创建用户")
         void createUser() {
             String username = "newuser-" + System.currentTimeMillis();
-            ApiResponse resp = adminApi.post("/admin/users", Map.of(
+            var resp = adminApi.exchange(org.springframework.http.HttpMethod.POST, "/api/v1/users", Map.of(
                     "username", username,
                     "realName", "新建用户",
                     "password", "123456",
                     "roleId", 1
             ));
-            assertTrue(resp.getCode() == 200 || resp.getCode() == 400);
+            assertEquals(201, resp.getStatusCode().value());
         }
 
         @Test
         @DisplayName("更新用户")
         void updateUser() {
-            // 更新 teststu 的真实姓名
-            ApiResponse resp = adminApi.put("/admin/users/110",
-                    Map.of("realName", "已更新姓名", "roleId", 1));
-            assertTrue(resp.getCode() == 200 || resp.getCode() == 400);
+            var resp = adminApi.exchange(org.springframework.http.HttpMethod.PUT, "/api/v1/users/110",
+                    Map.of("username", "teststu", "realName", "已更新姓名", "roleId", 1, "classId", 1));
+            assertEquals(200, resp.getStatusCode().value());
         }
 
         @Test
         @DisplayName("更新用户状态")
         void updateUserStatus() {
-            ApiResponse resp = adminApi.put("/admin/users/110/status?status=1", null);
-            assertTrue(resp.getCode() == 200 || resp.getCode() == 400);
+            var resp = adminApi.exchange(org.springframework.http.HttpMethod.PUT, "/api/v1/users/110/status",
+                    Map.of("status", 1));
+            assertEquals(200, resp.getStatusCode().value());
         }
     }
 
@@ -427,53 +425,61 @@ class AdminApiTest extends BaseApiTest {
         @Test
         @DisplayName("角色列表")
         void roleList() {
-            ApiResponse resp = adminApi.get("/admin/roles");
-            resp.assertOk();
-            assertTrue(resp.getDataNode().has("records"));
+            var resp = adminApi.exchange(org.springframework.http.HttpMethod.GET, "/api/v1/roles", null);
+            assertEquals(200, resp.getStatusCode().value());
+            assertTrue(jsonBody(resp).get("items").isArray());
         }
 
         @Test
         @DisplayName("角色详情")
         void roleDetail() {
-            ApiResponse resp = adminApi.get("/admin/roles/1");
-            resp.assertOk();
-            assertEquals("学生", resp.getDataText("roleName"));
+            var resp = adminApi.exchange(org.springframework.http.HttpMethod.GET, "/api/v1/roles/1", null);
+            assertEquals(200, resp.getStatusCode().value());
+            assertEquals("学生", jsonBody(resp).get("roleName").asText());
         }
 
         @Test
         @DisplayName("创建角色")
         void createRole() {
-            ApiResponse resp = adminApi.post("/admin/roles", Map.of(
+            var resp = adminApi.exchange(org.springframework.http.HttpMethod.POST, "/api/v1/roles", Map.of(
                     "roleName", "测试角色-" + System.currentTimeMillis(),
                     "roleCode", "ROLE_TEST",
                     "description", "测试用"
             ));
-            assertTrue(resp.getCode() == 200 || resp.getCode() == 400);
+            assertEquals(201, resp.getStatusCode().value());
         }
 
         @Test
         @DisplayName("更新角色")
         void updateRole() {
-            // 用角色2（教师）测试更新，不影响角色1的断言
-            ApiResponse resp = adminApi.put("/admin/roles/2",
+            var resp = adminApi.exchange(org.springframework.http.HttpMethod.PUT, "/api/v1/roles/2",
                     Map.of("roleName", "教师(已更新)", "roleCode", "ROLE_TEACHER"));
-            assertTrue(resp.getCode() == 200 || resp.getCode() == 400);
+            assertEquals(200, resp.getStatusCode().value());
         }
 
         @Test
         @DisplayName("删除角色（测试用角色）")
         void deleteRole() {
-            // 先创建再删除
-            ApiResponse createResp = adminApi.post("/admin/roles", Map.of(
+            String roleCode = "ROLE_TEMP_" + System.currentTimeMillis();
+            var createResp = adminApi.exchange(org.springframework.http.HttpMethod.POST, "/api/v1/roles", Map.of(
                     "roleName", "临时角色-" + System.currentTimeMillis(),
-                    "roleCode", "ROLE_TEMP",
+                    "roleCode", roleCode,
                     "description", "将被删除"
             ));
-            if (createResp.getCode() == 200) {
-                long id = createResp.getDataNode().asLong();
-                ApiResponse delResp = adminApi.delete("/admin/roles/" + id);
-                assertTrue(delResp.getCode() == 200 || delResp.getCode() == 400);
+            assertEquals(201, createResp.getStatusCode().value());
+
+            var listResp = adminApi.exchange(org.springframework.http.HttpMethod.GET, "/api/v1/roles?size=100", null);
+            String id = null;
+            for (var role : jsonBody(listResp).get("items")) {
+                if (roleCode.equals(role.get("roleCode").asText())) {
+                    id = role.get("id").asText();
+                    break;
+                }
             }
+            assertNotNull(id);
+            var deleteResp = adminApi.exchange(org.springframework.http.HttpMethod.DELETE,
+                    "/api/v1/roles/" + id, null);
+            assertEquals(204, deleteResp.getStatusCode().value());
         }
     }
 
@@ -484,14 +490,14 @@ class AdminApiTest extends BaseApiTest {
         @Test
         @DisplayName("规则列表")
         void ruleList() {
-            ApiResponse resp = adminApi.get("/admin/rule/list");
+            ApiResponse resp = adminApi.get("/api/admin/rule/list");
             resp.assertOk();
         }
 
         @Test
         @DisplayName("创建规则")
         void createRule() {
-            ApiResponse resp = adminApi.post("/admin/rule", Map.of(
+            ApiResponse resp = adminApi.post("/api/admin/rule", Map.of(
                     "ruleName", "测试规则-" + System.currentTimeMillis(),
                     "systemPrompt", "你是一个内容审核助手",
                     "onRejectAction", "reject",
@@ -503,34 +509,32 @@ class AdminApiTest extends BaseApiTest {
         @Test
         @DisplayName("更新规则")
         void updateRule() {
-            // 先创建再更新
-            ApiResponse createResp = adminApi.post("/admin/rule", Map.of(
+            ApiResponse createResp = adminApi.post("/api/admin/rule", Map.of(
                     "ruleName", "待更新规则-" + System.currentTimeMillis(),
                     "systemPrompt", "原始提示词",
                     "onRejectAction", "reject",
                     "status", 1
             ));
-            if (createResp.getCode() == 200) {
-                long id = createResp.getDataNode().asLong();
-                ApiResponse updateResp = adminApi.put("/admin/rule/" + id,
-                        Map.of("ruleName", "已更新规则", "systemPrompt", "更新后的提示词"));
-                assertTrue(updateResp.getCode() == 200 || updateResp.getCode() == 400);
-            }
+            createResp.assertOk();
+            long id = createResp.getDataNode().asLong();
+            ApiResponse updateResp = adminApi.put("/api/admin/rule/" + id,
+                    Map.of("ruleName", "已更新规则", "systemPrompt", "更新后的提示词"));
+            assertTrue(updateResp.getCode() == 200 || updateResp.getCode() == 400);
         }
 
         @Test
         @DisplayName("切换规则启用状态")
         void toggleRule() {
-            // 先获取第一个规则
-            ApiResponse listResp = adminApi.get("/admin/rule/list");
-            if (listResp.getCode() == 200 && listResp.getDataNode().has("records")) {
-                var records = listResp.getDataNode().get("records");
-                if (records.isArray() && records.size() > 0) {
-                    long id = records.get(0).get("id").asLong();
-                    ApiResponse toggleResp = adminApi.put("/admin/rule/" + id + "/toggle", null);
-                    assertTrue(toggleResp.getCode() == 200 || toggleResp.getCode() == 400);
-                }
-            }
+            ApiResponse createResp = adminApi.post("/api/admin/rule", Map.of(
+                    "ruleName", "待切换规则-" + System.currentTimeMillis(),
+                    "systemPrompt", "切换测试提示词",
+                    "onRejectAction", "reject",
+                    "status", 1
+            ));
+            createResp.assertOk();
+            long id = createResp.getDataNode().asLong();
+            ApiResponse toggleResp = adminApi.put("/api/admin/rule/" + id + "/toggle", null);
+            assertTrue(toggleResp.getCode() == 200 || toggleResp.getCode() == 400);
         }
     }
 
@@ -541,25 +545,25 @@ class AdminApiTest extends BaseApiTest {
         @Test
         @DisplayName("菜单树")
         void menuTree() {
-            ApiResponse resp = adminApi.get("/admin/menus/tree");
-            resp.assertOk();
-            assertTrue(resp.getDataNode().isArray());
+            var resp = adminApi.exchange(org.springframework.http.HttpMethod.GET, "/api/v1/menus/tree", null);
+            assertEquals(200, resp.getStatusCode().value());
+            assertTrue(jsonBody(resp).isArray());
         }
 
         @Test
         @DisplayName("菜单详情")
         void menuDetail() {
-            ApiResponse resp = adminApi.get("/admin/menus/1");
-            resp.assertOk();
-            assertEquals("系统管理", resp.getDataText("menuName"));
+            var resp = adminApi.exchange(org.springframework.http.HttpMethod.GET, "/api/v1/menus/1", null);
+            assertEquals(200, resp.getStatusCode().value());
+            assertEquals("系统管理", jsonBody(resp).get("menuName").asText());
         }
 
         @Test
         @DisplayName("更新菜单")
         void updateMenu() {
-            ApiResponse resp = adminApi.put("/admin/menus/1",
+            var resp = adminApi.exchange(org.springframework.http.HttpMethod.PUT, "/api/v1/menus/1",
                     Map.of("menuName", "系统管理(已更新)", "sort", 1));
-            assertTrue(resp.getCode() == 200 || resp.getCode() == 400);
+            assertEquals(200, resp.getStatusCode().value());
         }
     }
 
@@ -570,7 +574,7 @@ class AdminApiTest extends BaseApiTest {
         @Test
         @DisplayName("批次评分明细")
         void batchScoreDetail() {
-            ApiResponse resp = adminApi.get("/admin/score/batch/1");
+            ApiResponse resp = adminApi.get("/api/admin/score/batch/1");
             assertTrue(resp.getCode() == 200 || resp.getCode() == 500);
         }
     }
@@ -606,6 +610,15 @@ class AdminApiTest extends BaseApiTest {
             assertEquals(200, root.get("code").asInt(), "附件上传业务失败: " + resp.getBody());
         } catch (Exception e) {
             throw new RuntimeException("解析附件上传响应失败: " + resp.getBody(), e);
+        }
+    }
+
+    private tools.jackson.databind.JsonNode jsonBody(org.springframework.http.ResponseEntity<String> response) {
+        assertNotNull(response.getBody());
+        try {
+            return objectMapper.readTree(response.getBody());
+        } catch (Exception e) {
+            throw new AssertionError("响应不是合法 JSON: " + response.getBody(), e);
         }
     }
 

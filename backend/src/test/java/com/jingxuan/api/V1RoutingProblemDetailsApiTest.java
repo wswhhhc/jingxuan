@@ -56,7 +56,7 @@ class V1RoutingProblemDetailsApiTest extends BaseApiTest {
         HttpHeaders headers = authenticatedHeaders("legacy-routing-404");
 
         ResponseEntity<String> response = restTemplate.exchange(
-                "/route-does-not-exist", HttpMethod.GET,
+                "/api/route-does-not-exist", HttpMethod.GET,
                 new HttpEntity<>(headers), String.class);
 
         assertEquals(404, response.getStatusCode().value());
@@ -71,7 +71,7 @@ class V1RoutingProblemDetailsApiTest extends BaseApiTest {
         HttpHeaders headers = authenticatedHeaders("legacy-routing-405");
 
         ResponseEntity<String> response = restTemplate.exchange(
-                "/student/works", HttpMethod.PATCH,
+                "/api/student/works", HttpMethod.PATCH,
                 new HttpEntity<>(headers), String.class);
 
         assertEquals(405, response.getStatusCode().value());

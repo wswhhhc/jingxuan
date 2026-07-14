@@ -28,5 +28,5 @@ export function deleteRule(id: number) {
 
 /** v1 无此功能，临时保留旧实现 */
 export function testConnection() {
-  return request.post('/admin/rule/test-connection')
+  return request.post('/api/admin/rule/test-connection')
 }

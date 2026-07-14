@@ -30,8 +30,25 @@ import type {
 } from 'vue';
 
 import type {
+  LoginRequest,
+  ProblemDetails,
+  V1AiUserImportRequest,
+  V1AiUserImportResponse,
+  V1BatchImportResult,
+  V1EmailVerificationRequest,
   V1LoginResponse,
-  V1UserInfo
+  V1Menu,
+  V1MenuRequest,
+  V1RefreshRequest,
+  V1RegistrationRequest,
+  V1Role,
+  V1RoleRequest,
+  V1User,
+  V1UserApprovalDecisionRequest,
+  V1UserDeletionImpact,
+  V1UserInfo,
+  V1UserRequest,
+  V1UserStatusRequest
 } from '../models';
 
 import { apiRequest } from '../../http';
@@ -45,13 +62,15 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
  * @summary com/jingxuan/identityaccess/web/V1RegistrationController.java
  */
 export const postAuthEmailVerifications = (
-
+    v1EmailVerificationRequest: MaybeRefOrGetter<V1EmailVerificationRequest>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {
-
+      v1EmailVerificationRequest = toValue(v1EmailVerificationRequest);
 
       return apiRequest<void>(
-      {url: `/api/v1/auth/email-verifications`, method: 'POST', signal
+      {url: `/api/v1/auth/email-verifications`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: v1EmailVerificationRequest, signal
     },
       options);
     }
@@ -59,9 +78,9 @@ export const postAuthEmailVerifications = (
 
 
 
-export const getPostAuthEmailVerificationsMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAuthEmailVerifications>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof postAuthEmailVerifications>>, TError,void, TContext> => {
+export const getPostAuthEmailVerificationsMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAuthEmailVerifications>>, TError,{data: V1EmailVerificationRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof postAuthEmailVerifications>>, TError,{data: V1EmailVerificationRequest}, TContext> => {
 
 const mutationKey = ['postAuthEmailVerifications'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -73,10 +92,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postAuthEmailVerifications>>, void> = () => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postAuthEmailVerifications>>, {data: V1EmailVerificationRequest}> = (props) => {
+          const {data} = props ?? {};
 
-
-          return  postAuthEmailVerifications(requestOptions)
+          return  postAuthEmailVerifications(data,requestOptions)
         }
 
 
@@ -87,18 +106,18 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type PostAuthEmailVerificationsMutationResult = NonNullable<Awaited<ReturnType<typeof postAuthEmailVerifications>>>
-
-    export type PostAuthEmailVerificationsMutationError = void
+    export type PostAuthEmailVerificationsMutationBody = V1EmailVerificationRequest
+    export type PostAuthEmailVerificationsMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/identityaccess/web/V1RegistrationController.java
  */
-export const usePostAuthEmailVerifications = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAuthEmailVerifications>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
+export const usePostAuthEmailVerifications = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAuthEmailVerifications>>, TError,{data: V1EmailVerificationRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof postAuthEmailVerifications>>,
         TError,
-        void,
+        {data: V1EmailVerificationRequest},
         TContext
       > => {
       return useMutation(getPostAuthEmailVerificationsMutationOptions(options), queryClient);
@@ -107,13 +126,15 @@ export const usePostAuthEmailVerifications = <TError = void,
  * @summary com/jingxuan/identityaccess/web/V1AuthController.java
  */
 export const postAuthLogin = (
-
+    loginRequest: MaybeRefOrGetter<LoginRequest>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {
+      loginRequest = toValue(loginRequest);
 
-
-      return apiRequest<V1LoginResponse | void>(
-      {url: `/api/v1/auth/login`, method: 'POST', signal
+      return apiRequest<V1LoginResponse>(
+      {url: `/api/v1/auth/login`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: loginRequest, signal
     },
       options);
     }
@@ -121,9 +142,9 @@ export const postAuthLogin = (
 
 
 
-export const getPostAuthLoginMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAuthLogin>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof postAuthLogin>>, TError,void, TContext> => {
+export const getPostAuthLoginMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAuthLogin>>, TError,{data: LoginRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof postAuthLogin>>, TError,{data: LoginRequest}, TContext> => {
 
 const mutationKey = ['postAuthLogin'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -135,10 +156,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postAuthLogin>>, void> = () => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postAuthLogin>>, {data: LoginRequest}> = (props) => {
+          const {data} = props ?? {};
 
-
-          return  postAuthLogin(requestOptions)
+          return  postAuthLogin(data,requestOptions)
         }
 
 
@@ -149,18 +170,18 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type PostAuthLoginMutationResult = NonNullable<Awaited<ReturnType<typeof postAuthLogin>>>
-
-    export type PostAuthLoginMutationError = void
+    export type PostAuthLoginMutationBody = LoginRequest
+    export type PostAuthLoginMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/identityaccess/web/V1AuthController.java
  */
-export const usePostAuthLogin = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAuthLogin>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
+export const usePostAuthLogin = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAuthLogin>>, TError,{data: LoginRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof postAuthLogin>>,
         TError,
-        void,
+        {data: LoginRequest},
         TContext
       > => {
       return useMutation(getPostAuthLoginMutationOptions(options), queryClient);
@@ -169,13 +190,15 @@ export const usePostAuthLogin = <TError = void,
  * @summary com/jingxuan/identityaccess/web/V1AuthController.java
  */
 export const postAuthLogout = (
-
+    v1RefreshRequest?: MaybeRefOrGetter<V1RefreshRequest>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {
-
+      v1RefreshRequest = toValue(v1RefreshRequest);
 
       return apiRequest<void>(
-      {url: `/api/v1/auth/logout`, method: 'POST', signal
+      {url: `/api/v1/auth/logout`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: v1RefreshRequest, signal
     },
       options);
     }
@@ -183,9 +206,9 @@ export const postAuthLogout = (
 
 
 
-export const getPostAuthLogoutMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAuthLogout>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof postAuthLogout>>, TError,void, TContext> => {
+export const getPostAuthLogoutMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAuthLogout>>, TError,{data?: V1RefreshRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof postAuthLogout>>, TError,{data?: V1RefreshRequest}, TContext> => {
 
 const mutationKey = ['postAuthLogout'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -197,10 +220,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postAuthLogout>>, void> = () => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postAuthLogout>>, {data?: V1RefreshRequest}> = (props) => {
+          const {data} = props ?? {};
 
-
-          return  postAuthLogout(requestOptions)
+          return  postAuthLogout(data,requestOptions)
         }
 
 
@@ -211,18 +234,18 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type PostAuthLogoutMutationResult = NonNullable<Awaited<ReturnType<typeof postAuthLogout>>>
-
-    export type PostAuthLogoutMutationError = void
+    export type PostAuthLogoutMutationBody = V1RefreshRequest | undefined
+    export type PostAuthLogoutMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/identityaccess/web/V1AuthController.java
  */
-export const usePostAuthLogout = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAuthLogout>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
+export const usePostAuthLogout = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAuthLogout>>, TError,{data?: V1RefreshRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof postAuthLogout>>,
         TError,
-        void,
+        {data?: V1RefreshRequest},
         TContext
       > => {
       return useMutation(getPostAuthLogoutMutationOptions(options), queryClient);
@@ -252,7 +275,7 @@ export const getGetAuthMeQueryKey = () => {
     }
 
 
-export const getGetAuthMeQueryOptions = <TData = Awaited<ReturnType<typeof getAuthMe>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAuthMe>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export const getGetAuthMeQueryOptions = <TData = Awaited<ReturnType<typeof getAuthMe>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAuthMe>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -271,14 +294,14 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetAuthMeQueryResult = NonNullable<Awaited<ReturnType<typeof getAuthMe>>>
-export type GetAuthMeQueryError = void
+export type GetAuthMeQueryError = ProblemDetails
 
 
 /**
  * @summary com/jingxuan/identityaccess/web/V1AuthController.java
  */
 
-export function useGetAuthMe<TData = Awaited<ReturnType<typeof getAuthMe>>, TError = void>(
+export function useGetAuthMe<TData = Awaited<ReturnType<typeof getAuthMe>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAuthMe>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
  ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -301,13 +324,15 @@ export function useGetAuthMe<TData = Awaited<ReturnType<typeof getAuthMe>>, TErr
  * @summary com/jingxuan/identityaccess/web/V1AuthController.java
  */
 export const postAuthRefresh = (
-
+    v1RefreshRequest: MaybeRefOrGetter<V1RefreshRequest>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {
+      v1RefreshRequest = toValue(v1RefreshRequest);
 
-
-      return apiRequest<V1LoginResponse | void>(
-      {url: `/api/v1/auth/refresh`, method: 'POST', signal
+      return apiRequest<V1LoginResponse>(
+      {url: `/api/v1/auth/refresh`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: v1RefreshRequest, signal
     },
       options);
     }
@@ -315,9 +340,9 @@ export const postAuthRefresh = (
 
 
 
-export const getPostAuthRefreshMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAuthRefresh>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof postAuthRefresh>>, TError,void, TContext> => {
+export const getPostAuthRefreshMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAuthRefresh>>, TError,{data: V1RefreshRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof postAuthRefresh>>, TError,{data: V1RefreshRequest}, TContext> => {
 
 const mutationKey = ['postAuthRefresh'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -329,10 +354,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postAuthRefresh>>, void> = () => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postAuthRefresh>>, {data: V1RefreshRequest}> = (props) => {
+          const {data} = props ?? {};
 
-
-          return  postAuthRefresh(requestOptions)
+          return  postAuthRefresh(data,requestOptions)
         }
 
 
@@ -343,18 +368,18 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type PostAuthRefreshMutationResult = NonNullable<Awaited<ReturnType<typeof postAuthRefresh>>>
-
-    export type PostAuthRefreshMutationError = void
+    export type PostAuthRefreshMutationBody = V1RefreshRequest
+    export type PostAuthRefreshMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/identityaccess/web/V1AuthController.java
  */
-export const usePostAuthRefresh = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAuthRefresh>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
+export const usePostAuthRefresh = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAuthRefresh>>, TError,{data: V1RefreshRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof postAuthRefresh>>,
         TError,
-        void,
+        {data: V1RefreshRequest},
         TContext
       > => {
       return useMutation(getPostAuthRefreshMutationOptions(options), queryClient);
@@ -363,13 +388,15 @@ export const usePostAuthRefresh = <TError = void,
  * @summary com/jingxuan/identityaccess/web/V1RegistrationController.java
  */
 export const postAuthRegistrations = (
-
+    v1RegistrationRequest: MaybeRefOrGetter<V1RegistrationRequest>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {
+      v1RegistrationRequest = toValue(v1RegistrationRequest);
 
-
-      return apiRequest<void>(
-      {url: `/api/v1/auth/registrations`, method: 'POST', signal
+      return apiRequest<V1UserInfo>(
+      {url: `/api/v1/auth/registrations`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: v1RegistrationRequest, signal
     },
       options);
     }
@@ -377,9 +404,9 @@ export const postAuthRegistrations = (
 
 
 
-export const getPostAuthRegistrationsMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAuthRegistrations>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof postAuthRegistrations>>, TError,void, TContext> => {
+export const getPostAuthRegistrationsMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAuthRegistrations>>, TError,{data: V1RegistrationRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof postAuthRegistrations>>, TError,{data: V1RegistrationRequest}, TContext> => {
 
 const mutationKey = ['postAuthRegistrations'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -391,10 +418,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postAuthRegistrations>>, void> = () => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postAuthRegistrations>>, {data: V1RegistrationRequest}> = (props) => {
+          const {data} = props ?? {};
 
-
-          return  postAuthRegistrations(requestOptions)
+          return  postAuthRegistrations(data,requestOptions)
         }
 
 
@@ -405,18 +432,18 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type PostAuthRegistrationsMutationResult = NonNullable<Awaited<ReturnType<typeof postAuthRegistrations>>>
-
-    export type PostAuthRegistrationsMutationError = void
+    export type PostAuthRegistrationsMutationBody = V1RegistrationRequest
+    export type PostAuthRegistrationsMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/identityaccess/web/V1RegistrationController.java
  */
-export const usePostAuthRegistrations = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAuthRegistrations>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
+export const usePostAuthRegistrations = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAuthRegistrations>>, TError,{data: V1RegistrationRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof postAuthRegistrations>>,
         TError,
-        void,
+        {data: V1RegistrationRequest},
         TContext
       > => {
       return useMutation(getPostAuthRegistrationsMutationOptions(options), queryClient);
@@ -430,7 +457,7 @@ export const getMenusTree = (
 ) => {
 
 
-      return apiRequest<void>(
+      return apiRequest<V1Menu[]>(
       {url: `/api/v1/menus/tree`, method: 'GET', signal
     },
       options);
@@ -446,7 +473,7 @@ export const getGetMenusTreeQueryKey = () => {
     }
 
 
-export const getGetMenusTreeQueryOptions = <TData = Awaited<ReturnType<typeof getMenusTree>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMenusTree>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export const getGetMenusTreeQueryOptions = <TData = Awaited<ReturnType<typeof getMenusTree>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMenusTree>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -465,14 +492,14 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetMenusTreeQueryResult = NonNullable<Awaited<ReturnType<typeof getMenusTree>>>
-export type GetMenusTreeQueryError = void
+export type GetMenusTreeQueryError = ProblemDetails
 
 
 /**
  * @summary com/jingxuan/identityaccess/web/V1MenuAdminController.java
  */
 
-export function useGetMenusTree<TData = Awaited<ReturnType<typeof getMenusTree>>, TError = void>(
+export function useGetMenusTree<TData = Awaited<ReturnType<typeof getMenusTree>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMenusTree>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
  ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -500,7 +527,7 @@ export const getMenusId = (
 ) => {
       id = toValue(id);
 
-      return apiRequest<void>(
+      return apiRequest<V1Menu>(
       {url: `/api/v1/menus/${id}`, method: 'GET', signal
     },
       options);
@@ -516,7 +543,7 @@ export const getGetMenusIdQueryKey = (id: MaybeRefOrGetter<string>,) => {
     }
 
 
-export const getGetMenusIdQueryOptions = <TData = Awaited<ReturnType<typeof getMenusId>>, TError = void>(id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMenusId>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export const getGetMenusIdQueryOptions = <TData = Awaited<ReturnType<typeof getMenusId>>, TError = ProblemDetails>(id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMenusId>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -535,14 +562,14 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetMenusIdQueryResult = NonNullable<Awaited<ReturnType<typeof getMenusId>>>
-export type GetMenusIdQueryError = void
+export type GetMenusIdQueryError = ProblemDetails
 
 
 /**
  * @summary com/jingxuan/identityaccess/web/V1MenuAdminController.java
  */
 
-export function useGetMenusId<TData = Awaited<ReturnType<typeof getMenusId>>, TError = void>(
+export function useGetMenusId<TData = Awaited<ReturnType<typeof getMenusId>>, TError = ProblemDetails>(
  id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMenusId>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
  ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -566,12 +593,16 @@ export function useGetMenusId<TData = Awaited<ReturnType<typeof getMenusId>>, TE
  */
 export const putMenusId = (
     id: MaybeRefOrGetter<string>,
+    v1MenuRequest: MaybeRefOrGetter<V1MenuRequest>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {
       id = toValue(id);
+v1MenuRequest = toValue(v1MenuRequest);
 
       return apiRequest<void>(
-      {url: `/api/v1/menus/${id}`, method: 'PUT', signal
+      {url: `/api/v1/menus/${id}`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: v1MenuRequest, signal
     },
       options);
     }
@@ -579,9 +610,9 @@ export const putMenusId = (
 
 
 
-export const getPutMenusIdMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putMenusId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof putMenusId>>, TError,{id: string}, TContext> => {
+export const getPutMenusIdMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putMenusId>>, TError,{id: string;data: V1MenuRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof putMenusId>>, TError,{id: string;data: V1MenuRequest}, TContext> => {
 
 const mutationKey = ['putMenusId'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -593,10 +624,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putMenusId>>, {id: string}> = (props) => {
-          const {id} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putMenusId>>, {id: string;data: V1MenuRequest}> = (props) => {
+          const {id,data} = props ?? {};
 
-          return  putMenusId(id,requestOptions)
+          return  putMenusId(id,data,requestOptions)
         }
 
 
@@ -607,153 +638,21 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type PutMenusIdMutationResult = NonNullable<Awaited<ReturnType<typeof putMenusId>>>
-
-    export type PutMenusIdMutationError = void
+    export type PutMenusIdMutationBody = V1MenuRequest
+    export type PutMenusIdMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/identityaccess/web/V1MenuAdminController.java
  */
-export const usePutMenusId = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putMenusId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
+export const usePutMenusId = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putMenusId>>, TError,{id: string;data: V1MenuRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof putMenusId>>,
         TError,
-        {id: string},
+        {id: string;data: V1MenuRequest},
         TContext
       > => {
       return useMutation(getPutMenusIdMutationOptions(options), queryClient);
-    }
-    /**
- * @summary com/jingxuan/identityaccess/web/V1RoleAdminController.java
- */
-export const getRolesId = (
-    id: MaybeRefOrGetter<string>,
- options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
-) => {
-      id = toValue(id);
-
-      return apiRequest<void>(
-      {url: `/api/v1/roles/${id}`, method: 'GET', signal
-    },
-      options);
-    }
-
-
-
-
-export const getGetRolesIdQueryKey = (id: MaybeRefOrGetter<string>,) => {
-    return [
-    'api','v1','roles',id
-    ] as const;
-    }
-
-
-export const getGetRolesIdQueryOptions = <TData = Awaited<ReturnType<typeof getRolesId>>, TError = void>(id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRolesId>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  getGetRolesIdQueryKey(id);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getRolesId>>> = ({ signal }) => getRolesId(id, requestOptions, signal);
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: computed(() => toValue(id) !== null && toValue(id) !== undefined), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getRolesId>>, TError, TData>
-}
-
-export type GetRolesIdQueryResult = NonNullable<Awaited<ReturnType<typeof getRolesId>>>
-export type GetRolesIdQueryError = void
-
-
-/**
- * @summary com/jingxuan/identityaccess/web/V1RoleAdminController.java
- */
-
-export function useGetRolesId<TData = Awaited<ReturnType<typeof getRolesId>>, TError = void>(
- id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRolesId>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
- ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getGetRolesIdQueryOptions(id,options)
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  query.queryKey = unref(queryOptions).queryKey as DataTag<QueryKey, TData, TError>;
-
-  return query;
-}
-
-
-
-
-
-
-/**
- * @summary com/jingxuan/identityaccess/web/V1RoleAdminController.java
- */
-export const putRolesId = (
-    id: MaybeRefOrGetter<string>,
- options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
-) => {
-      id = toValue(id);
-
-      return apiRequest<void>(
-      {url: `/api/v1/roles/${id}`, method: 'PUT', signal
-    },
-      options);
-    }
-
-
-
-
-export const getPutRolesIdMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putRolesId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof putRolesId>>, TError,{id: string}, TContext> => {
-
-const mutationKey = ['putRolesId'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putRolesId>>, {id: string}> = (props) => {
-          const {id} = props ?? {};
-
-          return  putRolesId(id,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type PutRolesIdMutationResult = NonNullable<Awaited<ReturnType<typeof putRolesId>>>
-
-    export type PutRolesIdMutationError = void
-
-    /**
- * @summary com/jingxuan/identityaccess/web/V1RoleAdminController.java
- */
-export const usePutRolesId = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putRolesId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient): UseMutationReturnType<
-        Awaited<ReturnType<typeof putRolesId>>,
-        TError,
-        {id: string},
-        TContext
-      > => {
-      return useMutation(getPutRolesIdMutationOptions(options), queryClient);
     }
     /**
  * @summary com/jingxuan/identityaccess/web/V1RoleAdminController.java
@@ -773,7 +672,7 @@ export const deleteRolesId = (
 
 
 
-export const getDeleteRolesIdMutationOptions = <TError = void,
+export const getDeleteRolesIdMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteRolesId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteRolesId>>, TError,{id: string}, TContext> => {
 
@@ -802,12 +701,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type DeleteRolesIdMutationResult = NonNullable<Awaited<ReturnType<typeof deleteRolesId>>>
 
-    export type DeleteRolesIdMutationError = void
+    export type DeleteRolesIdMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/identityaccess/web/V1RoleAdminController.java
  */
-export const useDeleteRolesId = <TError = void,
+export const useDeleteRolesId = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteRolesId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof deleteRolesId>>,
@@ -820,13 +719,149 @@ export const useDeleteRolesId = <TError = void,
     /**
  * @summary com/jingxuan/identityaccess/web/V1RoleAdminController.java
  */
+export const getRolesId = (
+    id: MaybeRefOrGetter<string>,
+ options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
+) => {
+      id = toValue(id);
+
+      return apiRequest<V1Role>(
+      {url: `/api/v1/roles/${id}`, method: 'GET', signal
+    },
+      options);
+    }
+
+
+
+
+export const getGetRolesIdQueryKey = (id: MaybeRefOrGetter<string>,) => {
+    return [
+    'api','v1','roles',id
+    ] as const;
+    }
+
+
+export const getGetRolesIdQueryOptions = <TData = Awaited<ReturnType<typeof getRolesId>>, TError = ProblemDetails>(id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRolesId>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  getGetRolesIdQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getRolesId>>> = ({ signal }) => getRolesId(id, requestOptions, signal);
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: computed(() => toValue(id) !== null && toValue(id) !== undefined), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getRolesId>>, TError, TData>
+}
+
+export type GetRolesIdQueryResult = NonNullable<Awaited<ReturnType<typeof getRolesId>>>
+export type GetRolesIdQueryError = ProblemDetails
+
+
+/**
+ * @summary com/jingxuan/identityaccess/web/V1RoleAdminController.java
+ */
+
+export function useGetRolesId<TData = Awaited<ReturnType<typeof getRolesId>>, TError = ProblemDetails>(
+ id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRolesId>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetRolesIdQueryOptions(id,options)
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = unref(queryOptions).queryKey as DataTag<QueryKey, TData, TError>;
+
+  return query;
+}
+
+
+
+
+
+
+/**
+ * @summary com/jingxuan/identityaccess/web/V1RoleAdminController.java
+ */
+export const putRolesId = (
+    id: MaybeRefOrGetter<string>,
+    v1RoleRequest: MaybeRefOrGetter<V1RoleRequest>,
+ options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
+) => {
+      id = toValue(id);
+v1RoleRequest = toValue(v1RoleRequest);
+
+      return apiRequest<void>(
+      {url: `/api/v1/roles/${id}`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: v1RoleRequest, signal
+    },
+      options);
+    }
+
+
+
+
+export const getPutRolesIdMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putRolesId>>, TError,{id: string;data: V1RoleRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof putRolesId>>, TError,{id: string;data: V1RoleRequest}, TContext> => {
+
+const mutationKey = ['putRolesId'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putRolesId>>, {id: string;data: V1RoleRequest}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  putRolesId(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PutRolesIdMutationResult = NonNullable<Awaited<ReturnType<typeof putRolesId>>>
+    export type PutRolesIdMutationBody = V1RoleRequest
+    export type PutRolesIdMutationError = ProblemDetails
+
+    /**
+ * @summary com/jingxuan/identityaccess/web/V1RoleAdminController.java
+ */
+export const usePutRolesId = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putRolesId>>, TError,{id: string;data: V1RoleRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient): UseMutationReturnType<
+        Awaited<ReturnType<typeof putRolesId>>,
+        TError,
+        {id: string;data: V1RoleRequest},
+        TContext
+      > => {
+      return useMutation(getPutRolesIdMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary com/jingxuan/identityaccess/web/V1RoleAdminController.java
+ */
 export const getRolesIdMenus = (
     id: MaybeRefOrGetter<string>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {
       id = toValue(id);
 
-      return apiRequest<void>(
+      return apiRequest<string[]>(
       {url: `/api/v1/roles/${id}/menus`, method: 'GET', signal
     },
       options);
@@ -842,7 +877,7 @@ export const getGetRolesIdMenusQueryKey = (id: MaybeRefOrGetter<string>,) => {
     }
 
 
-export const getGetRolesIdMenusQueryOptions = <TData = Awaited<ReturnType<typeof getRolesIdMenus>>, TError = void>(id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRolesIdMenus>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export const getGetRolesIdMenusQueryOptions = <TData = Awaited<ReturnType<typeof getRolesIdMenus>>, TError = ProblemDetails>(id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRolesIdMenus>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -861,14 +896,14 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetRolesIdMenusQueryResult = NonNullable<Awaited<ReturnType<typeof getRolesIdMenus>>>
-export type GetRolesIdMenusQueryError = void
+export type GetRolesIdMenusQueryError = ProblemDetails
 
 
 /**
  * @summary com/jingxuan/identityaccess/web/V1RoleAdminController.java
  */
 
-export function useGetRolesIdMenus<TData = Awaited<ReturnType<typeof getRolesIdMenus>>, TError = void>(
+export function useGetRolesIdMenus<TData = Awaited<ReturnType<typeof getRolesIdMenus>>, TError = ProblemDetails>(
  id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRolesIdMenus>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
  ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -892,12 +927,16 @@ export function useGetRolesIdMenus<TData = Awaited<ReturnType<typeof getRolesIdM
  */
 export const putRolesIdMenus = (
     id: MaybeRefOrGetter<string>,
+    putRolesIdMenusBody: MaybeRefOrGetter<string[]>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {
       id = toValue(id);
+putRolesIdMenusBody = toValue(putRolesIdMenusBody);
 
       return apiRequest<void>(
-      {url: `/api/v1/roles/${id}/menus`, method: 'PUT', signal
+      {url: `/api/v1/roles/${id}/menus`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: putRolesIdMenusBody, signal
     },
       options);
     }
@@ -905,9 +944,9 @@ export const putRolesIdMenus = (
 
 
 
-export const getPutRolesIdMenusMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putRolesIdMenus>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof putRolesIdMenus>>, TError,{id: string}, TContext> => {
+export const getPutRolesIdMenusMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putRolesIdMenus>>, TError,{id: string;data: string[]}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof putRolesIdMenus>>, TError,{id: string;data: string[]}, TContext> => {
 
 const mutationKey = ['putRolesIdMenus'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -919,10 +958,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putRolesIdMenus>>, {id: string}> = (props) => {
-          const {id} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putRolesIdMenus>>, {id: string;data: string[]}> = (props) => {
+          const {id,data} = props ?? {};
 
-          return  putRolesIdMenus(id,requestOptions)
+          return  putRolesIdMenus(id,data,requestOptions)
         }
 
 
@@ -933,18 +972,18 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type PutRolesIdMenusMutationResult = NonNullable<Awaited<ReturnType<typeof putRolesIdMenus>>>
-
-    export type PutRolesIdMenusMutationError = void
+    export type PutRolesIdMenusMutationBody = string[]
+    export type PutRolesIdMenusMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/identityaccess/web/V1RoleAdminController.java
  */
-export const usePutRolesIdMenus = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putRolesIdMenus>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
+export const usePutRolesIdMenus = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putRolesIdMenus>>, TError,{id: string;data: string[]}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof putRolesIdMenus>>,
         TError,
-        {id: string},
+        {id: string;data: string[]},
         TContext
       > => {
       return useMutation(getPutRolesIdMenusMutationOptions(options), queryClient);
@@ -953,13 +992,15 @@ export const usePutRolesIdMenus = <TError = void,
  * @summary com/jingxuan/identityaccess/web/V1UserAdminController.java
  */
 export const postUsersBatch = (
-
+    v1UserRequest: MaybeRefOrGetter<V1UserRequest[]>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {
+      v1UserRequest = toValue(v1UserRequest);
 
-
-      return apiRequest<void>(
-      {url: `/api/v1/users/batch`, method: 'POST', signal
+      return apiRequest<V1BatchImportResult>(
+      {url: `/api/v1/users/batch`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: v1UserRequest, signal
     },
       options);
     }
@@ -967,9 +1008,9 @@ export const postUsersBatch = (
 
 
 
-export const getPostUsersBatchMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postUsersBatch>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof postUsersBatch>>, TError,void, TContext> => {
+export const getPostUsersBatchMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postUsersBatch>>, TError,{data: V1UserRequest[]}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof postUsersBatch>>, TError,{data: V1UserRequest[]}, TContext> => {
 
 const mutationKey = ['postUsersBatch'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -981,10 +1022,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postUsersBatch>>, void> = () => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postUsersBatch>>, {data: V1UserRequest[]}> = (props) => {
+          const {data} = props ?? {};
 
-
-          return  postUsersBatch(requestOptions)
+          return  postUsersBatch(data,requestOptions)
         }
 
 
@@ -995,18 +1036,18 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type PostUsersBatchMutationResult = NonNullable<Awaited<ReturnType<typeof postUsersBatch>>>
-
-    export type PostUsersBatchMutationError = void
+    export type PostUsersBatchMutationBody = V1UserRequest[]
+    export type PostUsersBatchMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/identityaccess/web/V1UserAdminController.java
  */
-export const usePostUsersBatch = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postUsersBatch>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
+export const usePostUsersBatch = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postUsersBatch>>, TError,{data: V1UserRequest[]}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof postUsersBatch>>,
         TError,
-        void,
+        {data: V1UserRequest[]},
         TContext
       > => {
       return useMutation(getPostUsersBatchMutationOptions(options), queryClient);
@@ -1015,13 +1056,15 @@ export const usePostUsersBatch = <TError = void,
  * @summary com/jingxuan/identityaccess/web/V1UserAdminController.java
  */
 export const postUsersBatchAiParse = (
-
+    v1AiUserImportRequest: MaybeRefOrGetter<V1AiUserImportRequest>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {
+      v1AiUserImportRequest = toValue(v1AiUserImportRequest);
 
-
-      return apiRequest<void>(
-      {url: `/api/v1/users/batch/ai-parse`, method: 'POST', signal
+      return apiRequest<V1AiUserImportResponse>(
+      {url: `/api/v1/users/batch/ai-parse`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: v1AiUserImportRequest, signal
     },
       options);
     }
@@ -1029,9 +1072,9 @@ export const postUsersBatchAiParse = (
 
 
 
-export const getPostUsersBatchAiParseMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postUsersBatchAiParse>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof postUsersBatchAiParse>>, TError,void, TContext> => {
+export const getPostUsersBatchAiParseMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postUsersBatchAiParse>>, TError,{data: V1AiUserImportRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof postUsersBatchAiParse>>, TError,{data: V1AiUserImportRequest}, TContext> => {
 
 const mutationKey = ['postUsersBatchAiParse'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -1043,10 +1086,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postUsersBatchAiParse>>, void> = () => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postUsersBatchAiParse>>, {data: V1AiUserImportRequest}> = (props) => {
+          const {data} = props ?? {};
 
-
-          return  postUsersBatchAiParse(requestOptions)
+          return  postUsersBatchAiParse(data,requestOptions)
         }
 
 
@@ -1057,153 +1100,21 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type PostUsersBatchAiParseMutationResult = NonNullable<Awaited<ReturnType<typeof postUsersBatchAiParse>>>
-
-    export type PostUsersBatchAiParseMutationError = void
+    export type PostUsersBatchAiParseMutationBody = V1AiUserImportRequest
+    export type PostUsersBatchAiParseMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/identityaccess/web/V1UserAdminController.java
  */
-export const usePostUsersBatchAiParse = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postUsersBatchAiParse>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
+export const usePostUsersBatchAiParse = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postUsersBatchAiParse>>, TError,{data: V1AiUserImportRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof postUsersBatchAiParse>>,
         TError,
-        void,
+        {data: V1AiUserImportRequest},
         TContext
       > => {
       return useMutation(getPostUsersBatchAiParseMutationOptions(options), queryClient);
-    }
-    /**
- * @summary com/jingxuan/identityaccess/web/V1UserAdminController.java
- */
-export const getUsersId = (
-    id: MaybeRefOrGetter<string>,
- options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
-) => {
-      id = toValue(id);
-
-      return apiRequest<void>(
-      {url: `/api/v1/users/${id}`, method: 'GET', signal
-    },
-      options);
-    }
-
-
-
-
-export const getGetUsersIdQueryKey = (id: MaybeRefOrGetter<string>,) => {
-    return [
-    'api','v1','users',id
-    ] as const;
-    }
-
-
-export const getGetUsersIdQueryOptions = <TData = Awaited<ReturnType<typeof getUsersId>>, TError = void>(id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsersId>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  getGetUsersIdQueryKey(id);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getUsersId>>> = ({ signal }) => getUsersId(id, requestOptions, signal);
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: computed(() => toValue(id) !== null && toValue(id) !== undefined), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getUsersId>>, TError, TData>
-}
-
-export type GetUsersIdQueryResult = NonNullable<Awaited<ReturnType<typeof getUsersId>>>
-export type GetUsersIdQueryError = void
-
-
-/**
- * @summary com/jingxuan/identityaccess/web/V1UserAdminController.java
- */
-
-export function useGetUsersId<TData = Awaited<ReturnType<typeof getUsersId>>, TError = void>(
- id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsersId>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
- ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getGetUsersIdQueryOptions(id,options)
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  query.queryKey = unref(queryOptions).queryKey as DataTag<QueryKey, TData, TError>;
-
-  return query;
-}
-
-
-
-
-
-
-/**
- * @summary com/jingxuan/identityaccess/web/V1UserAdminController.java
- */
-export const putUsersId = (
-    id: MaybeRefOrGetter<string>,
- options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
-) => {
-      id = toValue(id);
-
-      return apiRequest<void>(
-      {url: `/api/v1/users/${id}`, method: 'PUT', signal
-    },
-      options);
-    }
-
-
-
-
-export const getPutUsersIdMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putUsersId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof putUsersId>>, TError,{id: string}, TContext> => {
-
-const mutationKey = ['putUsersId'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putUsersId>>, {id: string}> = (props) => {
-          const {id} = props ?? {};
-
-          return  putUsersId(id,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type PutUsersIdMutationResult = NonNullable<Awaited<ReturnType<typeof putUsersId>>>
-
-    export type PutUsersIdMutationError = void
-
-    /**
- * @summary com/jingxuan/identityaccess/web/V1UserAdminController.java
- */
-export const usePutUsersId = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putUsersId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient): UseMutationReturnType<
-        Awaited<ReturnType<typeof putUsersId>>,
-        TError,
-        {id: string},
-        TContext
-      > => {
-      return useMutation(getPutUsersIdMutationOptions(options), queryClient);
     }
     /**
  * @summary com/jingxuan/identityaccess/web/V1UserAdminController.java
@@ -1223,7 +1134,7 @@ export const deleteUsersId = (
 
 
 
-export const getDeleteUsersIdMutationOptions = <TError = void,
+export const getDeleteUsersIdMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteUsersId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteUsersId>>, TError,{id: string}, TContext> => {
 
@@ -1252,12 +1163,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type DeleteUsersIdMutationResult = NonNullable<Awaited<ReturnType<typeof deleteUsersId>>>
 
-    export type DeleteUsersIdMutationError = void
+    export type DeleteUsersIdMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/identityaccess/web/V1UserAdminController.java
  */
-export const useDeleteUsersId = <TError = void,
+export const useDeleteUsersId = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteUsersId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof deleteUsersId>>,
@@ -1268,16 +1179,16 @@ export const useDeleteUsersId = <TError = void,
       return useMutation(getDeleteUsersIdMutationOptions(options), queryClient);
     }
     /**
- * @summary com/jingxuan/identityaccess/web/V1UserApprovalController.java
+ * @summary com/jingxuan/identityaccess/web/V1UserAdminController.java
  */
-export const postUsersIdApprovalDecisions = (
+export const getUsersId = (
     id: MaybeRefOrGetter<string>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {
       id = toValue(id);
 
-      return apiRequest<void>(
-      {url: `/api/v1/users/${id}/approval-decisions`, method: 'POST', signal
+      return apiRequest<V1User>(
+      {url: `/api/v1/users/${id}`, method: 'GET', signal
     },
       options);
     }
@@ -1285,9 +1196,149 @@ export const postUsersIdApprovalDecisions = (
 
 
 
-export const getPostUsersIdApprovalDecisionsMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postUsersIdApprovalDecisions>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof postUsersIdApprovalDecisions>>, TError,{id: string}, TContext> => {
+export const getGetUsersIdQueryKey = (id: MaybeRefOrGetter<string>,) => {
+    return [
+    'api','v1','users',id
+    ] as const;
+    }
+
+
+export const getGetUsersIdQueryOptions = <TData = Awaited<ReturnType<typeof getUsersId>>, TError = ProblemDetails>(id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsersId>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  getGetUsersIdQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getUsersId>>> = ({ signal }) => getUsersId(id, requestOptions, signal);
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: computed(() => toValue(id) !== null && toValue(id) !== undefined), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getUsersId>>, TError, TData>
+}
+
+export type GetUsersIdQueryResult = NonNullable<Awaited<ReturnType<typeof getUsersId>>>
+export type GetUsersIdQueryError = ProblemDetails
+
+
+/**
+ * @summary com/jingxuan/identityaccess/web/V1UserAdminController.java
+ */
+
+export function useGetUsersId<TData = Awaited<ReturnType<typeof getUsersId>>, TError = ProblemDetails>(
+ id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsersId>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetUsersIdQueryOptions(id,options)
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = unref(queryOptions).queryKey as DataTag<QueryKey, TData, TError>;
+
+  return query;
+}
+
+
+
+
+
+
+/**
+ * @summary com/jingxuan/identityaccess/web/V1UserAdminController.java
+ */
+export const putUsersId = (
+    id: MaybeRefOrGetter<string>,
+    v1UserRequest: MaybeRefOrGetter<V1UserRequest>,
+ options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
+) => {
+      id = toValue(id);
+v1UserRequest = toValue(v1UserRequest);
+
+      return apiRequest<void>(
+      {url: `/api/v1/users/${id}`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: v1UserRequest, signal
+    },
+      options);
+    }
+
+
+
+
+export const getPutUsersIdMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putUsersId>>, TError,{id: string;data: V1UserRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof putUsersId>>, TError,{id: string;data: V1UserRequest}, TContext> => {
+
+const mutationKey = ['putUsersId'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putUsersId>>, {id: string;data: V1UserRequest}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  putUsersId(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PutUsersIdMutationResult = NonNullable<Awaited<ReturnType<typeof putUsersId>>>
+    export type PutUsersIdMutationBody = V1UserRequest
+    export type PutUsersIdMutationError = ProblemDetails
+
+    /**
+ * @summary com/jingxuan/identityaccess/web/V1UserAdminController.java
+ */
+export const usePutUsersId = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putUsersId>>, TError,{id: string;data: V1UserRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient): UseMutationReturnType<
+        Awaited<ReturnType<typeof putUsersId>>,
+        TError,
+        {id: string;data: V1UserRequest},
+        TContext
+      > => {
+      return useMutation(getPutUsersIdMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary com/jingxuan/identityaccess/web/V1UserApprovalController.java
+ */
+export const postUsersIdApprovalDecisions = (
+    id: MaybeRefOrGetter<string>,
+    v1UserApprovalDecisionRequest: MaybeRefOrGetter<V1UserApprovalDecisionRequest>,
+ options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
+) => {
+      id = toValue(id);
+v1UserApprovalDecisionRequest = toValue(v1UserApprovalDecisionRequest);
+
+      return apiRequest<void>(
+      {url: `/api/v1/users/${id}/approval-decisions`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: v1UserApprovalDecisionRequest, signal
+    },
+      options);
+    }
+
+
+
+
+export const getPostUsersIdApprovalDecisionsMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postUsersIdApprovalDecisions>>, TError,{id: string;data: V1UserApprovalDecisionRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof postUsersIdApprovalDecisions>>, TError,{id: string;data: V1UserApprovalDecisionRequest}, TContext> => {
 
 const mutationKey = ['postUsersIdApprovalDecisions'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -1299,10 +1350,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postUsersIdApprovalDecisions>>, {id: string}> = (props) => {
-          const {id} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postUsersIdApprovalDecisions>>, {id: string;data: V1UserApprovalDecisionRequest}> = (props) => {
+          const {id,data} = props ?? {};
 
-          return  postUsersIdApprovalDecisions(id,requestOptions)
+          return  postUsersIdApprovalDecisions(id,data,requestOptions)
         }
 
 
@@ -1313,18 +1364,18 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type PostUsersIdApprovalDecisionsMutationResult = NonNullable<Awaited<ReturnType<typeof postUsersIdApprovalDecisions>>>
-
-    export type PostUsersIdApprovalDecisionsMutationError = void
+    export type PostUsersIdApprovalDecisionsMutationBody = V1UserApprovalDecisionRequest
+    export type PostUsersIdApprovalDecisionsMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/identityaccess/web/V1UserApprovalController.java
  */
-export const usePostUsersIdApprovalDecisions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postUsersIdApprovalDecisions>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
+export const usePostUsersIdApprovalDecisions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postUsersIdApprovalDecisions>>, TError,{id: string;data: V1UserApprovalDecisionRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof postUsersIdApprovalDecisions>>,
         TError,
-        {id: string},
+        {id: string;data: V1UserApprovalDecisionRequest},
         TContext
       > => {
       return useMutation(getPostUsersIdApprovalDecisionsMutationOptions(options), queryClient);
@@ -1338,7 +1389,7 @@ export const getUsersIdDeletionImpact = (
 ) => {
       id = toValue(id);
 
-      return apiRequest<void>(
+      return apiRequest<V1UserDeletionImpact>(
       {url: `/api/v1/users/${id}/deletion-impact`, method: 'GET', signal
     },
       options);
@@ -1354,7 +1405,7 @@ export const getGetUsersIdDeletionImpactQueryKey = (id: MaybeRefOrGetter<string>
     }
 
 
-export const getGetUsersIdDeletionImpactQueryOptions = <TData = Awaited<ReturnType<typeof getUsersIdDeletionImpact>>, TError = void>(id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsersIdDeletionImpact>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export const getGetUsersIdDeletionImpactQueryOptions = <TData = Awaited<ReturnType<typeof getUsersIdDeletionImpact>>, TError = ProblemDetails>(id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsersIdDeletionImpact>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -1373,14 +1424,14 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetUsersIdDeletionImpactQueryResult = NonNullable<Awaited<ReturnType<typeof getUsersIdDeletionImpact>>>
-export type GetUsersIdDeletionImpactQueryError = void
+export type GetUsersIdDeletionImpactQueryError = ProblemDetails
 
 
 /**
  * @summary com/jingxuan/identityaccess/web/V1UserApprovalController.java
  */
 
-export function useGetUsersIdDeletionImpact<TData = Awaited<ReturnType<typeof getUsersIdDeletionImpact>>, TError = void>(
+export function useGetUsersIdDeletionImpact<TData = Awaited<ReturnType<typeof getUsersIdDeletionImpact>>, TError = ProblemDetails>(
  id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsersIdDeletionImpact>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
  ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -1404,12 +1455,16 @@ export function useGetUsersIdDeletionImpact<TData = Awaited<ReturnType<typeof ge
  */
 export const putUsersIdStatus = (
     id: MaybeRefOrGetter<string>,
+    v1UserStatusRequest: MaybeRefOrGetter<V1UserStatusRequest>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {
       id = toValue(id);
+v1UserStatusRequest = toValue(v1UserStatusRequest);
 
       return apiRequest<void>(
-      {url: `/api/v1/users/${id}/status`, method: 'PUT', signal
+      {url: `/api/v1/users/${id}/status`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: v1UserStatusRequest, signal
     },
       options);
     }
@@ -1417,9 +1472,9 @@ export const putUsersIdStatus = (
 
 
 
-export const getPutUsersIdStatusMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putUsersIdStatus>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof putUsersIdStatus>>, TError,{id: string}, TContext> => {
+export const getPutUsersIdStatusMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putUsersIdStatus>>, TError,{id: string;data: V1UserStatusRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof putUsersIdStatus>>, TError,{id: string;data: V1UserStatusRequest}, TContext> => {
 
 const mutationKey = ['putUsersIdStatus'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -1431,10 +1486,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putUsersIdStatus>>, {id: string}> = (props) => {
-          const {id} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putUsersIdStatus>>, {id: string;data: V1UserStatusRequest}> = (props) => {
+          const {id,data} = props ?? {};
 
-          return  putUsersIdStatus(id,requestOptions)
+          return  putUsersIdStatus(id,data,requestOptions)
         }
 
 
@@ -1445,18 +1500,18 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type PutUsersIdStatusMutationResult = NonNullable<Awaited<ReturnType<typeof putUsersIdStatus>>>
-
-    export type PutUsersIdStatusMutationError = void
+    export type PutUsersIdStatusMutationBody = V1UserStatusRequest
+    export type PutUsersIdStatusMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/identityaccess/web/V1UserAdminController.java
  */
-export const usePutUsersIdStatus = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putUsersIdStatus>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
+export const usePutUsersIdStatus = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putUsersIdStatus>>, TError,{id: string;data: V1UserStatusRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof putUsersIdStatus>>,
         TError,
-        {id: string},
+        {id: string;data: V1UserStatusRequest},
         TContext
       > => {
       return useMutation(getPutUsersIdStatusMutationOptions(options), queryClient);

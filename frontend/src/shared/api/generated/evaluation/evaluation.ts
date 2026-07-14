@@ -29,6 +29,24 @@ import type {
   MaybeRefOrGetter
 } from 'vue';
 
+import type {
+  GetLeaderboardsCategories200Item,
+  GetLeaderboardsCategoriesParams,
+  GetMeScoresHistoryParams,
+  GetPrizesIdIssuesParams,
+  GetPrizesRankedWorksParams,
+  PostLeaderboardsCacheRefreshParams,
+  ProblemDetails,
+  ScoreSubmitRequest,
+  V1BatchScoreDetail,
+  V1IssueRequest,
+  V1LeaderboardEntry,
+  V1MyRank,
+  V1PageV1RewardIssue,
+  V1PageV1ScoreHistoryEntry,
+  V1PrizeRequest
+} from '../models';
+
 import { apiRequest } from '../../http';
 
 
@@ -40,13 +58,14 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
  * @summary com/jingxuan/evaluation/web/V1LeaderboardController.java
  */
 export const postLeaderboardsCacheRefresh = (
-
+    params?: MaybeRefOrGetter<PostLeaderboardsCacheRefreshParams>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {
-
+      params = toValue(params);
 
       return apiRequest<void>(
-      {url: `/api/v1/leaderboards/cache/refresh`, method: 'POST', signal
+      {url: `/api/v1/leaderboards/cache/refresh`, method: 'POST',
+        params, signal
     },
       options);
     }
@@ -54,9 +73,9 @@ export const postLeaderboardsCacheRefresh = (
 
 
 
-export const getPostLeaderboardsCacheRefreshMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postLeaderboardsCacheRefresh>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof postLeaderboardsCacheRefresh>>, TError,void, TContext> => {
+export const getPostLeaderboardsCacheRefreshMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postLeaderboardsCacheRefresh>>, TError,{params?: PostLeaderboardsCacheRefreshParams}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof postLeaderboardsCacheRefresh>>, TError,{params?: PostLeaderboardsCacheRefreshParams}, TContext> => {
 
 const mutationKey = ['postLeaderboardsCacheRefresh'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -68,10 +87,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postLeaderboardsCacheRefresh>>, void> = () => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postLeaderboardsCacheRefresh>>, {params?: PostLeaderboardsCacheRefreshParams}> = (props) => {
+          const {params} = props ?? {};
 
-
-          return  postLeaderboardsCacheRefresh(requestOptions)
+          return  postLeaderboardsCacheRefresh(params,requestOptions)
         }
 
 
@@ -83,17 +102,17 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type PostLeaderboardsCacheRefreshMutationResult = NonNullable<Awaited<ReturnType<typeof postLeaderboardsCacheRefresh>>>
 
-    export type PostLeaderboardsCacheRefreshMutationError = void
+    export type PostLeaderboardsCacheRefreshMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/evaluation/web/V1LeaderboardController.java
  */
-export const usePostLeaderboardsCacheRefresh = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postLeaderboardsCacheRefresh>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
+export const usePostLeaderboardsCacheRefresh = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postLeaderboardsCacheRefresh>>, TError,{params?: PostLeaderboardsCacheRefreshParams}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof postLeaderboardsCacheRefresh>>,
         TError,
-        void,
+        {params?: PostLeaderboardsCacheRefreshParams},
         TContext
       > => {
       return useMutation(getPostLeaderboardsCacheRefreshMutationOptions(options), queryClient);
@@ -102,13 +121,14 @@ export const usePostLeaderboardsCacheRefresh = <TError = void,
  * @summary com/jingxuan/evaluation/web/V1LeaderboardController.java
  */
 export const getLeaderboardsCategories = (
-
+    params?: MaybeRefOrGetter<GetLeaderboardsCategoriesParams>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {
+      params = toValue(params);
 
-
-      return apiRequest<void>(
-      {url: `/api/v1/leaderboards/categories`, method: 'GET', signal
+      return apiRequest<GetLeaderboardsCategories200Item[]>(
+      {url: `/api/v1/leaderboards/categories`, method: 'GET',
+        params, signal
     },
       options);
     }
@@ -116,23 +136,23 @@ export const getLeaderboardsCategories = (
 
 
 
-export const getGetLeaderboardsCategoriesQueryKey = () => {
+export const getGetLeaderboardsCategoriesQueryKey = (params?: MaybeRefOrGetter<GetLeaderboardsCategoriesParams>,) => {
     return [
-    'api','v1','leaderboards','categories'
+    'api','v1','leaderboards','categories', ...(params ? [params] : [])
     ] as const;
     }
 
 
-export const getGetLeaderboardsCategoriesQueryOptions = <TData = Awaited<ReturnType<typeof getLeaderboardsCategories>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLeaderboardsCategories>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export const getGetLeaderboardsCategoriesQueryOptions = <TData = Awaited<ReturnType<typeof getLeaderboardsCategories>>, TError = ProblemDetails>(params?: MaybeRefOrGetter<GetLeaderboardsCategoriesParams>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLeaderboardsCategories>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  getGetLeaderboardsCategoriesQueryKey();
+  const queryKey =  getGetLeaderboardsCategoriesQueryKey(params);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getLeaderboardsCategories>>> = ({ signal }) => getLeaderboardsCategories(requestOptions, signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getLeaderboardsCategories>>> = ({ signal }) => getLeaderboardsCategories(params, requestOptions, signal);
 
 
 
@@ -142,19 +162,19 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetLeaderboardsCategoriesQueryResult = NonNullable<Awaited<ReturnType<typeof getLeaderboardsCategories>>>
-export type GetLeaderboardsCategoriesQueryError = void
+export type GetLeaderboardsCategoriesQueryError = ProblemDetails
 
 
 /**
  * @summary com/jingxuan/evaluation/web/V1LeaderboardController.java
  */
 
-export function useGetLeaderboardsCategories<TData = Awaited<ReturnType<typeof getLeaderboardsCategories>>, TError = void>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLeaderboardsCategories>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export function useGetLeaderboardsCategories<TData = Awaited<ReturnType<typeof getLeaderboardsCategories>>, TError = ProblemDetails>(
+ params?: MaybeRefOrGetter<GetLeaderboardsCategoriesParams>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLeaderboardsCategories>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
  ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetLeaderboardsCategoriesQueryOptions(options)
+  const queryOptions = getGetLeaderboardsCategoriesQueryOptions(params,options)
 
   const query = useQuery(queryOptions, queryClient) as UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -169,6 +189,7 @@ export function useGetLeaderboardsCategories<TData = Awaited<ReturnType<typeof g
 
 
 /**
+ * 返回学生参与的所有已公示批次的排名
  * @summary com/jingxuan/evaluation/web/V1LeaderboardController.java
  */
 export const getLeaderboardsMe = (
@@ -177,7 +198,7 @@ export const getLeaderboardsMe = (
 ) => {
 
 
-      return apiRequest<void>(
+      return apiRequest<V1MyRank[]>(
       {url: `/api/v1/leaderboards/me`, method: 'GET', signal
     },
       options);
@@ -193,7 +214,7 @@ export const getGetLeaderboardsMeQueryKey = () => {
     }
 
 
-export const getGetLeaderboardsMeQueryOptions = <TData = Awaited<ReturnType<typeof getLeaderboardsMe>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLeaderboardsMe>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export const getGetLeaderboardsMeQueryOptions = <TData = Awaited<ReturnType<typeof getLeaderboardsMe>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLeaderboardsMe>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -212,14 +233,14 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetLeaderboardsMeQueryResult = NonNullable<Awaited<ReturnType<typeof getLeaderboardsMe>>>
-export type GetLeaderboardsMeQueryError = void
+export type GetLeaderboardsMeQueryError = ProblemDetails
 
 
 /**
  * @summary com/jingxuan/evaluation/web/V1LeaderboardController.java
  */
 
-export function useGetLeaderboardsMe<TData = Awaited<ReturnType<typeof getLeaderboardsMe>>, TError = void>(
+export function useGetLeaderboardsMe<TData = Awaited<ReturnType<typeof getLeaderboardsMe>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getLeaderboardsMe>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
  ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -242,13 +263,14 @@ export function useGetLeaderboardsMe<TData = Awaited<ReturnType<typeof getLeader
  * @summary com/jingxuan/evaluation/web/V1MyScoreController.java
  */
 export const getMeScoresHistory = (
-
+    params?: MaybeRefOrGetter<GetMeScoresHistoryParams>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {
+      params = toValue(params);
 
-
-      return apiRequest<void>(
-      {url: `/api/v1/me/scores/history`, method: 'GET', signal
+      return apiRequest<V1PageV1ScoreHistoryEntry>(
+      {url: `/api/v1/me/scores/history`, method: 'GET',
+        params, signal
     },
       options);
     }
@@ -256,23 +278,23 @@ export const getMeScoresHistory = (
 
 
 
-export const getGetMeScoresHistoryQueryKey = () => {
+export const getGetMeScoresHistoryQueryKey = (params?: MaybeRefOrGetter<GetMeScoresHistoryParams>,) => {
     return [
-    'api','v1','me','scores','history'
+    'api','v1','me','scores','history', ...(params ? [params] : [])
     ] as const;
     }
 
 
-export const getGetMeScoresHistoryQueryOptions = <TData = Awaited<ReturnType<typeof getMeScoresHistory>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMeScoresHistory>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export const getGetMeScoresHistoryQueryOptions = <TData = Awaited<ReturnType<typeof getMeScoresHistory>>, TError = ProblemDetails>(params?: MaybeRefOrGetter<GetMeScoresHistoryParams>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMeScoresHistory>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  getGetMeScoresHistoryQueryKey();
+  const queryKey =  getGetMeScoresHistoryQueryKey(params);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getMeScoresHistory>>> = ({ signal }) => getMeScoresHistory(requestOptions, signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getMeScoresHistory>>> = ({ signal }) => getMeScoresHistory(params, requestOptions, signal);
 
 
 
@@ -282,19 +304,19 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetMeScoresHistoryQueryResult = NonNullable<Awaited<ReturnType<typeof getMeScoresHistory>>>
-export type GetMeScoresHistoryQueryError = void
+export type GetMeScoresHistoryQueryError = ProblemDetails
 
 
 /**
  * @summary com/jingxuan/evaluation/web/V1MyScoreController.java
  */
 
-export function useGetMeScoresHistory<TData = Awaited<ReturnType<typeof getMeScoresHistory>>, TError = void>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMeScoresHistory>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export function useGetMeScoresHistory<TData = Awaited<ReturnType<typeof getMeScoresHistory>>, TError = ProblemDetails>(
+ params?: MaybeRefOrGetter<GetMeScoresHistoryParams>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMeScoresHistory>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
  ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetMeScoresHistoryQueryOptions(options)
+  const queryOptions = getGetMeScoresHistoryQueryOptions(params,options)
 
   const query = useQuery(queryOptions, queryClient) as UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -326,7 +348,7 @@ export const putPrizesIssuesIssueIdCancel = (
 
 
 
-export const getPutPrizesIssuesIssueIdCancelMutationOptions = <TError = void,
+export const getPutPrizesIssuesIssueIdCancelMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putPrizesIssuesIssueIdCancel>>, TError,{issueId: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
 ): UseMutationOptions<Awaited<ReturnType<typeof putPrizesIssuesIssueIdCancel>>, TError,{issueId: string}, TContext> => {
 
@@ -355,12 +377,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type PutPrizesIssuesIssueIdCancelMutationResult = NonNullable<Awaited<ReturnType<typeof putPrizesIssuesIssueIdCancel>>>
 
-    export type PutPrizesIssuesIssueIdCancelMutationError = void
+    export type PutPrizesIssuesIssueIdCancelMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/evaluation/web/V1PrizeController.java
  */
-export const usePutPrizesIssuesIssueIdCancel = <TError = void,
+export const usePutPrizesIssuesIssueIdCancel = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putPrizesIssuesIssueIdCancel>>, TError,{issueId: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof putPrizesIssuesIssueIdCancel>>,
@@ -374,13 +396,14 @@ export const usePutPrizesIssuesIssueIdCancel = <TError = void,
  * @summary com/jingxuan/evaluation/web/V1PrizeController.java
  */
 export const getPrizesRankedWorks = (
-
+    params: MaybeRefOrGetter<GetPrizesRankedWorksParams>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {
+      params = toValue(params);
 
-
-      return apiRequest<void>(
-      {url: `/api/v1/prizes/ranked-works`, method: 'GET', signal
+      return apiRequest<V1LeaderboardEntry[]>(
+      {url: `/api/v1/prizes/ranked-works`, method: 'GET',
+        params, signal
     },
       options);
     }
@@ -388,23 +411,23 @@ export const getPrizesRankedWorks = (
 
 
 
-export const getGetPrizesRankedWorksQueryKey = () => {
+export const getGetPrizesRankedWorksQueryKey = (params?: MaybeRefOrGetter<GetPrizesRankedWorksParams>,) => {
     return [
-    'api','v1','prizes','ranked-works'
+    'api','v1','prizes','ranked-works', ...(params ? [params] : [])
     ] as const;
     }
 
 
-export const getGetPrizesRankedWorksQueryOptions = <TData = Awaited<ReturnType<typeof getPrizesRankedWorks>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPrizesRankedWorks>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export const getGetPrizesRankedWorksQueryOptions = <TData = Awaited<ReturnType<typeof getPrizesRankedWorks>>, TError = ProblemDetails>(params: MaybeRefOrGetter<GetPrizesRankedWorksParams>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPrizesRankedWorks>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  getGetPrizesRankedWorksQueryKey();
+  const queryKey =  getGetPrizesRankedWorksQueryKey(params);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPrizesRankedWorks>>> = ({ signal }) => getPrizesRankedWorks(requestOptions, signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPrizesRankedWorks>>> = ({ signal }) => getPrizesRankedWorks(params, requestOptions, signal);
 
 
 
@@ -414,19 +437,19 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetPrizesRankedWorksQueryResult = NonNullable<Awaited<ReturnType<typeof getPrizesRankedWorks>>>
-export type GetPrizesRankedWorksQueryError = void
+export type GetPrizesRankedWorksQueryError = ProblemDetails
 
 
 /**
  * @summary com/jingxuan/evaluation/web/V1PrizeController.java
  */
 
-export function useGetPrizesRankedWorks<TData = Awaited<ReturnType<typeof getPrizesRankedWorks>>, TError = void>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPrizesRankedWorks>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export function useGetPrizesRankedWorks<TData = Awaited<ReturnType<typeof getPrizesRankedWorks>>, TError = ProblemDetails>(
+ params: MaybeRefOrGetter<GetPrizesRankedWorksParams>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPrizesRankedWorks>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
  ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetPrizesRankedWorksQueryOptions(options)
+  const queryOptions = getGetPrizesRankedWorksQueryOptions(params,options)
 
   const query = useQuery(queryOptions, queryClient) as UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -441,68 +464,6 @@ export function useGetPrizesRankedWorks<TData = Awaited<ReturnType<typeof getPri
 
 
 /**
- * @summary com/jingxuan/evaluation/web/V1PrizeController.java
- */
-export const putPrizesId = (
-    id: MaybeRefOrGetter<string>,
- options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
-) => {
-      id = toValue(id);
-
-      return apiRequest<void>(
-      {url: `/api/v1/prizes/${id}`, method: 'PUT', signal
-    },
-      options);
-    }
-
-
-
-
-export const getPutPrizesIdMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putPrizesId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof putPrizesId>>, TError,{id: string}, TContext> => {
-
-const mutationKey = ['putPrizesId'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putPrizesId>>, {id: string}> = (props) => {
-          const {id} = props ?? {};
-
-          return  putPrizesId(id,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type PutPrizesIdMutationResult = NonNullable<Awaited<ReturnType<typeof putPrizesId>>>
-
-    export type PutPrizesIdMutationError = void
-
-    /**
- * @summary com/jingxuan/evaluation/web/V1PrizeController.java
- */
-export const usePutPrizesId = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putPrizesId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient): UseMutationReturnType<
-        Awaited<ReturnType<typeof putPrizesId>>,
-        TError,
-        {id: string},
-        TContext
-      > => {
-      return useMutation(getPutPrizesIdMutationOptions(options), queryClient);
-    }
-    /**
  * @summary com/jingxuan/evaluation/web/V1PrizeController.java
  */
 export const deletePrizesId = (
@@ -520,7 +481,7 @@ export const deletePrizesId = (
 
 
 
-export const getDeletePrizesIdMutationOptions = <TError = void,
+export const getDeletePrizesIdMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deletePrizesId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deletePrizesId>>, TError,{id: string}, TContext> => {
 
@@ -549,12 +510,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type DeletePrizesIdMutationResult = NonNullable<Awaited<ReturnType<typeof deletePrizesId>>>
 
-    export type DeletePrizesIdMutationError = void
+    export type DeletePrizesIdMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/evaluation/web/V1PrizeController.java
  */
-export const useDeletePrizesId = <TError = void,
+export const useDeletePrizesId = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deletePrizesId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof deletePrizesId>>,
@@ -567,14 +528,18 @@ export const useDeletePrizesId = <TError = void,
     /**
  * @summary com/jingxuan/evaluation/web/V1PrizeController.java
  */
-export const getPrizesIdIssues = (
+export const putPrizesId = (
     id: MaybeRefOrGetter<string>,
+    v1PrizeRequest: MaybeRefOrGetter<V1PrizeRequest>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {
       id = toValue(id);
+v1PrizeRequest = toValue(v1PrizeRequest);
 
       return apiRequest<void>(
-      {url: `/api/v1/prizes/${id}/issues`, method: 'GET', signal
+      {url: `/api/v1/prizes/${id}`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: v1PrizeRequest, signal
     },
       options);
     }
@@ -582,23 +547,90 @@ export const getPrizesIdIssues = (
 
 
 
-export const getGetPrizesIdIssuesQueryKey = (id: MaybeRefOrGetter<string>,) => {
+export const getPutPrizesIdMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putPrizesId>>, TError,{id: string;data: V1PrizeRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof putPrizesId>>, TError,{id: string;data: V1PrizeRequest}, TContext> => {
+
+const mutationKey = ['putPrizesId'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putPrizesId>>, {id: string;data: V1PrizeRequest}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  putPrizesId(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PutPrizesIdMutationResult = NonNullable<Awaited<ReturnType<typeof putPrizesId>>>
+    export type PutPrizesIdMutationBody = V1PrizeRequest
+    export type PutPrizesIdMutationError = ProblemDetails
+
+    /**
+ * @summary com/jingxuan/evaluation/web/V1PrizeController.java
+ */
+export const usePutPrizesId = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putPrizesId>>, TError,{id: string;data: V1PrizeRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient): UseMutationReturnType<
+        Awaited<ReturnType<typeof putPrizesId>>,
+        TError,
+        {id: string;data: V1PrizeRequest},
+        TContext
+      > => {
+      return useMutation(getPutPrizesIdMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary com/jingxuan/evaluation/web/V1PrizeController.java
+ */
+export const getPrizesIdIssues = (
+    id: MaybeRefOrGetter<string>,
+    params?: MaybeRefOrGetter<GetPrizesIdIssuesParams>,
+ options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
+) => {
+      id = toValue(id);
+params = toValue(params);
+
+      return apiRequest<V1PageV1RewardIssue>(
+      {url: `/api/v1/prizes/${id}/issues`, method: 'GET',
+        params, signal
+    },
+      options);
+    }
+
+
+
+
+export const getGetPrizesIdIssuesQueryKey = (id: MaybeRefOrGetter<string>,
+    params?: MaybeRefOrGetter<GetPrizesIdIssuesParams>,) => {
     return [
-    'api','v1','prizes',id,'issues'
+    'api','v1','prizes',id,'issues', ...(params ? [params] : [])
     ] as const;
     }
 
 
-export const getGetPrizesIdIssuesQueryOptions = <TData = Awaited<ReturnType<typeof getPrizesIdIssues>>, TError = void>(id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPrizesIdIssues>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export const getGetPrizesIdIssuesQueryOptions = <TData = Awaited<ReturnType<typeof getPrizesIdIssues>>, TError = ProblemDetails>(id: MaybeRefOrGetter<string>,
+    params?: MaybeRefOrGetter<GetPrizesIdIssuesParams>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPrizesIdIssues>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  getGetPrizesIdIssuesQueryKey(id);
+  const queryKey =  getGetPrizesIdIssuesQueryKey(id,params);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPrizesIdIssues>>> = ({ signal }) => getPrizesIdIssues(id, requestOptions, signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPrizesIdIssues>>> = ({ signal }) => getPrizesIdIssues(id,params, requestOptions, signal);
 
 
 
@@ -608,19 +640,20 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetPrizesIdIssuesQueryResult = NonNullable<Awaited<ReturnType<typeof getPrizesIdIssues>>>
-export type GetPrizesIdIssuesQueryError = void
+export type GetPrizesIdIssuesQueryError = ProblemDetails
 
 
 /**
  * @summary com/jingxuan/evaluation/web/V1PrizeController.java
  */
 
-export function useGetPrizesIdIssues<TData = Awaited<ReturnType<typeof getPrizesIdIssues>>, TError = void>(
- id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPrizesIdIssues>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export function useGetPrizesIdIssues<TData = Awaited<ReturnType<typeof getPrizesIdIssues>>, TError = ProblemDetails>(
+ id: MaybeRefOrGetter<string>,
+    params?: MaybeRefOrGetter<GetPrizesIdIssuesParams>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPrizesIdIssues>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
  ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetPrizesIdIssuesQueryOptions(id,options)
+  const queryOptions = getGetPrizesIdIssuesQueryOptions(id,params,options)
 
   const query = useQuery(queryOptions, queryClient) as UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -639,12 +672,16 @@ export function useGetPrizesIdIssues<TData = Awaited<ReturnType<typeof getPrizes
  */
 export const postPrizesIdIssues = (
     id: MaybeRefOrGetter<string>,
+    v1IssueRequest: MaybeRefOrGetter<V1IssueRequest>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {
       id = toValue(id);
+v1IssueRequest = toValue(v1IssueRequest);
 
       return apiRequest<void>(
-      {url: `/api/v1/prizes/${id}/issues`, method: 'POST', signal
+      {url: `/api/v1/prizes/${id}/issues`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: v1IssueRequest, signal
     },
       options);
     }
@@ -652,9 +689,9 @@ export const postPrizesIdIssues = (
 
 
 
-export const getPostPrizesIdIssuesMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPrizesIdIssues>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof postPrizesIdIssues>>, TError,{id: string}, TContext> => {
+export const getPostPrizesIdIssuesMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPrizesIdIssues>>, TError,{id: string;data: V1IssueRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof postPrizesIdIssues>>, TError,{id: string;data: V1IssueRequest}, TContext> => {
 
 const mutationKey = ['postPrizesIdIssues'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -666,10 +703,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postPrizesIdIssues>>, {id: string}> = (props) => {
-          const {id} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postPrizesIdIssues>>, {id: string;data: V1IssueRequest}> = (props) => {
+          const {id,data} = props ?? {};
 
-          return  postPrizesIdIssues(id,requestOptions)
+          return  postPrizesIdIssues(id,data,requestOptions)
         }
 
 
@@ -680,18 +717,18 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type PostPrizesIdIssuesMutationResult = NonNullable<Awaited<ReturnType<typeof postPrizesIdIssues>>>
-
-    export type PostPrizesIdIssuesMutationError = void
+    export type PostPrizesIdIssuesMutationBody = V1IssueRequest
+    export type PostPrizesIdIssuesMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/evaluation/web/V1PrizeController.java
  */
-export const usePostPrizesIdIssues = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPrizesIdIssues>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
+export const usePostPrizesIdIssues = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postPrizesIdIssues>>, TError,{id: string;data: V1IssueRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof postPrizesIdIssues>>,
         TError,
-        {id: string},
+        {id: string;data: V1IssueRequest},
         TContext
       > => {
       return useMutation(getPostPrizesIdIssuesMutationOptions(options), queryClient);
@@ -705,7 +742,7 @@ export const getScoresBatchBatchId = (
 ) => {
       batchId = toValue(batchId);
 
-      return apiRequest<void>(
+      return apiRequest<V1BatchScoreDetail[]>(
       {url: `/api/v1/scores/batch/${batchId}`, method: 'GET', signal
     },
       options);
@@ -721,7 +758,7 @@ export const getGetScoresBatchBatchIdQueryKey = (batchId: MaybeRefOrGetter<strin
     }
 
 
-export const getGetScoresBatchBatchIdQueryOptions = <TData = Awaited<ReturnType<typeof getScoresBatchBatchId>>, TError = void>(batchId: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getScoresBatchBatchId>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export const getGetScoresBatchBatchIdQueryOptions = <TData = Awaited<ReturnType<typeof getScoresBatchBatchId>>, TError = ProblemDetails>(batchId: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getScoresBatchBatchId>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -740,14 +777,14 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetScoresBatchBatchIdQueryResult = NonNullable<Awaited<ReturnType<typeof getScoresBatchBatchId>>>
-export type GetScoresBatchBatchIdQueryError = void
+export type GetScoresBatchBatchIdQueryError = ProblemDetails
 
 
 /**
  * @summary com/jingxuan/evaluation/web/V1ScoreAdminController.java
  */
 
-export function useGetScoresBatchBatchId<TData = Awaited<ReturnType<typeof getScoresBatchBatchId>>, TError = void>(
+export function useGetScoresBatchBatchId<TData = Awaited<ReturnType<typeof getScoresBatchBatchId>>, TError = ProblemDetails>(
  batchId: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getScoresBatchBatchId>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
  ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -771,12 +808,16 @@ export function useGetScoresBatchBatchId<TData = Awaited<ReturnType<typeof getSc
  */
 export const putWorksIdScoresMe = (
     id: MaybeRefOrGetter<string>,
+    scoreSubmitRequest: MaybeRefOrGetter<ScoreSubmitRequest>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {
       id = toValue(id);
+scoreSubmitRequest = toValue(scoreSubmitRequest);
 
       return apiRequest<void>(
-      {url: `/api/v1/works/${id}/scores/me`, method: 'PUT', signal
+      {url: `/api/v1/works/${id}/scores/me`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: scoreSubmitRequest, signal
     },
       options);
     }
@@ -784,9 +825,9 @@ export const putWorksIdScoresMe = (
 
 
 
-export const getPutWorksIdScoresMeMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putWorksIdScoresMe>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof putWorksIdScoresMe>>, TError,{id: string}, TContext> => {
+export const getPutWorksIdScoresMeMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putWorksIdScoresMe>>, TError,{id: string;data: ScoreSubmitRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof putWorksIdScoresMe>>, TError,{id: string;data: ScoreSubmitRequest}, TContext> => {
 
 const mutationKey = ['putWorksIdScoresMe'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -798,10 +839,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putWorksIdScoresMe>>, {id: string}> = (props) => {
-          const {id} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putWorksIdScoresMe>>, {id: string;data: ScoreSubmitRequest}> = (props) => {
+          const {id,data} = props ?? {};
 
-          return  putWorksIdScoresMe(id,requestOptions)
+          return  putWorksIdScoresMe(id,data,requestOptions)
         }
 
 
@@ -812,18 +853,18 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type PutWorksIdScoresMeMutationResult = NonNullable<Awaited<ReturnType<typeof putWorksIdScoresMe>>>
-
-    export type PutWorksIdScoresMeMutationError = void
+    export type PutWorksIdScoresMeMutationBody = ScoreSubmitRequest
+    export type PutWorksIdScoresMeMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/evaluation/web/V1ScoreController.java
  */
-export const usePutWorksIdScoresMe = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putWorksIdScoresMe>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
+export const usePutWorksIdScoresMe = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putWorksIdScoresMe>>, TError,{id: string;data: ScoreSubmitRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof putWorksIdScoresMe>>,
         TError,
-        {id: string},
+        {id: string;data: ScoreSubmitRequest},
         TContext
       > => {
       return useMutation(getPutWorksIdScoresMeMutationOptions(options), queryClient);

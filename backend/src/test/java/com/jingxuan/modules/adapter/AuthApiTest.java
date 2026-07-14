@@ -19,7 +19,7 @@ class AuthApiTest extends BaseApiTest {
         @Test
         @DisplayName("学生登录成功")
         void studentLoginSuccess() {
-            ApiResponse resp = publicApi.post("/auth/login",
+            ApiResponse resp = publicApi.post("/api/auth/login",
                     Map.of("username", "2022001", "password", "test123"));
             resp.assertOk();
             assertNotNull(resp.getDataText("token"));
@@ -29,7 +29,7 @@ class AuthApiTest extends BaseApiTest {
         @Test
         @DisplayName("教师登录成功")
         void teacherLoginSuccess() {
-            ApiResponse resp = publicApi.post("/auth/login",
+            ApiResponse resp = publicApi.post("/api/auth/login",
                     Map.of("username", "t001", "password", "test123"));
             assertEquals(200, resp.getCode(), "教师登录失败: " + resp.getMessage());
             assertEquals("ROLE_TEACHER", resp.getDataNested("userInfo", "roleCode"));
@@ -38,7 +38,7 @@ class AuthApiTest extends BaseApiTest {
         @Test
         @DisplayName("管理员登录成功")
         void adminLoginSuccess() {
-            ApiResponse resp = publicApi.post("/auth/login",
+            ApiResponse resp = publicApi.post("/api/auth/login",
                     Map.of("username", "admin", "password", "admin123"));
             resp.assertOk();
             assertEquals("ROLE_ADMIN", resp.getDataNested("userInfo", "roleCode"));
@@ -47,7 +47,7 @@ class AuthApiTest extends BaseApiTest {
         @Test
         @DisplayName("密码错误返回 401")
         void wrongPassword() {
-            ApiResponse resp = publicApi.post("/auth/login",
+            ApiResponse resp = publicApi.post("/api/auth/login",
                     Map.of("username", "2022001", "password", "wrongpass"));
             resp.assertCode(401);
         }
@@ -55,7 +55,7 @@ class AuthApiTest extends BaseApiTest {
         @Test
         @DisplayName("账号不存在返回 401")
         void userNotFound() {
-            ApiResponse resp = publicApi.post("/auth/login",
+            ApiResponse resp = publicApi.post("/api/auth/login",
                     Map.of("username", "nonexist", "password", "test123"));
             resp.assertCode(401);
         }
@@ -68,7 +68,7 @@ class AuthApiTest extends BaseApiTest {
         @Test
         @DisplayName("已登录用户获取信息")
         void getCurrentUser() {
-            ApiResponse resp = studentApi.get("/auth/user-info");
+            ApiResponse resp = studentApi.get("/api/auth/user-info");
             resp.assertOk();
             assertEquals("2022001", resp.getDataText("username"));
             assertEquals("张三", resp.getDataText("realName"));
@@ -77,7 +77,7 @@ class AuthApiTest extends BaseApiTest {
         @Test
         @DisplayName("未登录返回 401")
         void unauthorized() {
-            ApiResponse resp = publicApi.get("/auth/user-info");
+            ApiResponse resp = publicApi.get("/api/auth/user-info");
             // 未认证时应返回 401
             assertTrue(resp.getCode() == 401 || resp.getCode() == 302,
                     "期望 401 或 302，实际: " + resp.getCode());
@@ -91,11 +91,11 @@ class AuthApiTest extends BaseApiTest {
         @Test
         @DisplayName("修改密码成功")
         void changePasswordSuccess() {
-            ApiResponse resp = studentApi.put("/auth/password",
+            ApiResponse resp = studentApi.put("/api/auth/password",
                     Map.of("oldPassword", "test123", "newPassword", "newpass123"));
             resp.assertOk();
             // 恢复原密码
-            studentApi.put("/auth/password",
+            studentApi.put("/api/auth/password",
                     Map.of("oldPassword", "newpass123", "newPassword", "test123"));
         }
 
@@ -103,7 +103,7 @@ class AuthApiTest extends BaseApiTest {
         @DisplayName("原密码错误返回 400")
         void wrongOldPassword() {
             // 使用 admin token 调用 student 密码接口测试密码错误
-            ApiResponse resp = studentApi.put("/auth/password",
+            ApiResponse resp = studentApi.put("/api/auth/password",
                     Map.of("oldPassword", "wrong", "newPassword", "newpass123"));
             resp.assertCode(400);
         }
@@ -116,7 +116,7 @@ class AuthApiTest extends BaseApiTest {
         @Test
         @DisplayName("已登录用户可正常退出")
         void logoutSuccess() {
-            ApiResponse resp = studentApi.post("/auth/logout", null);
+            ApiResponse resp = studentApi.post("/api/auth/logout", null);
             resp.assertOk();
         }
 
@@ -124,10 +124,10 @@ class AuthApiTest extends BaseApiTest {
         @DisplayName("退出后重复使用同一 Token 被拦截")
         void replayAfterLogoutShouldBeBlocked() {
             String token = login("2022001", "test123");
-            ApiResponse logoutResp = new ApiClient("http://localhost:" + port, token).post("/auth/logout", null);
+            ApiResponse logoutResp = new ApiClient("http://localhost:" + port, token).post("/api/auth/logout", null);
             logoutResp.assertOk();
 
-            ApiResponse replayResp = new ApiClient("http://localhost:" + port, token).get("/auth/user-info");
+            ApiResponse replayResp = new ApiClient("http://localhost:" + port, token).get("/api/auth/user-info");
             assertEquals(401, replayResp.getCode(), "退出后的同一 token 应被拦截");
         }
     }
@@ -139,7 +139,7 @@ class AuthApiTest extends BaseApiTest {
         @Test
         @DisplayName("更新手机号和邮箱")
         void updateProfile() {
-            ApiResponse resp = studentApi.put("/auth/profile",
+            ApiResponse resp = studentApi.put("/api/auth/profile",
                     Map.of("phone", "13800138001", "email", "student@test.com"));
             resp.assertOk();
         }
@@ -152,7 +152,7 @@ class AuthApiTest extends BaseApiTest {
         @Test
         @DisplayName("学生首次登录标记为 true")
         void studentFirstLoginTrue() {
-            ApiResponse resp = studentApi.get("/auth/check-first-login");
+            ApiResponse resp = studentApi.get("/api/auth/check-first-login");
             resp.assertOk();
             assertTrue(resp.getDataBool("firstLogin"));
         }
@@ -160,7 +160,7 @@ class AuthApiTest extends BaseApiTest {
         @Test
         @DisplayName("管理员首次登录标记为 false")
         void adminFirstLoginFalse() {
-            ApiResponse resp = adminApi.get("/auth/check-first-login");
+            ApiResponse resp = adminApi.get("/api/auth/check-first-login");
             resp.assertOk();
             assertFalse(resp.getDataBool("firstLogin"));
         }

@@ -52,8 +52,8 @@ class RestSecurityErrorHandlerTest {
     }
 
     @Test
-    void legacySecurityErrorsUseProblemDetails() throws Exception {
-        MockHttpServletRequest request = request("/student/tasks", "legacy-request");
+    void legacySecurityErrorsKeepResultEnvelope() throws Exception {
+        MockHttpServletRequest request = request("/api/student/tasks", "legacy-request");
         MockHttpServletResponse unauthenticated = new MockHttpServletResponse();
         MockHttpServletResponse forbidden = new MockHttpServletResponse();
 
@@ -61,10 +61,10 @@ class RestSecurityErrorHandlerTest {
                 new InsufficientAuthenticationException("missing token"));
         accessDeniedHandler.handle(request, forbidden, new AccessDeniedException("denied"));
 
-        assertProblemJson(unauthenticated);
-        assertEquals("UNAUTHENTICATED", objectMapper.readTree(unauthenticated.getContentAsString()).get("code").asText());
-        assertProblemJson(forbidden);
-        assertEquals("FORBIDDEN", objectMapper.readTree(forbidden.getContentAsString()).get("code").asText());
+        assertJson(unauthenticated);
+        assertEquals(401, objectMapper.readTree(unauthenticated.getContentAsString()).get("code").asInt());
+        assertJson(forbidden);
+        assertEquals(403, objectMapper.readTree(forbidden.getContentAsString()).get("code").asInt());
     }
 
     private MockHttpServletRequest request(String uri, String requestId) {
@@ -76,6 +76,11 @@ class RestSecurityErrorHandlerTest {
 
     private void assertProblemJson(MockHttpServletResponse response) {
         assertTrue(MediaType.APPLICATION_PROBLEM_JSON.isCompatibleWith(
+                MediaType.parseMediaType(response.getContentType())));
+    }
+
+    private void assertJson(MockHttpServletResponse response) {
+        assertTrue(MediaType.APPLICATION_JSON.isCompatibleWith(
                 MediaType.parseMediaType(response.getContentType())));
     }
 }

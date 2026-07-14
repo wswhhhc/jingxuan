@@ -10,14 +10,16 @@ export const useAuthStore = defineStore('auth', () => {
   const userInfo = ref<V1UserInfo | null>(null)
 
   async function login(username: string, password: string, remember = false) {
-    const response = await postAuthLogin({
-      data: { username, password, rememberMe: remember },
-    })
+    const response = await postAuthLogin({ username, password, rememberMe: remember })
     const data = response as unknown as V1LoginResponse
-    token.value = data.accessToken
+    if (!data.accessToken) {
+      throw new Error('登录响应缺少 accessToken')
+    }
+    const accessToken = data.accessToken
+    token.value = accessToken
 
-    localStorage.setItem('token', data.accessToken)
-    sessionStorage.setItem('token', data.accessToken)
+    localStorage.setItem('token', accessToken)
+    sessionStorage.setItem('token', accessToken)
 
     if (remember) {
       localStorage.setItem('remember', '1')

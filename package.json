@@ -13,17 +13,19 @@
     "frontend:test": "npm --prefix frontend run test",
     "frontend:build": "npm --prefix frontend run build",
     "frontend:audit": "npm --prefix frontend audit --omit=dev --audit-level=high",
+    "smoke:test": "node --test scripts/smoke-test.test.mjs",
+    "smoke:legacy": "bash scripts/smoke-test.sh http://127.0.0.1:8080",
     "backend:test:unit": "mvn -f backend/pom.xml -B -ntp test",
     "backend:test:integration": "mvn -f backend/pom.xml -B -ntp verify -DskipUnitTests=true",
     "backend:verify": "mvn -f backend/pom.xml -B -ntp verify",
     "backend:openapi:export": "mvn -f backend/pom.xml -B -ntp -Popenapi-export -DskipUnitTests=true -DskipITs=true verify",
-    "api:generate": "npm run backend:openapi:export && python -X utf8 scripts/enrich-openapi-schemas.py && npm --prefix frontend run api:generate && node scripts/trim-generated-api.mjs",
-    "api:check": "npm run api:generate && git diff --exit-code -- frontend/src/shared/api/generated",
+    "api:generate": "npm run backend:openapi:export && python -X utf8 scripts/verify-openapi-contract.py --write && node scripts/prepare-openapi-v1.mjs && npm --prefix frontend run api:generate && node scripts/trim-generated-api.mjs",
+    "api:check": "node --test scripts/prepare-openapi-v1.test.mjs scripts/check-generated-artifacts.test.mjs && python -X utf8 scripts/verify-openapi-contract.test.py && npm run backend:openapi:export && python -X utf8 scripts/verify-openapi-contract.py --check && node scripts/prepare-openapi-v1.mjs --check && npm --prefix frontend run api:generate && node scripts/trim-generated-api.mjs && node scripts/check-generated-artifacts.mjs",
     "format:check": "npm --prefix frontend exec -- prettier --check package.json frontend/orval.config.ts .github/workflows/ci.yml .github/dependabot.yml scripts/*.mjs",
     "verify:toolchain": "node scripts/verify-toolchain.mjs",
     "verify:config": "node --test scripts/verify-security-baseline.test.mjs && node scripts/verify-security-baseline.mjs",
     "verify:frontend": "npm run frontend:lint && npm run frontend:typecheck && npm run frontend:test && npm run frontend:build",
     "verify:quick": "npm run verify:toolchain && npm run verify:config && npm run format:check && npm run verify:frontend && npm run backend:test:unit",
-    "verify": "npm run verify:toolchain && npm run verify:config && npm run format:check && npm run verify:frontend && npm run frontend:audit && npm run backend:verify"
+    "verify": "npm run verify:toolchain && npm run verify:config && npm run format:check && npm run smoke:test && npm run api:check && npm run verify:frontend && npm run frontend:audit && npm run backend:verify"
   }
 }

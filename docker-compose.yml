@@ -3,35 +3,149 @@
 # 使用方式：docker compose up -d
 # ============================================================
 
+name: jingxuan
+
 services:
   # MySQL 数据库
   mysql:
-    image: mysql:8.0
-    container_name: jingxuan-mysql
+    image: mysql:8.0.46
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-jingxuan123}
-      MYSQL_DATABASE: jingxuan
+      # 旧版部署曾直接把 DB_PASSWORD 作为 root 密码；未显式配置新变量时保留该兼容路径。
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-${DB_PASSWORD:?DB_PASSWORD is required}}
+      MYSQL_DATABASE: ${DB_NAME:-jingxuan}
+      MYSQL_USER: ${DB_USER:-jingxuan}
+      MYSQL_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
       MYSQL_CHARACTER_SET_SERVER: utf8mb4
       MYSQL_COLLATION_SERVER: utf8mb4_unicode_ci
     volumes:
       - mysql-data:/var/lib/mysql
+      - mysql-socket:/var/run/mysqld
       # Flyway 是唯一 Schema 来源，不在这里初始化
     ports:
-      - "3307:3306"
+      - "127.0.0.1:3307:3306"
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASSWORD:-jingxuan123}"]
+      # 这里只检查 mysqld 是否可用。旧卷尚无应用账号时也必须先让迁移服务启动。
+      test: ["CMD-SHELL", "mysqladmin ping --host=127.0.0.1 --silent"]
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - data
+
+  # 官方镜像只会在空数据目录创建 MYSQL_USER。该一次性服务通过本地 socket
+  # 幂等补齐旧 mysql-data 卷中的应用账号，再允许后端启动。
+  mysql-user-bootstrap:
+    image: mysql:8.0.46
+    restart: "no"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      DB_NAME: ${DB_NAME:-jingxuan}
+      DB_USER: ${DB_USER:-jingxuan}
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      DB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-${DB_PASSWORD:?DB_PASSWORD is required}}
+      # 同时轮换 root 与应用密码时，可显式传入旧版 root 密码完成首次迁移。
+      LEGACY_ROOT_PASSWORD: ${DB_LEGACY_ROOT_PASSWORD:-${DB_PASSWORD:?DB_PASSWORD is required}}
+    volumes:
+      - mysql-socket:/var/run/mysqld
+    networks:
+      - data
+    entrypoint: ["/bin/bash", "-ec"]
+    command:
+      - |
+        case "$$DB_NAME" in
+          ""|*[!A-Za-z0-9_]*) echo "DB_NAME 只允许字母、数字和下划线" >&2; exit 1 ;;
+        esac
+        case "$$DB_USER" in
+          ""|root|*[!A-Za-z0-9_]*) echo "DB_USER 必须是非 root 的字母、数字或下划线账号" >&2; exit 1 ;;
+        esac
+
+        mysql_root() {
+          local password="$$1"
+          shift
+          MYSQL_PWD="$$password" mysql \
+            --protocol=socket \
+            --socket=/var/run/mysqld/mysqld.sock \
+            --user=root \
+            --batch \
+            --skip-column-names \
+            "$$@"
+        }
+
+        if mysql_root "$$DB_ROOT_PASSWORD" --execute="SELECT 1" >/dev/null 2>&1; then
+          active_root_password="$$DB_ROOT_PASSWORD"
+        elif mysql_root "$$LEGACY_ROOT_PASSWORD" --execute="SELECT 1" >/dev/null 2>&1; then
+          active_root_password="$$LEGACY_ROOT_PASSWORD"
+        else
+          echo "无法使用当前或旧版 root 密码连接 MySQL；旧卷迁移时请设置 DB_LEGACY_ROOT_PASSWORD" >&2
+          exit 1
+        fi
+
+        hex() {
+          printf '%s' "$$1" | od -An -v -tx1 | tr -d ' \n'
+        }
+        db_name_hex="$$(hex "$$DB_NAME")"
+        db_user_hex="$$(hex "$$DB_USER")"
+        db_password_hex="$$(hex "$$DB_PASSWORD")"
+        root_password_hex="$$(hex "$$DB_ROOT_PASSWORD")"
+
+        mysql_root "$$active_root_password" <<SQL
+        SET @app_db = CONVERT(X'$$db_name_hex' USING utf8mb4);
+        SET @app_user = CONVERT(X'$$db_user_hex' USING utf8mb4);
+        SET @app_password = CONVERT(X'$$db_password_hex' USING utf8mb4);
+        SET @new_root_password = CONVERT(X'$$root_password_hex' USING utf8mb4);
+        SET @account = CONCAT(QUOTE(@app_user), '@''%''');
+
+        SET @statement = CONCAT(
+          'CREATE DATABASE IF NOT EXISTS ', CHAR(96), @app_db, CHAR(96),
+          ' CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'
+        );
+        PREPARE prepared_statement FROM @statement;
+        EXECUTE prepared_statement;
+        DEALLOCATE PREPARE prepared_statement;
+
+        SET @statement = CONCAT(
+          'CREATE USER IF NOT EXISTS ', @account,
+          ' IDENTIFIED BY ', QUOTE(@app_password)
+        );
+        PREPARE prepared_statement FROM @statement;
+        EXECUTE prepared_statement;
+        DEALLOCATE PREPARE prepared_statement;
+
+        SET @statement = CONCAT(
+          'ALTER USER ', @account,
+          ' IDENTIFIED BY ', QUOTE(@app_password)
+        );
+        PREPARE prepared_statement FROM @statement;
+        EXECUTE prepared_statement;
+        DEALLOCATE PREPARE prepared_statement;
+
+        SET @statement = CONCAT(
+          'GRANT ALL PRIVILEGES ON ', CHAR(96), @app_db, CHAR(96), '.* TO ', @account
+        );
+        PREPARE prepared_statement FROM @statement;
+        EXECUTE prepared_statement;
+        DEALLOCATE PREPARE prepared_statement;
+
+        SET @statement = CONCAT(
+          'ALTER USER ''root''@''localhost'' IDENTIFIED BY ',
+          QUOTE(@new_root_password)
+        );
+        PREPARE prepared_statement FROM @statement;
+        EXECUTE prepared_statement;
+        DEALLOCATE PREPARE prepared_statement;
+        SQL
+
+        echo "MySQL 应用账号已完成幂等初始化"
 
   # Redis 缓存
   redis:
-    image: redis:7-alpine
-    container_name: jingxuan-redis
+    image: redis:7.4.5-alpine
     restart: unless-stopped
     ports:
-      - "6380:6379"
+      - "127.0.0.1:6380:6379"
     volumes:
       - redis-data:/data
     healthcheck:
@@ -39,6 +153,8 @@ services:
       interval: 10s
       timeout: 3s
       retries: 5
+    networks:
+      - data
 
   # 后端应用（Spring Boot）
   backend:
@@ -46,24 +162,38 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     image: jingxuan-backend:latest
-    container_name: jingxuan-backend
     restart: unless-stopped
     depends_on:
       mysql:
         condition: service_healthy
+      mysql-user-bootstrap:
+        condition: service_completed_successfully
       redis:
         condition: service_healthy
     environment:
-      DB_PASSWORD: ${DB_PASSWORD:-jingxuan123}
+      SPRING_PROFILES_ACTIVE: prod
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME:-jingxuan}
+      DB_USER: ${DB_USER:-jingxuan}
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
       DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
       MAIL_HOST: ${MAIL_HOST:-smtp.qq.com}
       MAIL_PORT: ${MAIL_PORT:-587}
       MAIL_USERNAME: ${MAIL_USERNAME:-}
       MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+      JINGXUAN_SECURITY_TRUSTED_PROXY_CIDRS: "${JINGXUAN_DOCKER_TRUSTED_PROXY_CIDRS:-127.0.0.1/32,::1/128,172.31.250.2/32}"
     ports:
-      - "8080:8080"
+      - "127.0.0.1:8080:8080"
     volumes:
       - uploads:/app/uploads
+    networks:
+      data:
+      proxy:
+        ipv4_address: 172.31.250.3
 
   # Nginx 反向代理 + 前端静态资源
   nginx:
@@ -71,16 +201,27 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     image: jingxuan-frontend:latest
-    container_name: jingxuan-nginx
     restart: unless-stopped
     depends_on:
       - backend
     ports:
       - "80:80"
+    networks:
+      proxy:
+        ipv4_address: 172.31.250.2
 
 volumes:
   mysql-data:
+  mysql-socket:
   redis-data:
   uploads:
 
-
+networks:
+  data:
+    driver: bridge
+    internal: true
+  proxy:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.31.250.0/29

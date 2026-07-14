@@ -99,13 +99,22 @@ import { ref, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { init, use } from 'echarts/core'
 import { PieChart, BarChart } from 'echarts/charts'
 import { TooltipComponent, LegendComponent, GridComponent } from 'echarts/components'
+import { LegacyGridContainLabel } from 'echarts/features'
 import { CanvasRenderer } from 'echarts/renderers'
 import type { ECharts } from 'echarts/core'
 import { getDashboardStats, getDashboardCharts } from '@/api/admin/dashboard'
 import type { DashboardStats, ChartData } from '@/api/admin/dashboard'
 import { useThemeStore } from '@/stores/theme'
 
-use([PieChart, BarChart, TooltipComponent, LegendComponent, GridComponent, CanvasRenderer])
+use([
+  PieChart,
+  BarChart,
+  TooltipComponent,
+  LegendComponent,
+  GridComponent,
+  LegacyGridContainLabel,
+  CanvasRenderer,
+])
 
 const loading = ref(false)
 const themeStore = useThemeStore()

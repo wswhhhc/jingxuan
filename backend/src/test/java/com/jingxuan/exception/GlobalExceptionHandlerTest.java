@@ -6,6 +6,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.QueryTimeoutException;
+import org.springframework.http.HttpMethod;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -44,5 +46,15 @@ class GlobalExceptionHandlerTest {
 
         assertEquals(500, result.getCode());
         assertEquals("数据库连接超时，请稍后重试", result.getMessage());
+    }
+
+    @Test
+    @DisplayName("缺失的静态上传文件返回 404 而不是服务器错误")
+    void missingStaticResource() {
+        Result<Void> result = handler.handleNoResourceFound(
+                new NoResourceFoundException(HttpMethod.GET, "/uploads/missing.jpg", "missing.jpg"));
+
+        assertEquals(404, result.getCode());
+        assertEquals("请求的资源不存在", result.getMessage());
     }
 }

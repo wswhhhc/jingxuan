@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.stream.Collectors;
@@ -96,6 +97,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoHandlerFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Result<Void> handleNoHandlerFound(NoHandlerFoundException e) {
+        return Result.fail(404, "请求的资源不存在");
+    }
+
+    /**
+     * 静态资源（如用户上传的图片）不存在时，Spring 会抛出此异常。
+     * 该异常不应落入兜底处理器而被误报为 500。
+     */
+    @ExceptionHandler(NoResourceFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Result<Void> handleNoResourceFound(NoResourceFoundException e) {
         return Result.fail(404, "请求的资源不存在");
     }
 

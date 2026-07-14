@@ -6,6 +6,7 @@ import com.jingxuan.exception.BusinessException;
 import com.jingxuan.mapper.SysUserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.mail.SimpleMailMessage;
@@ -37,7 +38,7 @@ public class RegistrationService {
     private final SysUserMapper sysUserMapper;
     private final PasswordEncoder passwordEncoder;
     private final StringRedisTemplate redisTemplate;
-    private final JavaMailSender mailSender;
+    private final ObjectProvider<JavaMailSender> mailSenderProvider;
 
     @Value("${MAIL_FROM:}")
     private String mailFrom;
@@ -45,6 +46,7 @@ public class RegistrationService {
     public void sendVerificationCode(Map<String, Object> body) {
         String email = normalizeEmail(body.get("email"));
         Integer roleId = parseRoleId(body.get("roleId"));
+        JavaMailSender mailSender = mailSenderProvider.getIfAvailable();
 
         if (mailSender == null) {
             log.warn("邮箱服务未配置（MAIL_* 环境变量），验证码仅记录日志");

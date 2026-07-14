@@ -80,7 +80,7 @@ export function validateRepositoryToolchainFiles({
 
   if (
     ecosystem !== undefined &&
-    (!/\bREQUIRED_JAVA_MAJOR\s*=\s*25\b/u.test(ecosystem) ||
+    (!/\bREQUIRED_JAVA_MAJOR\s*=\s*21\b/u.test(ecosystem) ||
       !/\bREQUIRED_NODE_MAJOR\s*=\s*24\b/u.test(ecosystem))
   ) {
     issues.push("ecosystem.config.cjs 必须声明 JDK 21 与 Node 24 LTS");

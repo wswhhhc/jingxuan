@@ -354,7 +354,7 @@ const formatDateTime = (value?: string) => formatDateTimeValue(value, '未提交
 
 async function loadClasses() {
   try {
-    const res = await request.get('/admin/dict/classes')
+    const res = await request.get('/api/admin/dict/classes')
     classes.value = res.data || []
   } catch {
     classes.value = []

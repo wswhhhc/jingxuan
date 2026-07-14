@@ -1,7 +1,7 @@
 import request from '../request'
 
 export interface UserItem {
-  id: number
+  id: string
   username: string
   realName: string
   roleId: number
@@ -43,8 +43,11 @@ export interface AiImportUserDraft {
   status?: number
 }
 
-export function getUsers(params: { page?: number; size?: number; keyword?: string; roleId?: number; status?: number }) {
-  return request.get('/api/admin/users', { params })
+export async function getUsers(params: { page?: number; size?: number; keyword?: string; roleId?: number; status?: number }) {
+  const res = await request.get('/api/v1/users', { params })
+  const page = res.data as { items?: UserItem[]; pageInfo?: { total?: number } }
+  res.data = { records: page.items ?? [], total: page.pageInfo?.total ?? 0 }
+  return res
 }
 
 export function createUser(data: {
@@ -55,11 +58,11 @@ export function createUser(data: {
   phone?: string
   email?: string
 }) {
-  return request.post('/api/admin/users', data)
+  return request.post('/api/v1/users', data)
 }
 
 export function updateUser(
-  id: number,
+  id: string,
   data: {
     username?: string
     realName?: string
@@ -70,29 +73,35 @@ export function updateUser(
     password?: string
   },
 ) {
-  return request.put(`/admin/users/${id}`, data)
+  return request.put(`/api/v1/users/${id}`, data)
 }
 
-export function updateStatus(id: number, status: number) {
-  return request.put(`/admin/users/${id}/status`, null, { params: { status } })
+export function updateStatus(id: string, status: number) {
+  return request.put(`/api/v1/users/${id}/status`, { status })
 }
 
-export function deleteUser(id: number) {
-  return request.delete(`/admin/users/${id}`)
+export function deleteUser(id: string) {
+  return request.delete(`/api/v1/users/${id}`)
 }
 
-export function getRoles() {
-  return request.get('/api/admin/roles')
+export async function getRoles() {
+  const res = await request.get('/api/v1/roles', { params: { page: 1, size: 100 } })
+  const page = res.data as { items?: RoleItem[] }
+  res.data = (page.items ?? []).map((role) => ({ ...role, id: Number(role.id) }))
+  return res
 }
 
-export function getClasses() {
-  return request.get('/api/admin/dict/classes')
+export async function getClasses() {
+  const res = await request.get('/api/v1/classes')
+  const classes = res.data as { id?: string; label?: string }[]
+  res.data = classes.map((item) => ({ id: Number(item.id), className: item.label ?? '' }))
+  return res
 }
 
 export function batchImportUsers(users: Record<string, unknown>[]) {
-  return request.post('/api/admin/users/batch', users)
+  return request.post('/api/v1/users/batch', users)
 }
 
 export function parseAiImportUsers(messages: AiImportMessage[]) {
-  return request.post('/api/admin/users/batch/ai-parse', { messages })
+  return request.post('/api/v1/users/batch/ai-parse', { messages })
 }

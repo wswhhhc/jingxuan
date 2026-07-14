@@ -156,7 +156,7 @@ const roleSubmitting = ref(false)
 const roleFormRef = ref<FormInstance>()
 
 const roleForm = reactive({
-  id: undefined as number | undefined,
+  id: undefined as string | undefined,
   roleName: '',
   roleCode: '',
   description: '',
@@ -167,15 +167,15 @@ const roleRules = {
   roleCode: [{ required: true, message: '请输入角色编码', trigger: 'blur' }],
 }
 
-const collectMenuIds = (nodes: MenuItem[]): number[] => {
+const collectMenuIds = (nodes: MenuItem[]): string[] => {
   return nodes.flatMap((node) => [node.id, ...(node.children ? collectMenuIds(node.children) : [])])
 }
 
 const allMenuIds = computed(() => collectMenuIds(menuTree.value))
 
 const syncMenuSelectionCount = () => {
-  const checkedKeys = (menuTreeRef.value?.getCheckedKeys() as number[] | undefined) || []
-  const halfKeys = (menuTreeRef.value?.getHalfCheckedKeys() as number[] | undefined) || []
+  const checkedKeys = (menuTreeRef.value?.getCheckedKeys() as string[] | undefined) || []
+  const halfKeys = (menuTreeRef.value?.getHalfCheckedKeys() as string[] | undefined) || []
   menuSelectionCount.value = checkedKeys.length + halfKeys.length
 }
 
@@ -207,7 +207,7 @@ const handleRoleClick = async (row: RoleItem) => {
 
   try {
     const res = await getRoleMenus(row.id)
-    const checkedIds = (res.data as number[]) || []
+    const checkedIds = (res.data as string[]) || []
     menuTreeRef.value?.setCheckedKeys(checkedIds)
     syncMenuSelectionCount()
   } catch {
@@ -229,8 +229,8 @@ const handleSaveMenus = async () => {
   if (!currentRole.value) return
   menuSaving.value = true
   try {
-    const checkedKeys = menuTreeRef.value?.getCheckedKeys() as number[]
-    const halfKeys = menuTreeRef.value?.getHalfCheckedKeys() as number[]
+    const checkedKeys = menuTreeRef.value?.getCheckedKeys() as string[]
+    const halfKeys = menuTreeRef.value?.getHalfCheckedKeys() as string[]
     await updateRoleMenus(currentRole.value.id, [...checkedKeys, ...halfKeys])
     syncMenuSelectionCount()
     ElMessage.success('权限保存成功')

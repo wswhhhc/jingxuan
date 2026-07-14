@@ -407,7 +407,7 @@ const serializeClassScopes = () => {
 
 const loadClasses = async () => {
   try {
-    const res = await request.get('/admin/dict/classes')
+    const res = await request.get('/api/admin/dict/classes')
     classes.value = res.data || []
   } catch {
     classes.value = []

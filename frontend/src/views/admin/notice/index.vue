@@ -156,8 +156,8 @@ function scopeLabel(scope?: string) {
 }
 
 function scopeTagType(scope?: string): string {
-  const map: Record<string, string> = { all: '', student: 'success', teacher: 'warning' }
-  return map[scope || 'all'] || ''
+  const map: Record<string, string> = { all: 'info', student: 'success', teacher: 'warning' }
+  return map[scope || 'all'] || 'info'
 }
 
 const handleDelete = async (row: NoticeItem) => {

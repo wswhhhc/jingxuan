@@ -109,7 +109,7 @@ describe('Admin audit view', () => {
   it('loads classes and audit list on mount', async () => {
     const wrapper = await mountView(AuditPage)
 
-    expect(requestGetMock).toHaveBeenCalledWith('/admin/dict/classes')
+    expect(requestGetMock).toHaveBeenCalledWith('/api/admin/dict/classes')
     expect(getAuditListMock).toHaveBeenCalled()
     expect(wrapper.text()).toContain('审核列表')
   })

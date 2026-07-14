@@ -270,9 +270,10 @@ const roles = ref<RoleItem[]>([])
 const classes = ref<ClassItem[]>([])
 const dialogVisible = ref(false)
 const isEdit = ref(false)
-const editId = ref<number | null>(null)
+const editId = ref<string | null>(null)
 const pwdDialogVisible = ref(false)
-const resetPwdUserId = ref<number | null>(null)
+const resetPwdUserId = ref<string | null>(null)
+const resetPwdUser = ref<UserItem | null>(null)
 const formRef = ref<FormInstance>()
 const pwdFormRef = ref<FormInstance>()
 
@@ -413,6 +414,7 @@ const handleResetPwd = (row: UserItem) => {
     return
   }
   resetPwdUserId.value = row.id
+  resetPwdUser.value = row
   pwdForm.password = ''
   pwdForm.confirmPwd = ''
   pwdDialogVisible.value = true
@@ -442,7 +444,17 @@ const handleSavePwd = async () => {
   if (!valid) return
   saving.value = true
   try {
-    await updateUser(resetPwdUserId.value!, { password: pwdForm.password })
+    const user = resetPwdUser.value
+    if (!user) return
+    await updateUser(resetPwdUserId.value!, {
+      username: user.username,
+      realName: user.realName,
+      roleId: user.roleId,
+      classId: user.classId,
+      phone: user.phone,
+      email: user.email,
+      password: pwdForm.password,
+    })
     ElMessage.success('密码重置成功')
     pwdDialogVisible.value = false
   } catch {

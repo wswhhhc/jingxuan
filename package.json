@@ -27,4 +27,3 @@
     "verify": "npm run verify:toolchain && npm run verify:config && npm run format:check && npm run verify:frontend && npm run frontend:audit && npm run backend:verify"
   }
 }
-

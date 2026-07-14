@@ -47,6 +47,18 @@ spring:
     validate-on-migrate: true
     baseline-on-migrate: true
     baseline-version: 1
+  modulith:
+    events:
+      jdbc:
+        schema-initialization:
+          enabled: false
+      completion-mode: delete
+      republish-outstanding-events-on-restart: ${EVENT_RECOVERY_ENABLED:true}
+      staleness:
+        published: PT1M
+        processing: PT5M
+        resubmitted: PT1M
+        check-intervall: PT1M
 
 mybatis-plus:
   type-aliases-package: com.jingxuan.entity
@@ -89,3 +101,14 @@ deepseek:
 jingxuan:
   upload:
     path: ${JINGXUAN_UPLOAD_PATH:./uploads}
+  events:
+    recovery:
+      enabled: ${EVENT_RECOVERY_ENABLED:true}
+      batch-size: ${EVENT_RECOVERY_BATCH_SIZE:20}
+      max-in-flight: ${EVENT_RECOVERY_MAX_IN_FLIGHT:5}
+      min-age: ${EVENT_RECOVERY_MIN_AGE:PT5M}
+      fixed-delay: ${EVENT_RECOVERY_FIXED_DELAY:PT1M}
+
+logging:
+  level:
+    org.springframework.modulith.events.core.DefaultEventPublicationRegistry: WARN

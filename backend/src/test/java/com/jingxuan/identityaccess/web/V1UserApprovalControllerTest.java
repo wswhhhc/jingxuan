@@ -57,11 +57,11 @@ class V1UserApprovalControllerTest {
 
         mockMvc.perform(get("/api/v1/users/9007199254740993/deletion-impact"))
                 .andExpect(status().isOk());
-        mockMvc.perform(delete("/api/v1/users/9007199254740993").param("confirm", "true"))
+        mockMvc.perform(delete("/api/v1/users/9007199254740993/with-confirm").param("confirm", "true"))
                 .andExpect(status().isNoContent());
 
         verify(deletionService).delete(9007199254740993L, true);
-        Method method = V1UserApprovalController.class.getDeclaredMethod("delete", String.class, boolean.class);
+        Method method = V1UserApprovalController.class.getDeclaredMethod("deleteWithConfirm", String.class, boolean.class);
         PreAuthorize authorization = method.getAnnotation(PreAuthorize.class);
         assertNotNull(authorization);
         assertEquals("hasAuthority('user:delete')", authorization.value());

@@ -28,3 +28,11 @@ paths = [
 regexes = [
   '''^\s*String secret = "YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXoxMjM0NTY3ODkwYWJjZGVmZ2hpamtsbW5vcA";$''',
 ]
+
+[[allowlists]]
+description = "历史测试配置中的固定 JWT 测试值"
+targetRules = ["generic-api-key"]
+commits = [
+  "00334aabaa7e34a6db226ea57156f7fc88362172",
+  "b6fb0c3ac8bac7cc70172db97787d8dafffa42a6",
+]

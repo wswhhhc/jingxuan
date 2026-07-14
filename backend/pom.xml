@@ -361,6 +361,7 @@
                                         -Dspring.datasource.username=sa
                                         -Dspring.datasource.password=
                                         -DJWT_SECRET=dGhpcyBpcyBhIHRlc3Qgc2VjcmV0IGtleSBmb3Igand0IDI1NiBiaXRzIGxvbmc=
+                                        -Dspring.autoconfigure.exclude=org.springframework.modulith.events.jdbc.JdbcEventPublicationAutoConfiguration,org.springframework.modulith.events.config.EventPublicationAutoConfiguration
                                     </jvmArguments>
                                 </configuration>
                             </execution>

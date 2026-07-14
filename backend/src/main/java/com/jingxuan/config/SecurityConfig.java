@@ -52,6 +52,8 @@ public class SecurityConfig {
                             "/api/v1/auth/login", "/api/v1/auth/refresh",
                             "/auth/register", "/api/auth/register",
                             "/auth/send-code", "/api/auth/send-code").permitAll()
+                    // 公开 challenge 仅允许创建，读取和其他操作仍需认证
+                    .requestMatchers(HttpMethod.POST, "/api/v1/auth/challenges").permitAll()
                     // 静态资源
                     .requestMatchers(HttpMethod.GET, "/uploads/**").permitAll()
                     // v1 公共参考数据：注册和公开作品筛选需要班级、字典和标签

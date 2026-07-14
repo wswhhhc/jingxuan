@@ -57,8 +57,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureTestRestTemplate
 @ActiveProfiles("test")
 @Tag("integration")
-@Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS,
-        scripts = "classpath:sql/test-schema.sql")
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
         "classpath:sql/cleanup.sql",
         "classpath:sql/test-data.sql"
@@ -89,6 +87,7 @@ public abstract class BaseApiTest {
         registry.add("spring.datasource.username", MYSQL::getUsername);
         registry.add("spring.datasource.password", MYSQL::getPassword);
         registry.add("spring.datasource.driver-class-name", MYSQL::getDriverClassName);
+        registry.add("spring.flyway.enabled", () -> true);
         registry.add("spring.data.redis.host", REDIS::getHost);
         registry.add("spring.data.redis.port", REDIS::getFirstMappedPort);
         registry.add("jingxuan.upload.path", () -> TEST_UPLOAD_DIR.toString());

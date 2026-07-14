@@ -16,6 +16,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.Clock;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Base64;
 import java.util.HexFormat;
 import java.util.List;
@@ -306,7 +307,7 @@ public class RedisRefreshTokenService implements RefreshTokenService {
 
     @Override
     public IssuedRefreshToken issue(Long userId, String username, String role, boolean rememberMe) {
-        Instant now = clock.instant();
+        Instant now = currentInstant();
         for (int attempt = 0; attempt < MAX_RANDOM_COLLISION_RETRIES; attempt++) {
             TokenMaterial material = newFamilyToken();
             RefreshFamily family = RefreshFamily.issue(material.familyId(), userId, username, role,
@@ -331,7 +332,7 @@ public class RedisRefreshTokenService implements RefreshTokenService {
         String oldHash = sha256(refreshToken);
 
         for (int attempt = 0; attempt < MAX_RANDOM_COLLISION_RETRIES; attempt++) {
-            Instant now = clock.instant();
+            Instant now = currentInstant();
             TokenContext context = lookupContext("rotate", familyId, oldHash);
             if (context.expiresAt().isBefore(now.plusMillis(MIN_ROTATION_LIFETIME_MILLIS))) {
                 throw invalidRefreshToken();
@@ -391,7 +392,7 @@ public class RedisRefreshTokenService implements RefreshTokenService {
                             tokenKey(hash), familyKey(familyId), tokenKey(context.currentHash()),
                             userKey(context.userId())),
                     familyId, context.userId().toString(), context.currentHash(),
-                    Long.toString(clock.instant().toEpochMilli()));
+                    Long.toString(currentInstant().toEpochMilli()));
             if (Long.valueOf(SUCCESS).equals(result)) {
                 return;
             }
@@ -412,7 +413,7 @@ public class RedisRefreshTokenService implements RefreshTokenService {
             throw new IllegalArgumentException("userId 必须为正数");
         }
         executeRedis("revoke-all", REVOKE_ALL_SCRIPT, List.of(userKey(userId)), FAMILY_PREFIX, TOKEN_PREFIX,
-                userId.toString(), Long.toString(clock.instant().toEpochMilli()));
+                userId.toString(), Long.toString(currentInstant().toEpochMilli()));
     }
 
     private TokenContext lookupContext(String operation, String familyId, String tokenHash) {
@@ -442,6 +443,11 @@ public class RedisRefreshTokenService implements RefreshTokenService {
             throw corruptedStore();
         }
         return new TokenContext(familyUserId, currentHash, Instant.ofEpochMilli(familyExpiresAt));
+    }
+
+    /** Redis 绝对过期时间以毫秒保存，所有比较使用同一精度以避免秒级 TTL 截断。 */
+    private Instant currentInstant() {
+        return clock.instant().truncatedTo(ChronoUnit.MILLIS);
     }
 
     static String familyIdFromToken(String token) {

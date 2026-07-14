@@ -24,6 +24,9 @@ public class V1__Baseline extends BaseJavaMigration {
     private static final Pattern DATABASE_DIRECTIVE = Pattern.compile(
             "(?im)^\\s*(CREATE\\s+DATABASE\\b.*?|USE\\s+\\w+\\s*;)\\s*$"
     );
+    private static final Pattern SQL_COMMENTS = Pattern.compile(
+            "(?s)/\\*.*?\\*/|(?m)--[^\\r\\n]*"
+    );
 
     private static final List<String> BASELINE_SCRIPTS = List.of(
             "legacy-sql/base/init_schema.sql",
@@ -46,11 +49,19 @@ public class V1__Baseline extends BaseJavaMigration {
     public void migrate(Context context) throws Exception {
         Connection connection = context.getConnection();
         for (String scriptPath : BASELINE_SCRIPTS) {
+            String sql = readSanitizedSql(scriptPath);
+            if (!hasExecutableStatements(sql)) {
+                continue;
+            }
             ScriptUtils.executeSqlScript(
                     connection,
-                    new EncodedResource(new ByteArrayResource(readSanitizedSql(scriptPath).getBytes(StandardCharsets.UTF_8)))
+                    new EncodedResource(new ByteArrayResource(sql.getBytes(StandardCharsets.UTF_8)))
             );
         }
+    }
+
+    private static boolean hasExecutableStatements(String sql) {
+        return !SQL_COMMENTS.matcher(sql).replaceAll("").isBlank();
     }
 
     private String readSanitizedSql(String scriptPath) throws IOException {

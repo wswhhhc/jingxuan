@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -42,5 +43,19 @@ class V1BaselineResourceContractTest {
                 "测试数据只允许保留显式使用的 sql/test-data.sql fixture");
         assertFalse(Files.exists(Path.of("src/test/resources/test-schema.sql")),
                 "不得恢复已删除的重复测试 Schema");
+    }
+
+    @Test
+    void skipsCommentOnlyLegacyPlaceholdersBeforeInvokingSpringScriptUtils() throws Exception {
+        Method hasExecutableStatements = V1__Baseline.class
+                .getDeclaredMethod("hasExecutableStatements", String.class);
+        hasExecutableStatements.setAccessible(true);
+
+        assertFalse((boolean) hasExecutableStatements.invoke(null,
+                "-- 本地运行支持已移除。保留该历史文件为空迁移。\n"));
+        assertFalse((boolean) hasExecutableStatements.invoke(null,
+                "/* 不再创建运行时表 */\n\n"));
+        assertTrue((boolean) hasExecutableStatements.invoke(null,
+                "CREATE TABLE event_publication (id VARCHAR(36));"));
     }
 }

@@ -132,7 +132,7 @@ const totalTeachers = computed(() => rankList.value.reduce((sum, item) => sum + 
 const loadData = async () => {
   loading.value = true
   try {
-    const res = await request.get('/student/score/my-ranks')
+    const res = await request.get('/api/student/score/my-ranks')
     rankList.value = res.data || []
   } catch {
     rankList.value = []

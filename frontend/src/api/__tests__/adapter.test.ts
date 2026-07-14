@@ -170,6 +170,21 @@ describe('API 适配层 — workAdapter.ts', () => {
       expect(result.pageSize).toBe(10)
     })
 
+    it('兼容 v1 的 items 和 pageInfo 分页结构', () => {
+      const result = adaptPageResult(
+        {
+          items: [mockWorkItem],
+          pageInfo: { page: 2, pageSize: 12, total: 25 },
+        },
+        adaptWorkVO,
+      )
+
+      expect(result.records).toHaveLength(1)
+      expect(result.total).toBe(25)
+      expect(result.page).toBe(2)
+      expect(result.pageSize).toBe(12)
+    })
+
     it('缺少 pageNum 时回退到 page', () => {
       const result = adaptPageResult({ records: [], total: 0, page: 3, pageSize: 20 }, adapter)
       expect(result.page).toBe(3)

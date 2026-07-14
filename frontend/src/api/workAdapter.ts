@@ -7,10 +7,16 @@ export interface PageResult<T> {
 
 export interface BackendPageResult<T> {
   records?: T[] | null
+  items?: T[] | null
   total?: number
   pageNum?: number
   page?: number
   pageSize?: number
+  pageInfo?: {
+    page?: number
+    pageSize?: number
+    total?: number
+  }
 }
 
 export interface BackendWorkAttachment {
@@ -42,12 +48,13 @@ export interface BackendWorkVO {
   coverUrl?: string
   videoUrl?: string
   runDesc?: string
-  status: number
+  status: number | string
   statusLabel?: string
   rejectReason?: string
   submitterId: string | number
   submitterName?: string
   submitTime?: string
+  submittedAt?: string
   createTime?: string
   updateTime?: string
   attachments?: BackendWorkAttachment[]
@@ -92,6 +99,19 @@ export function toFrontendStatus(status: number) {
   return STATUS_MAP[status] || 'draft'
 }
 
+function normalizeWorkStatus(status: number | string) {
+  if (typeof status === 'number') {
+    return toFrontendStatus(status)
+  }
+  const map: Record<string, 'draft' | 'submitted' | 'rejected' | 'approved'> = {
+    DRAFT: 'draft',
+    SUBMITTED: 'submitted',
+    REJECTED: 'rejected',
+    APPROVED: 'approved',
+  }
+  return map[status] || 'draft'
+}
+
 export function toBackendStatus(status?: string): number | undefined {
   return status ? STATUS_REV_MAP[status] : undefined
 }
@@ -134,12 +154,12 @@ export function adaptWorkVO(item: BackendWorkVO) {
     coverUrl: item.coverUrl || '',
     videoUrl: item.videoUrl || '',
     runDescription: item.runDesc || '',
-    status: toFrontendStatus(item.status),
+    status: normalizeWorkStatus(item.status),
     statusLabel: item.statusLabel,
     rejectReason: item.rejectReason,
     submitterId: item.submitterId,
     submitterName: item.submitterName || '',
-    submitTime: item.submitTime || '',
+    submitTime: item.submitTime || item.submittedAt || '',
     createTime: item.createTime || '',
     updateTime: item.updateTime || '',
     attachments: (item.attachments || []).map(adaptAttachment),
@@ -166,10 +186,11 @@ export function adaptPageResult<TInput, TOutput>(
   adapter: (item: TInput) => TOutput,
   defaultPageSize = 10,
 ): PageResult<TOutput> {
+  const pageInfo = res.pageInfo
   return {
-    records: (res.records || []).map(adapter),
-    total: res.total || 0,
-    page: res.pageNum ?? res.page ?? 1,
-    pageSize: res.pageSize || defaultPageSize,
+    records: (res.records ?? res.items ?? []).map(adapter),
+    total: res.total ?? pageInfo?.total ?? 0,
+    page: res.pageNum ?? res.page ?? pageInfo?.page ?? 1,
+    pageSize: res.pageSize ?? pageInfo?.pageSize ?? defaultPageSize,
   }
 }

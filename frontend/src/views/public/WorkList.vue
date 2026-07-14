@@ -160,8 +160,8 @@ import {
 } from '@/api/public/work'
 import type { WorkItem } from '@/api/student/work'
 
-type V1ReferenceItem = { id: number; dictValue: string; dictLabel: string }
-type V1Tag = { id: number; dictLabel: string }
+type V1ReferenceItem = { id: string; dictValue: string; dictLabel: string }
+type V1Tag = { id: string; dictLabel: string }
 import type { PageResult } from '@/api/workAdapter'
 import { useApiList } from '@/composables/useApiList'
 import PaginationBar from '@/components/PaginationBar.vue'

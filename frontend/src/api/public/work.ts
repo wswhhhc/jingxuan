@@ -6,7 +6,7 @@ export interface PublicWorkListParams {
   pageSize?: number
   keyword?: string
   techStack?: string
-  classId?: number
+  classId?: string | number
   tagIds?: number[]
   submitTimeBegin?: string
   submitTimeEnd?: string
@@ -14,8 +14,19 @@ export interface PublicWorkListParams {
 }
 
 export interface TagItem {
-  id: number
+  id: string
   dictLabel: string
+}
+
+interface V1ReferenceItem {
+  id: string
+  label: string
+  value: string
+}
+
+interface V1Tag {
+  id: string
+  name: string
 }
 
 /* ============ API ============ */
@@ -40,14 +51,18 @@ export async function getPublicWorkList(params: PublicWorkListParams) {
 }
 
 export interface PublicClassItem {
-  id: number
+  id: string
   dictValue: string
   dictLabel: string
 }
 
 export async function getPublicClassList() {
-  const res = await request.get<PublicClassItem[]>('/api/v1/classes')
-  return res.data as PublicClassItem[]
+  const res = await request.get<V1ReferenceItem[]>('/api/v1/classes')
+  return (res.data as V1ReferenceItem[]).map((item) => ({
+    id: item.id,
+    dictLabel: item.label,
+    dictValue: item.value,
+  }))
 }
 
 export async function getPublicWorkDetail(id: string | number) {
@@ -60,8 +75,8 @@ export async function getPublicWorkDetail(id: string | number) {
 }
 
 export async function getPublicTagList() {
-  const res = await request.get<TagItem[]>('/api/v1/tags')
-  return res.data as TagItem[]
+  const res = await request.get<V1Tag[]>('/api/v1/tags')
+  return (res.data as V1Tag[]).map((item) => ({ id: item.id, dictLabel: item.name }))
 }
 
 /** 点赞/取消点赞 */

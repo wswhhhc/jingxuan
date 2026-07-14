@@ -820,6 +820,19 @@ test("Flyway V1 引用的 14 个 legacy SQL 全部随后端主资源打包", asy
   });
 });
 
+test("生产 JSON 日志只使用 Spring Boot 内置结构化编码器", async () => {
+  const logback = await readRepositoryFile(
+    "backend/src/main/resources/logback-spring.xml",
+  );
+
+  assert.match(
+    logback,
+    /org\.springframework\.boot\.logging\.logback\.StructuredLogEncoder/u,
+  );
+  assert.match(logback, /<format>logstash<\/format>/u);
+  assert.doesNotMatch(logback, /ch\.qos\.logback\.contrib/u);
+});
+
 test("Compose 固定安全 project、镜像版本并兼容旧 MySQL 卷迁移", async () => {
   const compose = await readRepositoryFile("docker-compose.yml");
 

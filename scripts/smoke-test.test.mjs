@@ -904,6 +904,11 @@ test("CI 的 legacy 运行时冒烟有界等待并验证 Flyway 与 fixture 顺�
   assert.ok(testDataIndex > cleanupIndex, "cleanup.sql 必须先于 test-data.sql");
   assert.ok(commitIndex > testDataIndex, "fixture 必须在同一事务提交");
   assert.match(job, /SMOKE_MODE:\s*full/u);
+  assert.match(job, /JWT_SECRET:\s*randomBytes\(48\)\.toString\("base64"\)/u);
+  assert.doesNotMatch(
+    job,
+    /JWT_SECRET:\s*randomBytes\(48\)\.toString\("base64url"\)/u,
+  );
   assert.match(job, /npm run smoke:legacy/u);
   assert.doesNotMatch(job, /(?:^|[\s"'])\.?\/?sql\//mu);
   assert.doesNotMatch(job, /(?:^|[\s"'])\.env(?:[\s"']|$)/mu);
@@ -917,6 +922,16 @@ test("CI 失败时只收集脱敏日志且始终销毁卷与孤儿容器", async
   assert.match(job, /if:\s*failure\(\)/u);
   assert.match(job, /docker compose ps/u);
   assert.match(job, /docker compose logs[^\n]*(?:mysql redis backend|mysql)/u);
+  assert.match(job, /docker inspect[^\n]*State\.ExitCode/u);
+  assert.match(job, /docker cp[^\n]*\/app\/logs/u);
+  assert.match(job, /find[^\n]*-type f[^\n]*-print0/u);
+  assert.match(job, /tail\s+-n\s+200/u);
+  assert.match(job, /RUNNER_TEMP/u);
+  const copyIndex = job.indexOf("docker cp");
+  const tailIndex = job.indexOf("tail -n 200");
+  const redactionPipeIndex = job.indexOf("} 2>&1 | node -e");
+  assert.ok(copyIndex !== -1 && copyIndex < redactionPipeIndex);
+  assert.ok(tailIndex !== -1 && tailIndex < redactionPipeIndex);
   assert.match(job, /DB_PASSWORD[^\n]*已脱敏|已脱敏[^\n]*DB_PASSWORD/u);
   assert.match(
     job,

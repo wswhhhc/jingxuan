@@ -201,7 +201,8 @@ jobs:
             DB_ROOT_PASSWORD: randomBytes(24).toString("hex"),
             DB_LEGACY_ROOT_PASSWORD: randomBytes(24).toString("hex"),
             DB_PASSWORD: randomBytes(24).toString("hex"),
-            JWT_SECRET: randomBytes(48).toString("base64url"),
+            // JwtTokenProvider 使用标准 Base64 解码，不能生成 Base64URL 密钥。
+            JWT_SECRET: randomBytes(48).toString("base64"),
           };
           for (const value of Object.values(values)) {
             process.stdout.write(`::add-mask::${value}\n`);
@@ -370,6 +371,18 @@ jobs:
           docker compose ps
           {
             docker compose logs --no-color mysql mysql-user-bootstrap redis backend || true
+            backend_id="$(docker compose ps -a -q backend)"
+            if [[ -n "$backend_id" ]]; then
+              docker inspect --format 'backend State.Status={{.State.Status}} State.ExitCode={{.State.ExitCode}} State.OOMKilled={{.State.OOMKilled}}' "$backend_id" || true
+              backend_log_dir="$RUNNER_TEMP/backend-file-logs-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+              mkdir -p "$backend_log_dir"
+              if docker cp "${backend_id}:/app/logs/." "$backend_log_dir/" >/dev/null 2>&1; then
+                while IFS= read -r -d '' log_file; do
+                  echo "===== 后端文件日志: $(basename "$log_file") ====="
+                  tail -n 200 "$log_file"
+                done < <(find "$backend_log_dir" -type f -print0)
+              fi
+            fi
             legacy_container="${COMPOSE_PROJECT_NAME}-legacy-mysql"
             if docker inspect "$legacy_container" >/dev/null 2>&1; then
               docker logs "$legacy_container" || true

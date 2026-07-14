@@ -46,7 +46,8 @@ export interface PublicClassItem {
 }
 
 export async function getPublicClassList() {
-  return request.get<PublicClassItem[]>('/api/v1/classes')
+  const res = await request.get<PublicClassItem[]>('/api/v1/classes')
+  return res.data as PublicClassItem[]
 }
 
 export async function getPublicWorkDetail(id: string | number) {
@@ -59,10 +60,11 @@ export async function getPublicWorkDetail(id: string | number) {
 }
 
 export async function getPublicTagList() {
-  return request.get<TagItem[]>('/api/v1/tags')
+  const res = await request.get<TagItem[]>('/api/v1/tags')
+  return res.data as TagItem[]
 }
 
 /** 点赞/取消点赞 */
-export function toggleLike(workId: number) {
+export function toggleLike(workId: string | number) {
   return request.put(`/api/v1/works/${workId}/likes`)
 }

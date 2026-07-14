@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.env.MockEnvironment;
 import tools.jackson.databind.ObjectMapper;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -28,7 +29,27 @@ class V1AuthOriginFilterTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final RequestIdFilter requestIdFilter = new RequestIdFilter();
     private final V1AuthOriginFilter originFilter =
-            new V1AuthOriginFilter(new RestAccessDeniedHandler(objectMapper));
+            new V1AuthOriginFilter(new RestAccessDeniedHandler(objectMapper), new MockEnvironment());
+
+    @Test
+    void allowsViteLoginOriginWhenDevProfileIsActive() throws Exception {
+        MockEnvironment environment = new MockEnvironment();
+        environment.setActiveProfiles("dev");
+        V1AuthOriginFilter devFilter = new V1AuthOriginFilter(
+                new RestAccessDeniedHandler(objectMapper), environment);
+        MockHttpServletRequest request = authRequest("POST", "/api/v1/auth/login");
+        request.setServerPort(8080);
+        request.addHeader(HttpHeaders.ORIGIN, SAME_ORIGIN);
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        AtomicInteger businessCalls = new AtomicInteger();
+
+        requestIdFilter.doFilter(request, response,
+                (requestWithId, responseWithId) -> devFilter.doFilter(requestWithId, responseWithId,
+                        (ignoredRequest, ignoredResponse) -> businessCalls.incrementAndGet()));
+
+        assertEquals(1, businessCalls.get());
+        assertEquals(200, response.getStatus());
+    }
 
     @ParameterizedTest(name = "{0} rejects {2} Origin")
     @MethodSource("rejectedOriginRequests")

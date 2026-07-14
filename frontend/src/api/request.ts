@@ -7,6 +7,19 @@ const request = axios.create({
   timeout: 30000,
 })
 
+interface ResponsePayload {
+  code?: number
+  data?: unknown
+  message?: string
+}
+
+export function normalizeResponsePayload(payload: unknown): ResponsePayload {
+  if (typeof payload === 'object' && payload !== null && 'code' in payload) {
+    return payload as ResponsePayload
+  }
+  return { code: 0, data: payload }
+}
+
 function extractMessage(payload: unknown): string | undefined {
   if (!payload) return undefined
   if (typeof payload === 'string') {
@@ -68,9 +81,9 @@ request.interceptors.request.use(
 
 request.interceptors.response.use(
   (response) => {
-    const res = response.data
+    const res = normalizeResponsePayload(response.data)
     if (res.code === 0 || res.code === 200) {
-      return res
+      return res as unknown as typeof response
     }
     const loginRequest = isLoginRequest(response.config)
     if (!loginRequest) {

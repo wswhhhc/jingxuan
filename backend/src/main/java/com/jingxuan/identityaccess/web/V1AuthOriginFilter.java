@@ -8,6 +8,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.access.AccessDeniedException;
@@ -35,6 +37,7 @@ public class V1AuthOriginFilter extends OncePerRequestFilter {
     );
 
     private final RestAccessDeniedHandler accessDeniedHandler;
+    private final Environment environment;
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
@@ -45,7 +48,7 @@ public class V1AuthOriginFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         // 开发环境（Vite 5173 != 后端 8080，不同源）放行同源检查
-        if (isDevelopment(request)) {
+        if (isDevelopment()) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -58,11 +61,8 @@ public class V1AuthOriginFilter extends OncePerRequestFilter {
     }
 
     /** 判断当前是否为开发/测试环境 */
-    private static boolean isDevelopment(HttpServletRequest request) {
-        String profiles = System.getProperty("spring.profiles.active", "");
-        String envVar = System.getenv("SPRING_PROFILES_ACTIVE");
-        return profiles.contains("dev") || profiles.contains("test")
-                || (envVar != null && (envVar.contains("dev") || envVar.contains("test")));
+    private boolean isDevelopment() {
+        return environment.acceptsProfiles(Profiles.of("dev", "test"));
     }
 
     private static boolean hasSameOrigin(HttpServletRequest request) {

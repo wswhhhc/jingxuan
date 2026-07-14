@@ -16,7 +16,7 @@ export interface CommentItem {
 }
 
 export function getCommentList(workId: string | number, pageNum = 1, pageSize = 10) {
-  return request.get(`/comment/list/${workId}`, { params: { pageNum, pageSize } })
+  return request.get(`/api/comment/list/${workId}`, { params: { pageNum, pageSize } })
 }
 
 export function addComment(workId: string | number, content: string, parentId?: string | number, guestName?: string) {
@@ -24,5 +24,5 @@ export function addComment(workId: string | number, content: string, parentId?: 
 }
 
 export function deleteComment(commentId: string | number) {
-  return request.delete(`/comment/${commentId}`)
+  return request.delete(`/api/comment/${commentId}`)
 }

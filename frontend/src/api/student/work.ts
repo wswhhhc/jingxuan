@@ -153,7 +153,7 @@ export function createWork(data: WorkForm) {
 
 export function updateWork(id: string | number, data: WorkForm) {
   return request({
-    url: `/student/works/${id}`,
+    url: `/api/student/works/${id}`,
     method: 'put',
     data: toUpdateRequest(data),
   })
@@ -161,14 +161,14 @@ export function updateWork(id: string | number, data: WorkForm) {
 
 export function deleteWork(id: string | number) {
   return request({
-    url: `/student/works/${id}`,
+    url: `/api/student/works/${id}`,
     method: 'delete',
   })
 }
 
 export function submitWork(id: string | number) {
   return request({
-    url: `/student/works/${id}/submit`,
+    url: `/api/student/works/${id}/submit`,
     method: 'post',
   })
 }
@@ -193,7 +193,7 @@ export async function getMyWorks(params: WorkListParams) {
 
 export async function getWorkDetail(id: string | number) {
   const res = await request({
-    url: `/student/works/${id}`,
+    url: `/api/student/works/${id}`,
     method: 'get',
   })
   res.data = adaptWorkVO(res.data)

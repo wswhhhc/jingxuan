@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
+import type { ProblemDetails } from '@/shared/api/generated/models/problemDetails'
 import { clearAuthStorage as clearSharedAuthStorage, getAuthToken } from '@/utils/auth'
 
 const request = axios.create({
@@ -11,6 +12,30 @@ interface ResponsePayload {
   code?: number
   data?: unknown
   message?: string
+}
+
+export class ApiProblemError extends Error implements ProblemDetails {
+  readonly type: string
+  readonly title: string
+  readonly status: number
+  readonly detail: string
+  readonly instance: string
+  readonly code: string
+  readonly requestId: string
+  readonly fieldErrors: ProblemDetails['fieldErrors']
+
+  constructor(problem: ProblemDetails, message = problem.detail) {
+    super(message)
+    this.name = 'ApiProblemError'
+    this.type = problem.type
+    this.title = problem.title
+    this.status = problem.status
+    this.detail = problem.detail
+    this.instance = problem.instance
+    this.code = problem.code
+    this.requestId = problem.requestId
+    this.fieldErrors = problem.fieldErrors
+  }
 }
 
 export function normalizeResponsePayload(payload: unknown): ResponsePayload {
@@ -31,12 +56,51 @@ function extractMessage(payload: unknown): string | undefined {
     }
   }
   if (typeof payload === 'object' && payload !== null) {
-    const message = (payload as { message?: unknown }).message
+    const { message, detail } = payload as {
+      message?: unknown
+      detail?: unknown
+    }
     if (typeof message === 'string' && message.trim()) {
       return message
     }
+    if (typeof detail === 'string' && detail.trim()) {
+      return detail
+    }
   }
   return undefined
+}
+
+function asProblemDetails(payload: unknown): ProblemDetails | undefined {
+  if (typeof payload === 'string') {
+    try {
+      return asProblemDetails(JSON.parse(payload))
+    } catch {
+      return undefined
+    }
+  }
+  if (typeof payload !== 'object' || payload === null) {
+    return undefined
+  }
+
+  const candidate = payload as Record<string, unknown>
+  const fieldErrors = candidate.fieldErrors
+  if (
+    typeof candidate.type !== 'string' ||
+    typeof candidate.title !== 'string' ||
+    typeof candidate.status !== 'number' ||
+    typeof candidate.detail !== 'string' ||
+    typeof candidate.instance !== 'string' ||
+    typeof candidate.code !== 'string' ||
+    typeof candidate.requestId !== 'string' ||
+    typeof fieldErrors !== 'object' ||
+    fieldErrors === null ||
+    Array.isArray(fieldErrors) ||
+    !Object.values(fieldErrors).every((value) => typeof value === 'string')
+  ) {
+    return undefined
+  }
+
+  return candidate as unknown as ProblemDetails
 }
 
 function getResponseText(request: unknown): unknown {
@@ -98,9 +162,17 @@ request.interceptors.response.use(
     return Promise.reject(new Error(res.message || (loginRequest ? '账号或密码错误' : '请求失败')))
   },
   (error: unknown) => {
-    const axiosError = axios.isAxiosError<{ code?: number }>(error) ? error : undefined
+    const axiosError = axios.isAxiosError<unknown>(error) ? error : undefined
     const loginRequest = isLoginRequest(axiosError?.config)
-    const code = axiosError?.response?.data?.code ?? axiosError?.response?.status
+    const responsePayload = axiosError?.response?.data
+    const problemDetails = asProblemDetails(responsePayload)
+    const payloadCode =
+      typeof responsePayload === 'object' &&
+      responsePayload !== null &&
+      typeof (responsePayload as { code?: unknown }).code === 'number'
+        ? (responsePayload as { code: number }).code
+        : undefined
+    const code = payloadCode ?? axiosError?.response?.status
     const fallbackMsg = loginRequest && code === 401 ? '账号或密码错误' : '网络错误'
     const msg = getErrorMessage(error) || fallbackMsg
     const finalMsg = loginRequest && code === 401 ? '账号或密码错误' : msg
@@ -110,7 +182,7 @@ request.interceptors.response.use(
     if (!loginRequest) {
       ElMessage.error(finalMsg)
     }
-    return Promise.reject(new Error(finalMsg))
+    return Promise.reject(problemDetails ? new ApiProblemError(problemDetails, finalMsg) : new Error(finalMsg))
   },
 )
 

@@ -5,6 +5,7 @@ import com.jingxuan.enums.UserStatusEnum;
 import com.jingxuan.mapper.SysUserMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -35,7 +36,7 @@ class RegistrationServiceTest {
         when(users.countByUsername("teacher001")).thenReturn(0);
         when(users.countByEmailAndRole("teacher@example.edu", 2)).thenReturn(0);
         when(passwords.encode("ExamplePass2026")).thenReturn("bcrypt12");
-        RegistrationService service = new RegistrationService(users, passwords, redis, mock(JavaMailSender.class));
+        RegistrationService service = new RegistrationService(users, passwords, redis, emptyMailSenderProvider());
 
         service.register(Map.of(
                 "username", "teacher001",
@@ -61,12 +62,17 @@ class RegistrationServiceTest {
         when(users.countByEmailAndRole("teacher@example.edu", 2)).thenReturn(0);
 
         RegistrationService service = new RegistrationService(users, mock(PasswordEncoder.class), redis,
-                mock(JavaMailSender.class));
+                emptyMailSenderProvider());
 
         assertThrows(com.jingxuan.exception.BusinessException.class, () -> service.register(Map.of(
                 "username", "teacher001", "password", "ExamplePass2026", "realName", "教师",
                 "email", "teacher@example.edu", "verifyCode", "123456", "roleId", 2)));
 
         verify(users, never()).insert(any(SysUser.class));
+    }
+
+    @SuppressWarnings("unchecked")
+    private static ObjectProvider<JavaMailSender> emptyMailSenderProvider() {
+        return mock(ObjectProvider.class);
     }
 }

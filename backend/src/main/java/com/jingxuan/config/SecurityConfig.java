@@ -1,9 +1,11 @@
 package com.jingxuan.config;
 
+import com.jingxuan.api.ApiPaths;
 import com.jingxuan.security.JwtAuthenticationFilter;
 import com.jingxuan.security.PublicRateLimitFilter;
 import com.jingxuan.security.RestAccessDeniedHandler;
 import com.jingxuan.security.RestAuthenticationEntryPoint;
+import jakarta.servlet.DispatcherType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -44,26 +46,25 @@ public class SecurityConfig {
             .sessionManagement(session ->
                     session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                    // 仅放行容器内部错误转发；直接请求 /error 仍需认证
+                    .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
                     // Springdoc / Swagger UI
                     .requestMatchers("/doc.html", "/swagger-ui/**", "/v3/api-docs/**",
                             "/webjars/**", "/favicon.ico").permitAll()
                     // 认证接口（兼容前端 /api 代理）
                     .requestMatchers("/auth/login", "/api/auth/login",
-                            "/api/v1/auth/login", "/api/v1/auth/refresh",
                             "/auth/register", "/api/auth/register",
                             "/auth/send-code", "/api/auth/send-code").permitAll()
-                    // 公开 challenge 仅允许创建，读取和其他操作仍需认证
-                    .requestMatchers(HttpMethod.POST, "/api/v1/auth/challenges").permitAll()
+                    // V1 匿名边界由 ApiPaths 集中维护，避免安全配置与契约漂移
+                    .requestMatchers(request -> ApiPaths.isPublicV1Operation(
+                            request.getMethod(), request.getRequestURI())).permitAll()
                     // 静态资源
                     .requestMatchers(HttpMethod.GET, "/uploads/**").permitAll()
-                    // v1 公共参考数据：注册和公开作品筛选需要班级、字典和标签
-                    .requestMatchers(HttpMethod.GET, "/api/v1/classes", "/api/v1/dictionaries/**", "/api/v1/tags").permitAll()
                     // 前台公开展示接口
-                    .requestMatchers("/public/**").permitAll()
-                    .requestMatchers(HttpMethod.GET, "/api/v1/showcase/works/**").permitAll()
+                    .requestMatchers("/api/public/**").permitAll()
                     // 公共评论列表 & 发表（游客也可评论）
-                    .requestMatchers(HttpMethod.GET, "/comment/list/**").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/comment/add", "/api/comment/add").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/comment/list/**").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/api/comment/add").permitAll()
                     // 其它接口需认证
                     .anyRequest().authenticated()
             )

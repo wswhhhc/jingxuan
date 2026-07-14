@@ -29,6 +29,14 @@ import type {
   MaybeRefOrGetter
 } from 'vue';
 
+import type {
+  GetNoticesPublishedParams,
+  ProblemDetails,
+  V1Notice,
+  V1NoticeRequest,
+  V1PageV1Notice
+} from '../models';
+
 import { apiRequest } from '../../http';
 
 
@@ -54,7 +62,7 @@ export const deleteMeNotificationsRead = (
 
 
 
-export const getDeleteMeNotificationsReadMutationOptions = <TError = void,
+export const getDeleteMeNotificationsReadMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteMeNotificationsRead>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteMeNotificationsRead>>, TError,void, TContext> => {
 
@@ -83,12 +91,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type DeleteMeNotificationsReadMutationResult = NonNullable<Awaited<ReturnType<typeof deleteMeNotificationsRead>>>
 
-    export type DeleteMeNotificationsReadMutationError = void
+    export type DeleteMeNotificationsReadMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/communication/web/V1NotificationController.java
  */
-export const useDeleteMeNotificationsRead = <TError = void,
+export const useDeleteMeNotificationsRead = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteMeNotificationsRead>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof deleteMeNotificationsRead>>,
@@ -116,7 +124,7 @@ export const postMeNotificationsReadAll = (
 
 
 
-export const getPostMeNotificationsReadAllMutationOptions = <TError = void,
+export const getPostMeNotificationsReadAllMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postMeNotificationsReadAll>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postMeNotificationsReadAll>>, TError,void, TContext> => {
 
@@ -145,12 +153,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type PostMeNotificationsReadAllMutationResult = NonNullable<Awaited<ReturnType<typeof postMeNotificationsReadAll>>>
 
-    export type PostMeNotificationsReadAllMutationError = void
+    export type PostMeNotificationsReadAllMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/communication/web/V1NotificationController.java
  */
-export const usePostMeNotificationsReadAll = <TError = void,
+export const usePostMeNotificationsReadAll = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postMeNotificationsReadAll>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof postMeNotificationsReadAll>>,
@@ -169,7 +177,7 @@ export const getMeNotificationsUnreadCount = (
 ) => {
 
 
-      return apiRequest<void>(
+      return apiRequest<number>(
       {url: `/api/v1/me/notifications/unread-count`, method: 'GET', signal
     },
       options);
@@ -185,7 +193,7 @@ export const getGetMeNotificationsUnreadCountQueryKey = () => {
     }
 
 
-export const getGetMeNotificationsUnreadCountQueryOptions = <TData = Awaited<ReturnType<typeof getMeNotificationsUnreadCount>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMeNotificationsUnreadCount>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export const getGetMeNotificationsUnreadCountQueryOptions = <TData = Awaited<ReturnType<typeof getMeNotificationsUnreadCount>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMeNotificationsUnreadCount>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -204,14 +212,14 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetMeNotificationsUnreadCountQueryResult = NonNullable<Awaited<ReturnType<typeof getMeNotificationsUnreadCount>>>
-export type GetMeNotificationsUnreadCountQueryError = void
+export type GetMeNotificationsUnreadCountQueryError = ProblemDetails
 
 
 /**
  * @summary com/jingxuan/communication/web/V1NotificationController.java
  */
 
-export function useGetMeNotificationsUnreadCount<TData = Awaited<ReturnType<typeof getMeNotificationsUnreadCount>>, TError = void>(
+export function useGetMeNotificationsUnreadCount<TData = Awaited<ReturnType<typeof getMeNotificationsUnreadCount>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMeNotificationsUnreadCount>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
  ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -248,7 +256,7 @@ export const postMeNotificationsIdRead = (
 
 
 
-export const getPostMeNotificationsIdReadMutationOptions = <TError = void,
+export const getPostMeNotificationsIdReadMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postMeNotificationsIdRead>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postMeNotificationsIdRead>>, TError,{id: string}, TContext> => {
 
@@ -277,12 +285,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type PostMeNotificationsIdReadMutationResult = NonNullable<Awaited<ReturnType<typeof postMeNotificationsIdRead>>>
 
-    export type PostMeNotificationsIdReadMutationError = void
+    export type PostMeNotificationsIdReadMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/communication/web/V1NotificationController.java
  */
-export const usePostMeNotificationsIdRead = <TError = void,
+export const usePostMeNotificationsIdRead = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postMeNotificationsIdRead>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof postMeNotificationsIdRead>>,
@@ -296,13 +304,14 @@ export const usePostMeNotificationsIdRead = <TError = void,
  * @summary com/jingxuan/communication/web/V1NoticeController.java
  */
 export const getNoticesPublished = (
-
+    params?: MaybeRefOrGetter<GetNoticesPublishedParams>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {
+      params = toValue(params);
 
-
-      return apiRequest<void>(
-      {url: `/api/v1/notices/published`, method: 'GET', signal
+      return apiRequest<V1PageV1Notice>(
+      {url: `/api/v1/notices/published`, method: 'GET',
+        params, signal
     },
       options);
     }
@@ -310,23 +319,23 @@ export const getNoticesPublished = (
 
 
 
-export const getGetNoticesPublishedQueryKey = () => {
+export const getGetNoticesPublishedQueryKey = (params?: MaybeRefOrGetter<GetNoticesPublishedParams>,) => {
     return [
-    'api','v1','notices','published'
+    'api','v1','notices','published', ...(params ? [params] : [])
     ] as const;
     }
 
 
-export const getGetNoticesPublishedQueryOptions = <TData = Awaited<ReturnType<typeof getNoticesPublished>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getNoticesPublished>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export const getGetNoticesPublishedQueryOptions = <TData = Awaited<ReturnType<typeof getNoticesPublished>>, TError = ProblemDetails>(params?: MaybeRefOrGetter<GetNoticesPublishedParams>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getNoticesPublished>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  getGetNoticesPublishedQueryKey();
+  const queryKey =  getGetNoticesPublishedQueryKey(params);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getNoticesPublished>>> = ({ signal }) => getNoticesPublished(requestOptions, signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getNoticesPublished>>> = ({ signal }) => getNoticesPublished(params, requestOptions, signal);
 
 
 
@@ -336,19 +345,19 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetNoticesPublishedQueryResult = NonNullable<Awaited<ReturnType<typeof getNoticesPublished>>>
-export type GetNoticesPublishedQueryError = void
+export type GetNoticesPublishedQueryError = ProblemDetails
 
 
 /**
  * @summary com/jingxuan/communication/web/V1NoticeController.java
  */
 
-export function useGetNoticesPublished<TData = Awaited<ReturnType<typeof getNoticesPublished>>, TError = void>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getNoticesPublished>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export function useGetNoticesPublished<TData = Awaited<ReturnType<typeof getNoticesPublished>>, TError = ProblemDetails>(
+ params?: MaybeRefOrGetter<GetNoticesPublishedParams>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getNoticesPublished>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
  ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetNoticesPublishedQueryOptions(options)
+  const queryOptions = getGetNoticesPublishedQueryOptions(params,options)
 
   const query = useQuery(queryOptions, queryClient) as UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -363,138 +372,6 @@ export function useGetNoticesPublished<TData = Awaited<ReturnType<typeof getNoti
 
 
 /**
- * @summary com/jingxuan/communication/web/V1NoticeController.java
- */
-export const getNoticesId = (
-    id: MaybeRefOrGetter<string>,
- options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
-) => {
-      id = toValue(id);
-
-      return apiRequest<void>(
-      {url: `/api/v1/notices/${id}`, method: 'GET', signal
-    },
-      options);
-    }
-
-
-
-
-export const getGetNoticesIdQueryKey = (id: MaybeRefOrGetter<string>,) => {
-    return [
-    'api','v1','notices',id
-    ] as const;
-    }
-
-
-export const getGetNoticesIdQueryOptions = <TData = Awaited<ReturnType<typeof getNoticesId>>, TError = void>(id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getNoticesId>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  getGetNoticesIdQueryKey(id);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getNoticesId>>> = ({ signal }) => getNoticesId(id, requestOptions, signal);
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: computed(() => toValue(id) !== null && toValue(id) !== undefined), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getNoticesId>>, TError, TData>
-}
-
-export type GetNoticesIdQueryResult = NonNullable<Awaited<ReturnType<typeof getNoticesId>>>
-export type GetNoticesIdQueryError = void
-
-
-/**
- * @summary com/jingxuan/communication/web/V1NoticeController.java
- */
-
-export function useGetNoticesId<TData = Awaited<ReturnType<typeof getNoticesId>>, TError = void>(
- id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getNoticesId>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
- ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getGetNoticesIdQueryOptions(id,options)
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  query.queryKey = unref(queryOptions).queryKey as DataTag<QueryKey, TData, TError>;
-
-  return query;
-}
-
-
-
-
-
-
-/**
- * @summary com/jingxuan/communication/web/V1NoticeController.java
- */
-export const putNoticesId = (
-    id: MaybeRefOrGetter<string>,
- options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
-) => {
-      id = toValue(id);
-
-      return apiRequest<void>(
-      {url: `/api/v1/notices/${id}`, method: 'PUT', signal
-    },
-      options);
-    }
-
-
-
-
-export const getPutNoticesIdMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putNoticesId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof putNoticesId>>, TError,{id: string}, TContext> => {
-
-const mutationKey = ['putNoticesId'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putNoticesId>>, {id: string}> = (props) => {
-          const {id} = props ?? {};
-
-          return  putNoticesId(id,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type PutNoticesIdMutationResult = NonNullable<Awaited<ReturnType<typeof putNoticesId>>>
-
-    export type PutNoticesIdMutationError = void
-
-    /**
- * @summary com/jingxuan/communication/web/V1NoticeController.java
- */
-export const usePutNoticesId = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putNoticesId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient): UseMutationReturnType<
-        Awaited<ReturnType<typeof putNoticesId>>,
-        TError,
-        {id: string},
-        TContext
-      > => {
-      return useMutation(getPutNoticesIdMutationOptions(options), queryClient);
-    }
-    /**
  * @summary com/jingxuan/communication/web/V1NoticeController.java
  */
 export const deleteNoticesId = (
@@ -512,7 +389,7 @@ export const deleteNoticesId = (
 
 
 
-export const getDeleteNoticesIdMutationOptions = <TError = void,
+export const getDeleteNoticesIdMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteNoticesId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteNoticesId>>, TError,{id: string}, TContext> => {
 
@@ -541,12 +418,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type DeleteNoticesIdMutationResult = NonNullable<Awaited<ReturnType<typeof deleteNoticesId>>>
 
-    export type DeleteNoticesIdMutationError = void
+    export type DeleteNoticesIdMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/communication/web/V1NoticeController.java
  */
-export const useDeleteNoticesId = <TError = void,
+export const useDeleteNoticesId = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteNoticesId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof deleteNoticesId>>,
@@ -555,6 +432,142 @@ export const useDeleteNoticesId = <TError = void,
         TContext
       > => {
       return useMutation(getDeleteNoticesIdMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary com/jingxuan/communication/web/V1NoticeController.java
+ */
+export const getNoticesId = (
+    id: MaybeRefOrGetter<string>,
+ options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
+) => {
+      id = toValue(id);
+
+      return apiRequest<V1Notice>(
+      {url: `/api/v1/notices/${id}`, method: 'GET', signal
+    },
+      options);
+    }
+
+
+
+
+export const getGetNoticesIdQueryKey = (id: MaybeRefOrGetter<string>,) => {
+    return [
+    'api','v1','notices',id
+    ] as const;
+    }
+
+
+export const getGetNoticesIdQueryOptions = <TData = Awaited<ReturnType<typeof getNoticesId>>, TError = ProblemDetails>(id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getNoticesId>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  getGetNoticesIdQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getNoticesId>>> = ({ signal }) => getNoticesId(id, requestOptions, signal);
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: computed(() => toValue(id) !== null && toValue(id) !== undefined), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getNoticesId>>, TError, TData>
+}
+
+export type GetNoticesIdQueryResult = NonNullable<Awaited<ReturnType<typeof getNoticesId>>>
+export type GetNoticesIdQueryError = ProblemDetails
+
+
+/**
+ * @summary com/jingxuan/communication/web/V1NoticeController.java
+ */
+
+export function useGetNoticesId<TData = Awaited<ReturnType<typeof getNoticesId>>, TError = ProblemDetails>(
+ id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getNoticesId>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetNoticesIdQueryOptions(id,options)
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = unref(queryOptions).queryKey as DataTag<QueryKey, TData, TError>;
+
+  return query;
+}
+
+
+
+
+
+
+/**
+ * @summary com/jingxuan/communication/web/V1NoticeController.java
+ */
+export const putNoticesId = (
+    id: MaybeRefOrGetter<string>,
+    v1NoticeRequest: MaybeRefOrGetter<V1NoticeRequest>,
+ options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
+) => {
+      id = toValue(id);
+v1NoticeRequest = toValue(v1NoticeRequest);
+
+      return apiRequest<V1Notice>(
+      {url: `/api/v1/notices/${id}`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: v1NoticeRequest, signal
+    },
+      options);
+    }
+
+
+
+
+export const getPutNoticesIdMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putNoticesId>>, TError,{id: string;data: V1NoticeRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof putNoticesId>>, TError,{id: string;data: V1NoticeRequest}, TContext> => {
+
+const mutationKey = ['putNoticesId'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putNoticesId>>, {id: string;data: V1NoticeRequest}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  putNoticesId(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PutNoticesIdMutationResult = NonNullable<Awaited<ReturnType<typeof putNoticesId>>>
+    export type PutNoticesIdMutationBody = V1NoticeRequest
+    export type PutNoticesIdMutationError = ProblemDetails
+
+    /**
+ * @summary com/jingxuan/communication/web/V1NoticeController.java
+ */
+export const usePutNoticesId = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putNoticesId>>, TError,{id: string;data: V1NoticeRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient): UseMutationReturnType<
+        Awaited<ReturnType<typeof putNoticesId>>,
+        TError,
+        {id: string;data: V1NoticeRequest},
+        TContext
+      > => {
+      return useMutation(getPutNoticesIdMutationOptions(options), queryClient);
     }
     /**
  * @summary com/jingxuan/communication/web/V1NoticeController.java
@@ -574,7 +587,7 @@ export const postNoticesIdPublication = (
 
 
 
-export const getPostNoticesIdPublicationMutationOptions = <TError = void,
+export const getPostNoticesIdPublicationMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postNoticesIdPublication>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postNoticesIdPublication>>, TError,{id: string}, TContext> => {
 
@@ -603,12 +616,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type PostNoticesIdPublicationMutationResult = NonNullable<Awaited<ReturnType<typeof postNoticesIdPublication>>>
 
-    export type PostNoticesIdPublicationMutationError = void
+    export type PostNoticesIdPublicationMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/communication/web/V1NoticeController.java
  */
-export const usePostNoticesIdPublication = <TError = void,
+export const usePostNoticesIdPublication = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postNoticesIdPublication>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof postNoticesIdPublication>>,

@@ -12,7 +12,7 @@ class StudentMyRanksApiTest extends BaseApiTest {
     @Test
     @DisplayName("已公示批次返回个人排名")
     void getPublishedRanks() {
-        ApiResponse resp = studentApi.get("/student/score/my-ranks");
+        ApiResponse resp = studentApi.get("/api/student/score/my-ranks");
         resp.assertOk();
         assertTrue(resp.getDataNode().isArray());
         assertTrue(resp.getDataNode().size() >= 1, "应至少返回一个已公示批次排名");

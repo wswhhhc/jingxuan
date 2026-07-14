@@ -1,5 +1,7 @@
 package com.jingxuan.exception;
 
+import com.jingxuan.api.ProblemDetails;
+import com.jingxuan.api.RequestIdFilter;
 import com.jingxuan.common.Result;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -7,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.QueryTimeoutException;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -23,7 +27,7 @@ class GlobalExceptionHandlerTest {
     void databaseConnectionFailure() {
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getMethod()).thenReturn("GET");
-        when(request.getRequestURI()).thenReturn("/public/works");
+        when(request.getRequestURI()).thenReturn("/api/public/works");
 
         Result<Void> result = handler.handleDatabaseTimeoutException(
                 new DataAccessResourceFailureException("Connection timed out"),
@@ -38,7 +42,7 @@ class GlobalExceptionHandlerTest {
     void databaseQueryTimeout() {
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getMethod()).thenReturn("GET");
-        when(request.getRequestURI()).thenReturn("/admin/log/list");
+        when(request.getRequestURI()).thenReturn("/api/admin/log/list");
 
         Result<Void> result = handler.handleDatabaseTimeoutException(
                 new QueryTimeoutException("Query timeout"),
@@ -51,10 +55,31 @@ class GlobalExceptionHandlerTest {
     @Test
     @DisplayName("缺失的静态上传文件返回 404 而不是服务器错误")
     void missingStaticResource() {
-        Result<Void> result = handler.handleNoResourceFound(
-                new NoResourceFoundException(HttpMethod.GET, "/uploads/missing.jpg", "missing.jpg"));
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/uploads/missing.jpg");
+        ResponseEntity<?> response = handler.handleNoResourceFound(
+                new NoResourceFoundException(HttpMethod.GET, "/uploads/missing.jpg", "missing.jpg"), request);
 
+        Result<?> result = (Result<?>) response.getBody();
+        assertEquals(404, response.getStatusCode().value());
         assertEquals(404, result.getCode());
         assertEquals("请求的资源不存在", result.getMessage());
+    }
+
+    @Test
+    @DisplayName("V1 缺失资源返回 Problem Details")
+    void missingV1Resource() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn("/api/v1/missing");
+        when(request.getAttribute(RequestIdFilter.ATTRIBUTE)).thenReturn("request-404");
+
+        ResponseEntity<?> response = handler.handleNoResourceFound(
+                new NoResourceFoundException(HttpMethod.GET, "/api/v1/missing", "missing"), request);
+
+        ProblemDetails details = (ProblemDetails) response.getBody();
+        assertEquals(404, response.getStatusCode().value());
+        assertEquals(MediaType.APPLICATION_PROBLEM_JSON, response.getHeaders().getContentType());
+        assertEquals("NOT_FOUND", details.code());
+        assertEquals("request-404", details.requestId());
     }
 }

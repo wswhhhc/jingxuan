@@ -474,7 +474,7 @@ async function handleAdminDelete(workId: number) {
         cancelButtonText: '取消',
       },
     )
-    await request.delete(`/admin/work/${workId}`)
+    await request.delete(`/api/admin/work/${workId}`)
     ElMessage.success('作品已删除')
     detailVisible.value = false
     reload()
@@ -515,7 +515,7 @@ function onTabChange(name: string) {
 async function loadDeleteRequests() {
   drLoading.value = true
   try {
-    const res = await request.get<{ records: DeleteRequestItem[]; total: number }>('/admin/delete-requests', {
+    const res = await request.get<{ records: DeleteRequestItem[]; total: number }>('/api/admin/delete-requests', {
       params: { page: drPage.value, size: drPageSize.value, status: 0 },
     })
     drList.value = res.data?.records || []
@@ -534,7 +534,7 @@ async function handleApproveDelete(row: DeleteRequestItem) {
       confirmButtonText: '确认删除',
       cancelButtonText: '取消',
     })
-    await request.post(`/admin/delete-request/${row.id}/approve`)
+    await request.post(`/api/admin/delete-request/${row.id}/approve`)
     ElMessage.success('已同意删除申请，作品已删除')
     loadDeleteRequests()
   } catch {
@@ -556,7 +556,7 @@ async function handleRejectDelete() {
   }
   drSubmitting.value = true
   try {
-    await request.post(`/admin/delete-request/${drCurrentItem.value.id}/reject`, {
+    await request.post(`/api/admin/delete-request/${drCurrentItem.value.id}/reject`, {
       reply: drRejectReply.value,
     })
     ElMessage.success('已拒绝删除申请')

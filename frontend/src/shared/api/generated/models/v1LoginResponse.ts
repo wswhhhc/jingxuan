@@ -7,8 +7,10 @@
 import type { V1UserInfo } from './v1UserInfo';
 
 export interface V1LoginResponse {
-  accessToken: string;
-  expiresIn: number;
-  tokenType: string;
-  user: V1UserInfo;
+  accessToken?: string;
+  expiresIn?: string;
+  refreshExpiresIn?: string;
+  refreshToken?: string;
+  tokenType?: string;
+  user?: V1UserInfo;
 }

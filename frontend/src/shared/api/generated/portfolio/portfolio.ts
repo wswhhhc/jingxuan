@@ -30,6 +30,18 @@ import type {
 } from 'vue';
 
 import type {
+  GetShowcaseWorksParams,
+  ProblemDetails,
+  V1AuditDecisionRequest,
+  V1CreateCommentRequest,
+  V1CreateWorkRequest,
+  V1CreatedComment,
+  V1CreatedDeletionRequest,
+  V1CreatedWork,
+  V1DeleteRequest,
+  V1FeaturedRequest,
+  V1PageV1WorkSummary,
+  V1UpdateWorkRequest,
   V1WorkDetail,
   V1WorkSummary
 } from '../models';
@@ -50,7 +62,7 @@ export const getMeWorks = (
 ) => {
 
 
-      return apiRequest<V1WorkSummary>(
+      return apiRequest<V1WorkSummary[]>(
       {url: `/api/v1/me/works`, method: 'GET', signal
     },
       options);
@@ -66,7 +78,7 @@ export const getGetMeWorksQueryKey = () => {
     }
 
 
-export const getGetMeWorksQueryOptions = <TData = Awaited<ReturnType<typeof getMeWorks>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMeWorks>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export const getGetMeWorksQueryOptions = <TData = Awaited<ReturnType<typeof getMeWorks>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMeWorks>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -85,14 +97,14 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetMeWorksQueryResult = NonNullable<Awaited<ReturnType<typeof getMeWorks>>>
-export type GetMeWorksQueryError = void
+export type GetMeWorksQueryError = ProblemDetails
 
 
 /**
  * @summary com/jingxuan/portfolio/web/V1PortfolioController.java
  */
 
-export function useGetMeWorks<TData = Awaited<ReturnType<typeof getMeWorks>>, TError = void>(
+export function useGetMeWorks<TData = Awaited<ReturnType<typeof getMeWorks>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMeWorks>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
  ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -115,13 +127,15 @@ export function useGetMeWorks<TData = Awaited<ReturnType<typeof getMeWorks>>, TE
  * @summary com/jingxuan/portfolio/web/V1PortfolioController.java
  */
 export const postMeWorks = (
-
+    v1CreateWorkRequest: MaybeRefOrGetter<V1CreateWorkRequest>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {
+      v1CreateWorkRequest = toValue(v1CreateWorkRequest);
 
-
-      return apiRequest<V1WorkSummary | void>(
-      {url: `/api/v1/me/works`, method: 'POST', signal
+      return apiRequest<V1CreatedWork>(
+      {url: `/api/v1/me/works`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: v1CreateWorkRequest, signal
     },
       options);
     }
@@ -129,9 +143,9 @@ export const postMeWorks = (
 
 
 
-export const getPostMeWorksMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postMeWorks>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof postMeWorks>>, TError,void, TContext> => {
+export const getPostMeWorksMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postMeWorks>>, TError,{data: V1CreateWorkRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof postMeWorks>>, TError,{data: V1CreateWorkRequest}, TContext> => {
 
 const mutationKey = ['postMeWorks'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -143,10 +157,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postMeWorks>>, void> = () => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postMeWorks>>, {data: V1CreateWorkRequest}> = (props) => {
+          const {data} = props ?? {};
 
-
-          return  postMeWorks(requestOptions)
+          return  postMeWorks(data,requestOptions)
         }
 
 
@@ -157,18 +171,18 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type PostMeWorksMutationResult = NonNullable<Awaited<ReturnType<typeof postMeWorks>>>
-
-    export type PostMeWorksMutationError = void
+    export type PostMeWorksMutationBody = V1CreateWorkRequest
+    export type PostMeWorksMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/portfolio/web/V1PortfolioController.java
  */
-export const usePostMeWorks = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postMeWorks>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
+export const usePostMeWorks = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postMeWorks>>, TError,{data: V1CreateWorkRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof postMeWorks>>,
         TError,
-        void,
+        {data: V1CreateWorkRequest},
         TContext
       > => {
       return useMutation(getPostMeWorksMutationOptions(options), queryClient);
@@ -182,7 +196,7 @@ export const getMeWorksId = (
 ) => {
       id = toValue(id);
 
-      return apiRequest<void>(
+      return apiRequest<V1WorkDetail>(
       {url: `/api/v1/me/works/${id}`, method: 'GET', signal
     },
       options);
@@ -198,7 +212,7 @@ export const getGetMeWorksIdQueryKey = (id: MaybeRefOrGetter<string>,) => {
     }
 
 
-export const getGetMeWorksIdQueryOptions = <TData = Awaited<ReturnType<typeof getMeWorksId>>, TError = void>(id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMeWorksId>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export const getGetMeWorksIdQueryOptions = <TData = Awaited<ReturnType<typeof getMeWorksId>>, TError = ProblemDetails>(id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMeWorksId>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -217,14 +231,14 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetMeWorksIdQueryResult = NonNullable<Awaited<ReturnType<typeof getMeWorksId>>>
-export type GetMeWorksIdQueryError = void
+export type GetMeWorksIdQueryError = ProblemDetails
 
 
 /**
  * @summary com/jingxuan/portfolio/web/V1PortfolioController.java
  */
 
-export function useGetMeWorksId<TData = Awaited<ReturnType<typeof getMeWorksId>>, TError = void>(
+export function useGetMeWorksId<TData = Awaited<ReturnType<typeof getMeWorksId>>, TError = ProblemDetails>(
  id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMeWorksId>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
  ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -248,12 +262,16 @@ export function useGetMeWorksId<TData = Awaited<ReturnType<typeof getMeWorksId>>
  */
 export const putMeWorksId = (
     id: MaybeRefOrGetter<string>,
+    v1UpdateWorkRequest: MaybeRefOrGetter<V1UpdateWorkRequest>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {
       id = toValue(id);
+v1UpdateWorkRequest = toValue(v1UpdateWorkRequest);
 
       return apiRequest<void>(
-      {url: `/api/v1/me/works/${id}`, method: 'PUT', signal
+      {url: `/api/v1/me/works/${id}`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: v1UpdateWorkRequest, signal
     },
       options);
     }
@@ -261,9 +279,9 @@ export const putMeWorksId = (
 
 
 
-export const getPutMeWorksIdMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putMeWorksId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof putMeWorksId>>, TError,{id: string}, TContext> => {
+export const getPutMeWorksIdMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putMeWorksId>>, TError,{id: string;data: V1UpdateWorkRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof putMeWorksId>>, TError,{id: string;data: V1UpdateWorkRequest}, TContext> => {
 
 const mutationKey = ['putMeWorksId'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -275,10 +293,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putMeWorksId>>, {id: string}> = (props) => {
-          const {id} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putMeWorksId>>, {id: string;data: V1UpdateWorkRequest}> = (props) => {
+          const {id,data} = props ?? {};
 
-          return  putMeWorksId(id,requestOptions)
+          return  putMeWorksId(id,data,requestOptions)
         }
 
 
@@ -289,18 +307,18 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type PutMeWorksIdMutationResult = NonNullable<Awaited<ReturnType<typeof putMeWorksId>>>
-
-    export type PutMeWorksIdMutationError = void
+    export type PutMeWorksIdMutationBody = V1UpdateWorkRequest
+    export type PutMeWorksIdMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/portfolio/web/V1PortfolioController.java
  */
-export const usePutMeWorksId = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putMeWorksId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
+export const usePutMeWorksId = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putMeWorksId>>, TError,{id: string;data: V1UpdateWorkRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof putMeWorksId>>,
         TError,
-        {id: string},
+        {id: string;data: V1UpdateWorkRequest},
         TContext
       > => {
       return useMutation(getPutMeWorksIdMutationOptions(options), queryClient);
@@ -310,12 +328,16 @@ export const usePutMeWorksId = <TError = void,
  */
 export const postMeWorksIdDeletionRequests = (
     id: MaybeRefOrGetter<string>,
+    v1DeleteRequest: MaybeRefOrGetter<V1DeleteRequest>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {
       id = toValue(id);
+v1DeleteRequest = toValue(v1DeleteRequest);
 
-      return apiRequest<void>(
-      {url: `/api/v1/me/works/${id}/deletion-requests`, method: 'POST', signal
+      return apiRequest<V1CreatedDeletionRequest>(
+      {url: `/api/v1/me/works/${id}/deletion-requests`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: v1DeleteRequest, signal
     },
       options);
     }
@@ -323,9 +345,9 @@ export const postMeWorksIdDeletionRequests = (
 
 
 
-export const getPostMeWorksIdDeletionRequestsMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postMeWorksIdDeletionRequests>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof postMeWorksIdDeletionRequests>>, TError,{id: string}, TContext> => {
+export const getPostMeWorksIdDeletionRequestsMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postMeWorksIdDeletionRequests>>, TError,{id: string;data: V1DeleteRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof postMeWorksIdDeletionRequests>>, TError,{id: string;data: V1DeleteRequest}, TContext> => {
 
 const mutationKey = ['postMeWorksIdDeletionRequests'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -337,10 +359,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postMeWorksIdDeletionRequests>>, {id: string}> = (props) => {
-          const {id} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postMeWorksIdDeletionRequests>>, {id: string;data: V1DeleteRequest}> = (props) => {
+          const {id,data} = props ?? {};
 
-          return  postMeWorksIdDeletionRequests(id,requestOptions)
+          return  postMeWorksIdDeletionRequests(id,data,requestOptions)
         }
 
 
@@ -351,18 +373,18 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type PostMeWorksIdDeletionRequestsMutationResult = NonNullable<Awaited<ReturnType<typeof postMeWorksIdDeletionRequests>>>
-
-    export type PostMeWorksIdDeletionRequestsMutationError = void
+    export type PostMeWorksIdDeletionRequestsMutationBody = V1DeleteRequest
+    export type PostMeWorksIdDeletionRequestsMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/portfolio/web/V1PortfolioController.java
  */
-export const usePostMeWorksIdDeletionRequests = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postMeWorksIdDeletionRequests>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
+export const usePostMeWorksIdDeletionRequests = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postMeWorksIdDeletionRequests>>, TError,{id: string;data: V1DeleteRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof postMeWorksIdDeletionRequests>>,
         TError,
-        {id: string},
+        {id: string;data: V1DeleteRequest},
         TContext
       > => {
       return useMutation(getPostMeWorksIdDeletionRequestsMutationOptions(options), queryClient);
@@ -385,7 +407,7 @@ export const postMeWorksIdSubmissions = (
 
 
 
-export const getPostMeWorksIdSubmissionsMutationOptions = <TError = void,
+export const getPostMeWorksIdSubmissionsMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postMeWorksIdSubmissions>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postMeWorksIdSubmissions>>, TError,{id: string}, TContext> => {
 
@@ -414,12 +436,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type PostMeWorksIdSubmissionsMutationResult = NonNullable<Awaited<ReturnType<typeof postMeWorksIdSubmissions>>>
 
-    export type PostMeWorksIdSubmissionsMutationError = void
+    export type PostMeWorksIdSubmissionsMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/portfolio/web/V1PortfolioController.java
  */
-export const usePostMeWorksIdSubmissions = <TError = void,
+export const usePostMeWorksIdSubmissions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postMeWorksIdSubmissions>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof postMeWorksIdSubmissions>>,
@@ -433,13 +455,14 @@ export const usePostMeWorksIdSubmissions = <TError = void,
  * @summary com/jingxuan/portfolio/web/V1ShowcaseController.java
  */
 export const getShowcaseWorks = (
-
+    params?: MaybeRefOrGetter<GetShowcaseWorksParams>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {
+      params = toValue(params);
 
-
-      return apiRequest<V1WorkSummary>(
-      {url: `/api/v1/showcase/works`, method: 'GET', signal
+      return apiRequest<V1PageV1WorkSummary>(
+      {url: `/api/v1/showcase/works`, method: 'GET',
+        params, signal
     },
       options);
     }
@@ -447,23 +470,23 @@ export const getShowcaseWorks = (
 
 
 
-export const getGetShowcaseWorksQueryKey = () => {
+export const getGetShowcaseWorksQueryKey = (params?: MaybeRefOrGetter<GetShowcaseWorksParams>,) => {
     return [
-    'api','v1','showcase','works'
+    'api','v1','showcase','works', ...(params ? [params] : [])
     ] as const;
     }
 
 
-export const getGetShowcaseWorksQueryOptions = <TData = Awaited<ReturnType<typeof getShowcaseWorks>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getShowcaseWorks>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export const getGetShowcaseWorksQueryOptions = <TData = Awaited<ReturnType<typeof getShowcaseWorks>>, TError = ProblemDetails>(params?: MaybeRefOrGetter<GetShowcaseWorksParams>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getShowcaseWorks>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  getGetShowcaseWorksQueryKey();
+  const queryKey =  getGetShowcaseWorksQueryKey(params);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getShowcaseWorks>>> = ({ signal }) => getShowcaseWorks(requestOptions, signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getShowcaseWorks>>> = ({ signal }) => getShowcaseWorks(params, requestOptions, signal);
 
 
 
@@ -473,19 +496,19 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetShowcaseWorksQueryResult = NonNullable<Awaited<ReturnType<typeof getShowcaseWorks>>>
-export type GetShowcaseWorksQueryError = void
+export type GetShowcaseWorksQueryError = ProblemDetails
 
 
 /**
  * @summary com/jingxuan/portfolio/web/V1ShowcaseController.java
  */
 
-export function useGetShowcaseWorks<TData = Awaited<ReturnType<typeof getShowcaseWorks>>, TError = void>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getShowcaseWorks>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export function useGetShowcaseWorks<TData = Awaited<ReturnType<typeof getShowcaseWorks>>, TError = ProblemDetails>(
+ params?: MaybeRefOrGetter<GetShowcaseWorksParams>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getShowcaseWorks>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
  ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetShowcaseWorksQueryOptions(options)
+  const queryOptions = getGetShowcaseWorksQueryOptions(params,options)
 
   const query = useQuery(queryOptions, queryClient) as UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -524,7 +547,7 @@ export const getGetShowcaseWorksIdQueryKey = (id: MaybeRefOrGetter<string>,) => 
     }
 
 
-export const getGetShowcaseWorksIdQueryOptions = <TData = Awaited<ReturnType<typeof getShowcaseWorksId>>, TError = void>(id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getShowcaseWorksId>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export const getGetShowcaseWorksIdQueryOptions = <TData = Awaited<ReturnType<typeof getShowcaseWorksId>>, TError = ProblemDetails>(id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getShowcaseWorksId>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -543,14 +566,14 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetShowcaseWorksIdQueryResult = NonNullable<Awaited<ReturnType<typeof getShowcaseWorksId>>>
-export type GetShowcaseWorksIdQueryError = void
+export type GetShowcaseWorksIdQueryError = ProblemDetails
 
 
 /**
  * @summary com/jingxuan/portfolio/web/V1ShowcaseController.java
  */
 
-export function useGetShowcaseWorksId<TData = Awaited<ReturnType<typeof getShowcaseWorksId>>, TError = void>(
+export function useGetShowcaseWorksId<TData = Awaited<ReturnType<typeof getShowcaseWorksId>>, TError = ProblemDetails>(
  id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getShowcaseWorksId>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
  ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -587,7 +610,7 @@ export const deleteWorksCommentsId = (
 
 
 
-export const getDeleteWorksCommentsIdMutationOptions = <TError = void,
+export const getDeleteWorksCommentsIdMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteWorksCommentsId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteWorksCommentsId>>, TError,{id: string}, TContext> => {
 
@@ -616,12 +639,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type DeleteWorksCommentsIdMutationResult = NonNullable<Awaited<ReturnType<typeof deleteWorksCommentsId>>>
 
-    export type DeleteWorksCommentsIdMutationError = void
+    export type DeleteWorksCommentsIdMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/portfolio/web/V1CommentController.java
  */
-export const useDeleteWorksCommentsId = <TError = void,
+export const useDeleteWorksCommentsId = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteWorksCommentsId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof deleteWorksCommentsId>>,
@@ -636,12 +659,16 @@ export const useDeleteWorksCommentsId = <TError = void,
  */
 export const postWorksIdAuditDecisions = (
     id: MaybeRefOrGetter<string>,
+    v1AuditDecisionRequest: MaybeRefOrGetter<V1AuditDecisionRequest>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {
       id = toValue(id);
+v1AuditDecisionRequest = toValue(v1AuditDecisionRequest);
 
       return apiRequest<void>(
-      {url: `/api/v1/works/${id}/audit-decisions`, method: 'POST', signal
+      {url: `/api/v1/works/${id}/audit-decisions`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: v1AuditDecisionRequest, signal
     },
       options);
     }
@@ -649,9 +676,9 @@ export const postWorksIdAuditDecisions = (
 
 
 
-export const getPostWorksIdAuditDecisionsMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postWorksIdAuditDecisions>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof postWorksIdAuditDecisions>>, TError,{id: string}, TContext> => {
+export const getPostWorksIdAuditDecisionsMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postWorksIdAuditDecisions>>, TError,{id: string;data: V1AuditDecisionRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof postWorksIdAuditDecisions>>, TError,{id: string;data: V1AuditDecisionRequest}, TContext> => {
 
 const mutationKey = ['postWorksIdAuditDecisions'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -663,10 +690,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postWorksIdAuditDecisions>>, {id: string}> = (props) => {
-          const {id} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postWorksIdAuditDecisions>>, {id: string;data: V1AuditDecisionRequest}> = (props) => {
+          const {id,data} = props ?? {};
 
-          return  postWorksIdAuditDecisions(id,requestOptions)
+          return  postWorksIdAuditDecisions(id,data,requestOptions)
         }
 
 
@@ -677,18 +704,18 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type PostWorksIdAuditDecisionsMutationResult = NonNullable<Awaited<ReturnType<typeof postWorksIdAuditDecisions>>>
-
-    export type PostWorksIdAuditDecisionsMutationError = void
+    export type PostWorksIdAuditDecisionsMutationBody = V1AuditDecisionRequest
+    export type PostWorksIdAuditDecisionsMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/portfolio/web/V1AuditController.java
  */
-export const usePostWorksIdAuditDecisions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postWorksIdAuditDecisions>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
+export const usePostWorksIdAuditDecisions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postWorksIdAuditDecisions>>, TError,{id: string;data: V1AuditDecisionRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof postWorksIdAuditDecisions>>,
         TError,
-        {id: string},
+        {id: string;data: V1AuditDecisionRequest},
         TContext
       > => {
       return useMutation(getPostWorksIdAuditDecisionsMutationOptions(options), queryClient);
@@ -698,12 +725,16 @@ export const usePostWorksIdAuditDecisions = <TError = void,
  */
 export const postWorksIdComments = (
     id: MaybeRefOrGetter<string>,
+    v1CreateCommentRequest: MaybeRefOrGetter<V1CreateCommentRequest>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {
       id = toValue(id);
+v1CreateCommentRequest = toValue(v1CreateCommentRequest);
 
-      return apiRequest<void>(
-      {url: `/api/v1/works/${id}/comments`, method: 'POST', signal
+      return apiRequest<V1CreatedComment>(
+      {url: `/api/v1/works/${id}/comments`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: v1CreateCommentRequest, signal
     },
       options);
     }
@@ -711,9 +742,9 @@ export const postWorksIdComments = (
 
 
 
-export const getPostWorksIdCommentsMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postWorksIdComments>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof postWorksIdComments>>, TError,{id: string}, TContext> => {
+export const getPostWorksIdCommentsMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postWorksIdComments>>, TError,{id: string;data: V1CreateCommentRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof postWorksIdComments>>, TError,{id: string;data: V1CreateCommentRequest}, TContext> => {
 
 const mutationKey = ['postWorksIdComments'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -725,10 +756,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postWorksIdComments>>, {id: string}> = (props) => {
-          const {id} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postWorksIdComments>>, {id: string;data: V1CreateCommentRequest}> = (props) => {
+          const {id,data} = props ?? {};
 
-          return  postWorksIdComments(id,requestOptions)
+          return  postWorksIdComments(id,data,requestOptions)
         }
 
 
@@ -739,83 +770,21 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type PostWorksIdCommentsMutationResult = NonNullable<Awaited<ReturnType<typeof postWorksIdComments>>>
-
-    export type PostWorksIdCommentsMutationError = void
+    export type PostWorksIdCommentsMutationBody = V1CreateCommentRequest
+    export type PostWorksIdCommentsMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/portfolio/web/V1CommentController.java
  */
-export const usePostWorksIdComments = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postWorksIdComments>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
+export const usePostWorksIdComments = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postWorksIdComments>>, TError,{id: string;data: V1CreateCommentRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof postWorksIdComments>>,
         TError,
-        {id: string},
+        {id: string;data: V1CreateCommentRequest},
         TContext
       > => {
       return useMutation(getPostWorksIdCommentsMutationOptions(options), queryClient);
-    }
-    /**
- * @summary com/jingxuan/portfolio/web/V1LikeController.java
- */
-export const putWorksIdLikes = (
-    id: MaybeRefOrGetter<string>,
- options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
-) => {
-      id = toValue(id);
-
-      return apiRequest<void>(
-      {url: `/api/v1/works/${id}/likes`, method: 'PUT', signal
-    },
-      options);
-    }
-
-
-
-
-export const getPutWorksIdLikesMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putWorksIdLikes>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof putWorksIdLikes>>, TError,{id: string}, TContext> => {
-
-const mutationKey = ['putWorksIdLikes'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putWorksIdLikes>>, {id: string}> = (props) => {
-          const {id} = props ?? {};
-
-          return  putWorksIdLikes(id,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type PutWorksIdLikesMutationResult = NonNullable<Awaited<ReturnType<typeof putWorksIdLikes>>>
-
-    export type PutWorksIdLikesMutationError = void
-
-    /**
- * @summary com/jingxuan/portfolio/web/V1LikeController.java
- */
-export const usePutWorksIdLikes = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putWorksIdLikes>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient): UseMutationReturnType<
-        Awaited<ReturnType<typeof putWorksIdLikes>>,
-        TError,
-        {id: string},
-        TContext
-      > => {
-      return useMutation(getPutWorksIdLikesMutationOptions(options), queryClient);
     }
     /**
  * @summary com/jingxuan/portfolio/web/V1LikeController.java
@@ -835,7 +804,7 @@ export const deleteWorksIdLikes = (
 
 
 
-export const getDeleteWorksIdLikesMutationOptions = <TError = void,
+export const getDeleteWorksIdLikesMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteWorksIdLikes>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteWorksIdLikes>>, TError,{id: string}, TContext> => {
 
@@ -864,12 +833,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type DeleteWorksIdLikesMutationResult = NonNullable<Awaited<ReturnType<typeof deleteWorksIdLikes>>>
 
-    export type DeleteWorksIdLikesMutationError = void
+    export type DeleteWorksIdLikesMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/portfolio/web/V1LikeController.java
  */
-export const useDeleteWorksIdLikes = <TError = void,
+export const useDeleteWorksIdLikes = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteWorksIdLikes>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof deleteWorksIdLikes>>,
@@ -878,6 +847,68 @@ export const useDeleteWorksIdLikes = <TError = void,
         TContext
       > => {
       return useMutation(getDeleteWorksIdLikesMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary com/jingxuan/portfolio/web/V1LikeController.java
+ */
+export const putWorksIdLikes = (
+    id: MaybeRefOrGetter<string>,
+ options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
+) => {
+      id = toValue(id);
+
+      return apiRequest<void>(
+      {url: `/api/v1/works/${id}/likes`, method: 'PUT', signal
+    },
+      options);
+    }
+
+
+
+
+export const getPutWorksIdLikesMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putWorksIdLikes>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof putWorksIdLikes>>, TError,{id: string}, TContext> => {
+
+const mutationKey = ['putWorksIdLikes'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putWorksIdLikes>>, {id: string}> = (props) => {
+          const {id} = props ?? {};
+
+          return  putWorksIdLikes(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PutWorksIdLikesMutationResult = NonNullable<Awaited<ReturnType<typeof putWorksIdLikes>>>
+
+    export type PutWorksIdLikesMutationError = ProblemDetails
+
+    /**
+ * @summary com/jingxuan/portfolio/web/V1LikeController.java
+ */
+export const usePutWorksIdLikes = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putWorksIdLikes>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient): UseMutationReturnType<
+        Awaited<ReturnType<typeof putWorksIdLikes>>,
+        TError,
+        {id: string},
+        TContext
+      > => {
+      return useMutation(getPutWorksIdLikesMutationOptions(options), queryClient);
     }
     /**
  * @summary com/jingxuan/portfolio/web/V1PublicationController.java
@@ -897,7 +928,7 @@ export const postWorksIdPublication = (
 
 
 
-export const getPostWorksIdPublicationMutationOptions = <TError = void,
+export const getPostWorksIdPublicationMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postWorksIdPublication>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postWorksIdPublication>>, TError,{id: string}, TContext> => {
 
@@ -926,12 +957,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type PostWorksIdPublicationMutationResult = NonNullable<Awaited<ReturnType<typeof postWorksIdPublication>>>
 
-    export type PostWorksIdPublicationMutationError = void
+    export type PostWorksIdPublicationMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/portfolio/web/V1PublicationController.java
  */
-export const usePostWorksIdPublication = <TError = void,
+export const usePostWorksIdPublication = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postWorksIdPublication>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof postWorksIdPublication>>,
@@ -946,12 +977,16 @@ export const usePostWorksIdPublication = <TError = void,
  */
 export const postWorksIdPublicationFeatured = (
     id: MaybeRefOrGetter<string>,
+    v1FeaturedRequest: MaybeRefOrGetter<V1FeaturedRequest>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {
       id = toValue(id);
+v1FeaturedRequest = toValue(v1FeaturedRequest);
 
       return apiRequest<void>(
-      {url: `/api/v1/works/${id}/publication/featured`, method: 'POST', signal
+      {url: `/api/v1/works/${id}/publication/featured`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: v1FeaturedRequest, signal
     },
       options);
     }
@@ -959,9 +994,9 @@ export const postWorksIdPublicationFeatured = (
 
 
 
-export const getPostWorksIdPublicationFeaturedMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postWorksIdPublicationFeatured>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof postWorksIdPublicationFeatured>>, TError,{id: string}, TContext> => {
+export const getPostWorksIdPublicationFeaturedMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postWorksIdPublicationFeatured>>, TError,{id: string;data: V1FeaturedRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof postWorksIdPublicationFeatured>>, TError,{id: string;data: V1FeaturedRequest}, TContext> => {
 
 const mutationKey = ['postWorksIdPublicationFeatured'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -973,10 +1008,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postWorksIdPublicationFeatured>>, {id: string}> = (props) => {
-          const {id} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postWorksIdPublicationFeatured>>, {id: string;data: V1FeaturedRequest}> = (props) => {
+          const {id,data} = props ?? {};
 
-          return  postWorksIdPublicationFeatured(id,requestOptions)
+          return  postWorksIdPublicationFeatured(id,data,requestOptions)
         }
 
 
@@ -987,18 +1022,18 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type PostWorksIdPublicationFeaturedMutationResult = NonNullable<Awaited<ReturnType<typeof postWorksIdPublicationFeatured>>>
-
-    export type PostWorksIdPublicationFeaturedMutationError = void
+    export type PostWorksIdPublicationFeaturedMutationBody = V1FeaturedRequest
+    export type PostWorksIdPublicationFeaturedMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/portfolio/web/V1PublicationController.java
  */
-export const usePostWorksIdPublicationFeatured = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postWorksIdPublicationFeatured>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
+export const usePostWorksIdPublicationFeatured = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postWorksIdPublicationFeatured>>, TError,{id: string;data: V1FeaturedRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof postWorksIdPublicationFeatured>>,
         TError,
-        {id: string},
+        {id: string;data: V1FeaturedRequest},
         TContext
       > => {
       return useMutation(getPostWorksIdPublicationFeaturedMutationOptions(options), queryClient);
@@ -1021,7 +1056,7 @@ export const postWorksIdPublicationOffline = (
 
 
 
-export const getPostWorksIdPublicationOfflineMutationOptions = <TError = void,
+export const getPostWorksIdPublicationOfflineMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postWorksIdPublicationOffline>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postWorksIdPublicationOffline>>, TError,{id: string}, TContext> => {
 
@@ -1050,12 +1085,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type PostWorksIdPublicationOfflineMutationResult = NonNullable<Awaited<ReturnType<typeof postWorksIdPublicationOffline>>>
 
-    export type PostWorksIdPublicationOfflineMutationError = void
+    export type PostWorksIdPublicationOfflineMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/portfolio/web/V1PublicationController.java
  */
-export const usePostWorksIdPublicationOffline = <TError = void,
+export const usePostWorksIdPublicationOffline = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postWorksIdPublicationOffline>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof postWorksIdPublicationOffline>>,

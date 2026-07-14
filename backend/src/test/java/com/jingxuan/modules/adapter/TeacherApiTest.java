@@ -19,7 +19,7 @@ class TeacherApiTest extends BaseApiTest {
         @Test
         @DisplayName("仅返回已通过作品(status=3)")
         void listApprovedWorks() {
-            ApiResponse resp = teacherApi.get("/teacher/work/list");
+            ApiResponse resp = teacherApi.get("/api/teacher/work/list");
             resp.assertOk();
             assertTrue(resp.getDataInt("total") >= 3, "应至少返回3个已通过作品");
         }
@@ -27,7 +27,7 @@ class TeacherApiTest extends BaseApiTest {
         @Test
         @DisplayName("学生访问返回 403")
         void studentForbidden() {
-            ApiResponse resp = studentApi.get("/teacher/work/list");
+            ApiResponse resp = studentApi.get("/api/teacher/work/list");
             assertEquals(403, resp.getCode(), "学生访问教师接口应返回 403");
         }
     }
@@ -39,7 +39,7 @@ class TeacherApiTest extends BaseApiTest {
         @Test
         @DisplayName("已通过作品详情不含学生信息")
         void approvedWorkDetail() {
-            ApiResponse resp = teacherApi.get("/teacher/work/1");
+            ApiResponse resp = teacherApi.get("/api/teacher/work/1");
             resp.assertOk();
             assertEquals("校园二手书交易平台", resp.getDataText("title"));
         }
@@ -53,7 +53,7 @@ class TeacherApiTest extends BaseApiTest {
         @DisplayName("对已通过作品成功评分")
         void scoreApprovedWork() {
             // 作品4已通过但未评分
-            ApiResponse resp = teacherApi.post("/teacher/score", Map.of(
+            ApiResponse resp = teacherApi.post("/api/teacher/score", Map.of(
                     "workId", 4,
                     "innovation", 20, "difficulty", 20,
                     "completion", 25, "practicality", 15,
@@ -66,7 +66,7 @@ class TeacherApiTest extends BaseApiTest {
         @Test
         @DisplayName("对未通过作品评分失败")
         void scoreNotApproved() {
-            ApiResponse resp = teacherApi.post("/teacher/score", Map.of(
+            ApiResponse resp = teacherApi.post("/api/teacher/score", Map.of(
                     "workId", 5,
                     "innovation", 20, "difficulty", 20,
                     "completion", 25, "practicality", 15,
@@ -83,7 +83,7 @@ class TeacherApiTest extends BaseApiTest {
         @Test
         @DisplayName("查询已评分作品")
         void scored() {
-            ApiResponse resp = teacherApi.get("/teacher/score/1");
+            ApiResponse resp = teacherApi.get("/api/teacher/score/1");
             resp.assertOk();
         }
     }
@@ -95,7 +95,7 @@ class TeacherApiTest extends BaseApiTest {
         @Test
         @DisplayName("返回评分历史")
         void history() {
-            ApiResponse resp = teacherApi.get("/teacher/score/history");
+            ApiResponse resp = teacherApi.get("/api/teacher/score/history");
             resp.assertOk();
         }
     }
@@ -107,7 +107,7 @@ class TeacherApiTest extends BaseApiTest {
         @Test
         @DisplayName("返回待评分和完成率等统计字段")
         void stats() {
-            ApiResponse resp = teacherApi.get("/teacher/dashboard/stats");
+            ApiResponse resp = teacherApi.get("/api/teacher/dashboard/stats");
             resp.assertOk();
             assertTrue(resp.getDataInt("totalScorableWorks") >= 0);
             assertTrue(resp.getDataInt("scoredWorks") >= 0);
@@ -125,7 +125,7 @@ class TeacherApiTest extends BaseApiTest {
         @Test
         @DisplayName("返回评分批次")
         void listBatches() {
-            ApiResponse resp = teacherApi.get("/teacher/batch/list");
+            ApiResponse resp = teacherApi.get("/api/teacher/batch/list");
             resp.assertOk();
             assertTrue(resp.getDataNode().isArray());
         }
@@ -138,7 +138,7 @@ class TeacherApiTest extends BaseApiTest {
         @Test
         @DisplayName("查询排行榜")
         void ranking() {
-            ApiResponse resp = teacherApi.get("/teacher/ranking/list", Map.of("batchId", 1, "topN", 5));
+            ApiResponse resp = teacherApi.get("/api/teacher/ranking/list", Map.of("batchId", 1, "topN", 5));
             assertTrue(resp.getCode() == 200 || resp.getCode() == 500,
                     "期望 200 或 500，实际: " + resp.getCode());
         }
@@ -146,7 +146,7 @@ class TeacherApiTest extends BaseApiTest {
         @Test
         @DisplayName("刷新排行榜缓存")
         void refresh() {
-            ApiResponse resp = teacherApi.post("/teacher/ranking/refresh?batchId=1", null);
+            ApiResponse resp = teacherApi.post("/api/teacher/ranking/refresh?batchId=1", null);
             assertTrue(resp.getCode() == 200 || resp.getCode() == 500,
                     "期望 200 或 500，实际: " + resp.getCode());
         }
@@ -159,14 +159,14 @@ class TeacherApiTest extends BaseApiTest {
         @Test
         @DisplayName("返回排行批次列表")
         void batches() {
-            ApiResponse resp = teacherApi.get("/teacher/ranking/batches");
+            ApiResponse resp = teacherApi.get("/api/teacher/ranking/batches");
             resp.assertOk();
         }
 
         @Test
         @DisplayName("返回排行分类")
         void categories() {
-            ApiResponse resp = teacherApi.get("/teacher/ranking/categories", Map.of("batchId", 1));
+            ApiResponse resp = teacherApi.get("/api/teacher/ranking/categories", Map.of("batchId", 1));
             resp.assertOk();
         }
     }
@@ -178,7 +178,7 @@ class TeacherApiTest extends BaseApiTest {
         @Test
         @DisplayName("通知列表")
         void list() {
-            ApiResponse resp = teacherApi.get("/teacher/notify/list");
+            ApiResponse resp = teacherApi.get("/api/teacher/notify/list");
             assertTrue(resp.getCode() == 200 || resp.getCode() == 500);
         }
     }

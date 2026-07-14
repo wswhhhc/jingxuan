@@ -136,7 +136,7 @@ export function uploadFile(file: File, workId?: string | number) {
   const formData = new FormData()
   formData.append('file', file)
   return request({
-    url: '/file/upload',
+    url: '/api/file/upload',
     method: 'post',
     data: formData,
     params: {

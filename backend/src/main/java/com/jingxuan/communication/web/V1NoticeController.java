@@ -69,7 +69,7 @@ public class V1NoticeController {
         @ApiResponse(responseCode = "404", description = "公告不存在")
     })
     public V1Notice getNotice(@PathVariable String id) {
-        return noticeQueryService.getNotice(id);
+        return noticeQueryService.getPublishedNotice(id);
     }
 
     @PostMapping

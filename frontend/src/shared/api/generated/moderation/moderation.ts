@@ -29,6 +29,15 @@ import type {
   MaybeRefOrGetter
 } from 'vue';
 
+import type {
+  PostModerationCheckBody,
+  PostModerationCheckParams,
+  ProblemDetails,
+  V1ModerationResult,
+  V1SensitiveRule,
+  V1SensitiveRuleRequest
+} from '../models';
+
 import { apiRequest } from '../../http';
 
 
@@ -40,13 +49,18 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
  * @summary com/jingxuan/moderation/web/V1ContentModerationController.java
  */
 export const postModerationCheck = (
-
+    postModerationCheckBody: MaybeRefOrGetter<PostModerationCheckBody>,
+    params?: MaybeRefOrGetter<PostModerationCheckParams>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {
+      postModerationCheckBody = toValue(postModerationCheckBody);
+params = toValue(params);
 
-
-      return apiRequest<void>(
-      {url: `/api/v1/moderation/check`, method: 'POST', signal
+      return apiRequest<V1ModerationResult>(
+      {url: `/api/v1/moderation/check`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: postModerationCheckBody,
+        params, signal
     },
       options);
     }
@@ -54,9 +68,9 @@ export const postModerationCheck = (
 
 
 
-export const getPostModerationCheckMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postModerationCheck>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof postModerationCheck>>, TError,void, TContext> => {
+export const getPostModerationCheckMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postModerationCheck>>, TError,{data: PostModerationCheckBody;params?: PostModerationCheckParams}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof postModerationCheck>>, TError,{data: PostModerationCheckBody;params?: PostModerationCheckParams}, TContext> => {
 
 const mutationKey = ['postModerationCheck'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -68,10 +82,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postModerationCheck>>, void> = () => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postModerationCheck>>, {data: PostModerationCheckBody;params?: PostModerationCheckParams}> = (props) => {
+          const {data,params} = props ?? {};
 
-
-          return  postModerationCheck(requestOptions)
+          return  postModerationCheck(data,params,requestOptions)
         }
 
 
@@ -82,153 +96,21 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type PostModerationCheckMutationResult = NonNullable<Awaited<ReturnType<typeof postModerationCheck>>>
-
-    export type PostModerationCheckMutationError = void
+    export type PostModerationCheckMutationBody = PostModerationCheckBody
+    export type PostModerationCheckMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/moderation/web/V1ContentModerationController.java
  */
-export const usePostModerationCheck = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postModerationCheck>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
+export const usePostModerationCheck = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postModerationCheck>>, TError,{data: PostModerationCheckBody;params?: PostModerationCheckParams}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof postModerationCheck>>,
         TError,
-        void,
+        {data: PostModerationCheckBody;params?: PostModerationCheckParams},
         TContext
       > => {
       return useMutation(getPostModerationCheckMutationOptions(options), queryClient);
-    }
-    /**
- * @summary com/jingxuan/moderation/web/V1SensitiveRuleController.java
- */
-export const getModerationRulesId = (
-    id: MaybeRefOrGetter<string>,
- options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
-) => {
-      id = toValue(id);
-
-      return apiRequest<void>(
-      {url: `/api/v1/moderation/rules/${id}`, method: 'GET', signal
-    },
-      options);
-    }
-
-
-
-
-export const getGetModerationRulesIdQueryKey = (id: MaybeRefOrGetter<string>,) => {
-    return [
-    'api','v1','moderation','rules',id
-    ] as const;
-    }
-
-
-export const getGetModerationRulesIdQueryOptions = <TData = Awaited<ReturnType<typeof getModerationRulesId>>, TError = void>(id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getModerationRulesId>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  getGetModerationRulesIdQueryKey(id);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getModerationRulesId>>> = ({ signal }) => getModerationRulesId(id, requestOptions, signal);
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: computed(() => toValue(id) !== null && toValue(id) !== undefined), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getModerationRulesId>>, TError, TData>
-}
-
-export type GetModerationRulesIdQueryResult = NonNullable<Awaited<ReturnType<typeof getModerationRulesId>>>
-export type GetModerationRulesIdQueryError = void
-
-
-/**
- * @summary com/jingxuan/moderation/web/V1SensitiveRuleController.java
- */
-
-export function useGetModerationRulesId<TData = Awaited<ReturnType<typeof getModerationRulesId>>, TError = void>(
- id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getModerationRulesId>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient
- ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getGetModerationRulesIdQueryOptions(id,options)
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  query.queryKey = unref(queryOptions).queryKey as DataTag<QueryKey, TData, TError>;
-
-  return query;
-}
-
-
-
-
-
-
-/**
- * @summary com/jingxuan/moderation/web/V1SensitiveRuleController.java
- */
-export const putModerationRulesId = (
-    id: MaybeRefOrGetter<string>,
- options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
-) => {
-      id = toValue(id);
-
-      return apiRequest<void>(
-      {url: `/api/v1/moderation/rules/${id}`, method: 'PUT', signal
-    },
-      options);
-    }
-
-
-
-
-export const getPutModerationRulesIdMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putModerationRulesId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof putModerationRulesId>>, TError,{id: string}, TContext> => {
-
-const mutationKey = ['putModerationRulesId'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putModerationRulesId>>, {id: string}> = (props) => {
-          const {id} = props ?? {};
-
-          return  putModerationRulesId(id,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type PutModerationRulesIdMutationResult = NonNullable<Awaited<ReturnType<typeof putModerationRulesId>>>
-
-    export type PutModerationRulesIdMutationError = void
-
-    /**
- * @summary com/jingxuan/moderation/web/V1SensitiveRuleController.java
- */
-export const usePutModerationRulesId = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putModerationRulesId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient): UseMutationReturnType<
-        Awaited<ReturnType<typeof putModerationRulesId>>,
-        TError,
-        {id: string},
-        TContext
-      > => {
-      return useMutation(getPutModerationRulesIdMutationOptions(options), queryClient);
     }
     /**
  * @summary com/jingxuan/moderation/web/V1SensitiveRuleController.java
@@ -248,7 +130,7 @@ export const deleteModerationRulesId = (
 
 
 
-export const getDeleteModerationRulesIdMutationOptions = <TError = void,
+export const getDeleteModerationRulesIdMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteModerationRulesId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
 ): UseMutationOptions<Awaited<ReturnType<typeof deleteModerationRulesId>>, TError,{id: string}, TContext> => {
 
@@ -277,12 +159,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type DeleteModerationRulesIdMutationResult = NonNullable<Awaited<ReturnType<typeof deleteModerationRulesId>>>
 
-    export type DeleteModerationRulesIdMutationError = void
+    export type DeleteModerationRulesIdMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/moderation/web/V1SensitiveRuleController.java
  */
-export const useDeleteModerationRulesId = <TError = void,
+export const useDeleteModerationRulesId = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteModerationRulesId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof deleteModerationRulesId>>,
@@ -291,6 +173,142 @@ export const useDeleteModerationRulesId = <TError = void,
         TContext
       > => {
       return useMutation(getDeleteModerationRulesIdMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary com/jingxuan/moderation/web/V1SensitiveRuleController.java
+ */
+export const getModerationRulesId = (
+    id: MaybeRefOrGetter<string>,
+ options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
+) => {
+      id = toValue(id);
+
+      return apiRequest<V1SensitiveRule>(
+      {url: `/api/v1/moderation/rules/${id}`, method: 'GET', signal
+    },
+      options);
+    }
+
+
+
+
+export const getGetModerationRulesIdQueryKey = (id: MaybeRefOrGetter<string>,) => {
+    return [
+    'api','v1','moderation','rules',id
+    ] as const;
+    }
+
+
+export const getGetModerationRulesIdQueryOptions = <TData = Awaited<ReturnType<typeof getModerationRulesId>>, TError = ProblemDetails>(id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getModerationRulesId>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  getGetModerationRulesIdQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getModerationRulesId>>> = ({ signal }) => getModerationRulesId(id, requestOptions, signal);
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: computed(() => toValue(id) !== null && toValue(id) !== undefined), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getModerationRulesId>>, TError, TData>
+}
+
+export type GetModerationRulesIdQueryResult = NonNullable<Awaited<ReturnType<typeof getModerationRulesId>>>
+export type GetModerationRulesIdQueryError = ProblemDetails
+
+
+/**
+ * @summary com/jingxuan/moderation/web/V1SensitiveRuleController.java
+ */
+
+export function useGetModerationRulesId<TData = Awaited<ReturnType<typeof getModerationRulesId>>, TError = ProblemDetails>(
+ id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getModerationRulesId>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient
+ ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetModerationRulesIdQueryOptions(id,options)
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = unref(queryOptions).queryKey as DataTag<QueryKey, TData, TError>;
+
+  return query;
+}
+
+
+
+
+
+
+/**
+ * @summary com/jingxuan/moderation/web/V1SensitiveRuleController.java
+ */
+export const putModerationRulesId = (
+    id: MaybeRefOrGetter<string>,
+    v1SensitiveRuleRequest: MaybeRefOrGetter<V1SensitiveRuleRequest>,
+ options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
+) => {
+      id = toValue(id);
+v1SensitiveRuleRequest = toValue(v1SensitiveRuleRequest);
+
+      return apiRequest<void>(
+      {url: `/api/v1/moderation/rules/${id}`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: v1SensitiveRuleRequest, signal
+    },
+      options);
+    }
+
+
+
+
+export const getPutModerationRulesIdMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putModerationRulesId>>, TError,{id: string;data: V1SensitiveRuleRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof putModerationRulesId>>, TError,{id: string;data: V1SensitiveRuleRequest}, TContext> => {
+
+const mutationKey = ['putModerationRulesId'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putModerationRulesId>>, {id: string;data: V1SensitiveRuleRequest}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  putModerationRulesId(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PutModerationRulesIdMutationResult = NonNullable<Awaited<ReturnType<typeof putModerationRulesId>>>
+    export type PutModerationRulesIdMutationBody = V1SensitiveRuleRequest
+    export type PutModerationRulesIdMutationError = ProblemDetails
+
+    /**
+ * @summary com/jingxuan/moderation/web/V1SensitiveRuleController.java
+ */
+export const usePutModerationRulesId = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putModerationRulesId>>, TError,{id: string;data: V1SensitiveRuleRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient): UseMutationReturnType<
+        Awaited<ReturnType<typeof putModerationRulesId>>,
+        TError,
+        {id: string;data: V1SensitiveRuleRequest},
+        TContext
+      > => {
+      return useMutation(getPutModerationRulesIdMutationOptions(options), queryClient);
     }
     /**
  * @summary com/jingxuan/moderation/web/V1SensitiveRuleController.java
@@ -310,7 +328,7 @@ export const postModerationRulesIdToggle = (
 
 
 
-export const getPostModerationRulesIdToggleMutationOptions = <TError = void,
+export const getPostModerationRulesIdToggleMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postModerationRulesIdToggle>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postModerationRulesIdToggle>>, TError,{id: string}, TContext> => {
 
@@ -339,12 +357,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type PostModerationRulesIdToggleMutationResult = NonNullable<Awaited<ReturnType<typeof postModerationRulesIdToggle>>>
 
-    export type PostModerationRulesIdToggleMutationError = void
+    export type PostModerationRulesIdToggleMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/moderation/web/V1SensitiveRuleController.java
  */
-export const usePostModerationRulesIdToggle = <TError = void,
+export const usePostModerationRulesIdToggle = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postModerationRulesIdToggle>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof postModerationRulesIdToggle>>,

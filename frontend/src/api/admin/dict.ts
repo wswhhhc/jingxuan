@@ -40,5 +40,5 @@ export function updateDict(data: {
 
 /** 删除字典项 */
 export function deleteDict(id: number) {
-  return request.delete(`/admin/dict/${id}`)
+  return request.delete(`/api/admin/dict/${id}`)
 }

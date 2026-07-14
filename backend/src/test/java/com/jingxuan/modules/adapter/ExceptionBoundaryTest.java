@@ -30,28 +30,28 @@ class ExceptionBoundaryTest extends BaseApiTest {
         @Test
         @DisplayName("分页参数 page=0")
         void pageZero() {
-            ApiResponse resp = publicApi.get("/public/works?page=0");
+            ApiResponse resp = publicApi.get("/api/public/works?page=0");
             resp.assertOk();
         }
 
         @Test
         @DisplayName("分页参数 page=-1")
         void pageNegative() {
-            ApiResponse resp = publicApi.get("/public/works?page=-1");
+            ApiResponse resp = publicApi.get("/api/public/works?page=-1");
             resp.assertOk();
         }
 
         @Test
         @DisplayName("分页参数 size=10000")
         void sizeLarge() {
-            ApiResponse resp = publicApi.get("/public/works?size=10000");
+            ApiResponse resp = publicApi.get("/api/public/works?size=10000");
             resp.assertOk();
         }
 
         @Test
         @DisplayName("非法 ID（字符串）")
         void invalidId() {
-            ApiResponse resp = publicApi.get("/public/works/abc");
+            ApiResponse resp = publicApi.get("/api/public/works/abc");
             // 应为 400 参数错误，404 或 500
             assertTrue(resp.getCode() >= 400, "非法 ID 应返回异常，实际: " + resp.getCode());
         }
@@ -59,7 +59,7 @@ class ExceptionBoundaryTest extends BaseApiTest {
         @Test
         @DisplayName("非法枚举值 status=99")
         void invalidStatus() {
-            ApiResponse resp = studentApi.get("/student/works", Map.of("status", 99));
+            ApiResponse resp = studentApi.get("/api/student/works", Map.of("status", 99));
             resp.assertOk(); // 无效枚举应被忽略而非报错
         }
 
@@ -67,7 +67,7 @@ class ExceptionBoundaryTest extends BaseApiTest {
         @DisplayName("超长作品标题（201字）")
         void titleTooLong() {
             String longTitle = "a".repeat(201);
-            ApiResponse resp = testStuApi.post("/student/works", Map.of("title", longTitle));
+            ApiResponse resp = testStuApi.post("/api/student/works", Map.of("title", longTitle));
             assertTrue(resp.getCode() == 400 || resp.getCode() == 200,
                     "超长标题应返回 400 或自动截断，实际: " + resp.getCode());
         }
@@ -75,14 +75,14 @@ class ExceptionBoundaryTest extends BaseApiTest {
         @Test
         @DisplayName("标题为纯空格")
         void titleBlank() {
-            ApiResponse resp = testStuApi.post("/student/works", Map.of("title", "   "));
+            ApiResponse resp = testStuApi.post("/api/student/works", Map.of("title", "   "));
             assertTrue(resp.getCode() == 400, "纯空格标题应返回 400，实际: " + resp.getCode());
         }
 
         @Test
         @DisplayName("日期格式错误不应导致 500")
         void invalidDateFormat() {
-            ApiResponse resp = adminApi.get("/admin/audit/list?submitTimeBegin=2026-99-99 99:99:99");
+            ApiResponse resp = adminApi.get("/api/admin/audit/list?submitTimeBegin=2026-99-99 99:99:99");
             assertTrue(resp.getCode() == 200 || resp.getCode() == 400,
                     "非法日期格式应被忽略或拦截，但不应 500，实际: " + resp.getCode());
         }
@@ -96,7 +96,7 @@ class ExceptionBoundaryTest extends BaseApiTest {
         @DisplayName("未登录访问需认证接口 → 401/403")
         void anonymousAccess() {
             try {
-                ApiResponse resp = publicApi.get("/student/works");
+                ApiResponse resp = publicApi.get("/api/student/works");
                 assertTrue(resp.getCode() == 401 || resp.getCode() == 403 || resp.getCode() == 302,
                         "期望 401/403，实际: " + resp.getCode());
             } catch (Exception e) {
@@ -108,14 +108,14 @@ class ExceptionBoundaryTest extends BaseApiTest {
         @Test
         @DisplayName("学生访问教师接口 → 403")
         void studentAccessTeacher() {
-            ApiResponse resp = studentApi.get("/teacher/work/list");
+            ApiResponse resp = studentApi.get("/api/teacher/work/list");
             assertEquals(403, resp.getCode());
         }
 
         @Test
         @DisplayName("教师访问管理接口 → 403")
         void teacherAccessAdmin() {
-            ApiResponse resp = teacherApi.get("/admin/dashboard/stats");
+            ApiResponse resp = teacherApi.get("/api/admin/dashboard/stats");
             assertEquals(403, resp.getCode());
         }
 
@@ -123,7 +123,7 @@ class ExceptionBoundaryTest extends BaseApiTest {
         @DisplayName("越权修改他人作品")
         void modifyOthersWork() {
             // 作品5属于赵六(103)，张三(100)不能修改
-            ApiResponse resp = studentApi.put("/student/works/5",
+            ApiResponse resp = studentApi.put("/api/student/works/5",
                     Map.of("title", "越权修改"));
             assertTrue(resp.getCode() == 400 || resp.getCode() == 403,
                     "越权修改应返回 400/403，实际: " + resp.getCode());
@@ -132,7 +132,7 @@ class ExceptionBoundaryTest extends BaseApiTest {
         @Test
         @DisplayName("越权删除他人作品")
         void deleteOthersWork() {
-            ApiResponse resp = studentApi.delete("/student/works/7");
+            ApiResponse resp = studentApi.delete("/api/student/works/7");
             assertTrue(resp.getCode() == 400 || resp.getCode() == 403,
                     "越权删除应返回 400/403，实际: " + resp.getCode());
         }
@@ -146,7 +146,7 @@ class ExceptionBoundaryTest extends BaseApiTest {
         @DisplayName("对未通过审核的作品评分 → 400")
         void scoreNotApproved() {
             // 作品5是已提交(status=1)，不可评分
-            ApiResponse resp = teacherApi.post("/teacher/score", Map.of(
+            ApiResponse resp = teacherApi.post("/api/teacher/score", Map.of(
                     "workId", 5,
                     "innovation", 20, "difficulty", 20,
                     "completion", 25, "practicality", 15,
@@ -159,7 +159,7 @@ class ExceptionBoundaryTest extends BaseApiTest {
         @DisplayName("评分超出范围 → 400")
         void scoreOutOfRange() {
             // innovation 最高25分
-            ApiResponse resp = teacherApi.post("/teacher/score", Map.of(
+            ApiResponse resp = teacherApi.post("/api/teacher/score", Map.of(
                     "workId", 4,
                     "innovation", 30, "difficulty", 20,
                     "completion", 25, "practicality", 15,
@@ -172,20 +172,20 @@ class ExceptionBoundaryTest extends BaseApiTest {
         @DisplayName("重复点赞状态正确")
         void toggleLike() {
             // 先确保未点赞（取消所有点赞）
-            ApiResponse statusResp = studentApi.get("/public/works/1/like-status");
+            ApiResponse statusResp = studentApi.get("/api/public/works/1/like-status");
             statusResp.assertOk();
             boolean wasLiked = statusResp.getDataBool("liked");
             if (wasLiked) {
-                studentApi.post("/works/1/like", null);
+                studentApi.post("/api/works/1/like", null);
             }
 
             // 点赞
-            ApiResponse likeResp = studentApi.post("/works/1/like", null);
+            ApiResponse likeResp = studentApi.post("/api/works/1/like", null);
             likeResp.assertOk();
             assertTrue(likeResp.getDataBool("liked"));
 
             // 取消点赞
-            ApiResponse unlikeResp = studentApi.post("/works/1/like", null);
+            ApiResponse unlikeResp = studentApi.post("/api/works/1/like", null);
             unlikeResp.assertOk();
             assertFalse(unlikeResp.getDataBool("liked"));
         }
@@ -194,7 +194,7 @@ class ExceptionBoundaryTest extends BaseApiTest {
         @DisplayName("创建作品在同批次中重复 → 400（使用已有作品的学生）")
         void duplicateInBatch() {
             // 张三(100)在批次1中已有作品
-            ApiResponse resp = studentApi.post("/student/works", Map.of(
+            ApiResponse resp = studentApi.post("/api/student/works", Map.of(
                     "title", "重复提交测试",
                     "summary", "不应创建成功"
             ));
@@ -205,14 +205,14 @@ class ExceptionBoundaryTest extends BaseApiTest {
         @Test
         @DisplayName("查询不存在的作品 → 404")
         void workNotFound() {
-            ApiResponse resp = publicApi.get("/public/works/99999");
+            ApiResponse resp = publicApi.get("/api/public/works/99999");
             assertTrue(resp.getCode() == 404, "不存在作品应返回 404，实际: " + resp.getCode());
         }
 
         @Test
         @DisplayName("团队成员已在其他作品中返回 400")
         void memberAlreadyInOtherWork() {
-            ApiResponse resp = testStuApi.post("/student/works", Map.of(
+            ApiResponse resp = testStuApi.post("/api/student/works", Map.of(
                     "title", "成员冲突测试-" + System.currentTimeMillis(),
                     "summary", "成员冲突",
                     "members", java.util.List.of(Map.of(
@@ -227,7 +227,7 @@ class ExceptionBoundaryTest extends BaseApiTest {
         @Test
         @DisplayName("附件被其他作品占用时绑定失败")
         void attachmentAlreadyBound() {
-            ApiResponse resp = testStuApi.post("/student/works", Map.of(
+            ApiResponse resp = testStuApi.post("/api/student/works", Map.of(
                     "title", "附件占用测试-" + System.currentTimeMillis(),
                     "summary", "附件占用",
                     "attachmentIds", java.util.List.of("1")
@@ -250,7 +250,7 @@ class ExceptionBoundaryTest extends BaseApiTest {
                 final int idx = i;
                 futures.add(executor.submit(() -> {
                     try {
-                        ApiResponse resp = studentApi.post("/works/1/like", null);
+                        ApiResponse resp = studentApi.post("/api/works/1/like", null);
                         return resp.getCode() == 200;
                     } catch (Exception e) {
                         return false;
@@ -271,7 +271,7 @@ class ExceptionBoundaryTest extends BaseApiTest {
         @Test
         @DisplayName("点赞与浏览计数在并发场景下保持非负且可读")
         void likeAndViewCountConsistency() throws Exception {
-            ApiResponse before = publicApi.get("/public/works/1");
+            ApiResponse before = publicApi.get("/api/public/works/1");
             before.assertOk();
             int initialLikeCount = before.getDataInt("likeCount");
             int initialViewCount = before.getDataInt("viewCount");
@@ -281,13 +281,13 @@ class ExceptionBoundaryTest extends BaseApiTest {
             try {
                 for (int i = 0; i < 5; i++) {
                     futures.add(executor.submit(() -> {
-                        publicApi.get("/public/works/1");
+                        publicApi.get("/api/public/works/1");
                         return true;
                     }));
                 }
                 for (int i = 0; i < 5; i++) {
                     futures.add(executor.submit(() -> {
-                        ApiResponse resp = studentApi.post("/works/1/like", null);
+                        ApiResponse resp = studentApi.post("/api/works/1/like", null);
                         return resp.getCode() == 200;
                     }));
                 }
@@ -299,7 +299,7 @@ class ExceptionBoundaryTest extends BaseApiTest {
                 executor.shutdownNow();
             }
 
-            ApiResponse after = publicApi.get("/public/works/1");
+            ApiResponse after = publicApi.get("/api/public/works/1");
             after.assertOk();
             assertTrue(after.getDataInt("viewCount") >= initialViewCount,
                     "浏览计数不应倒退");
@@ -307,8 +307,8 @@ class ExceptionBoundaryTest extends BaseApiTest {
                     "点赞计数不应为负数");
 
             // 尽量恢复点赞状态，避免影响后续测试
-            while (studentApi.get("/public/works/1/like-status").getDataBool("liked")) {
-                studentApi.post("/works/1/like", null);
+            while (studentApi.get("/api/public/works/1/like-status").getDataBool("liked")) {
+                studentApi.post("/api/works/1/like", null);
             }
             assertTrue(initialLikeCount >= 0);
         }
@@ -317,7 +317,7 @@ class ExceptionBoundaryTest extends BaseApiTest {
         @DisplayName("提交审核和审核操作并发时不应出现 500")
         void submitAndAuditAtSameTime() throws Exception {
             String title = "并发提审审核-" + System.currentTimeMillis();
-            ApiResponse createResp = testStuApi.post("/student/works", Map.of(
+            ApiResponse createResp = testStuApi.post("/api/student/works", Map.of(
                     "title", title,
                     "summary", "并发场景",
                     "techStack", "Java/Spring Boot"
@@ -326,15 +326,15 @@ class ExceptionBoundaryTest extends BaseApiTest {
             long workId = createResp.getDataNode().asLong();
 
             String attachmentId = uploadAttachmentForWork(workId, "concurrent-submit-audit.zip");
-            ApiResponse bindResp = testStuApi.put("/student/works/" + workId, Map.of(
+            ApiResponse bindResp = testStuApi.put("/api/student/works/" + workId, Map.of(
                     "attachmentIds", java.util.List.of(attachmentId)
             ));
             bindResp.assertOk();
 
             var executor = java.util.concurrent.Executors.newFixedThreadPool(2);
             try {
-                var submitFuture = executor.submit(() -> testStuApi.post("/student/works/" + workId + "/submit", null));
-                var auditFuture = executor.submit(() -> adminApi.post("/admin/audit", Map.of(
+                var submitFuture = executor.submit(() -> testStuApi.post("/api/student/works/" + workId + "/submit", null));
+                var auditFuture = executor.submit(() -> adminApi.post("/api/admin/audit", Map.of(
                         "workId", workId,
                         "result", "approved",
                         "reason", "并发审核"
@@ -363,7 +363,7 @@ class ExceptionBoundaryTest extends BaseApiTest {
             // 用完全伪造的 token
             String response = request(
                     org.springframework.http.HttpMethod.GET,
-                    "/student/works", null, "fake-jwt-token-12345");
+                    "/api/student/works", null, "fake-jwt-token-12345");
             try {
                 var root = objectMapper.readTree(response);
                 assertTrue(root.get("code").asInt() == 401 || root.get("code").asInt() == 500,
@@ -381,7 +381,7 @@ class ExceptionBoundaryTest extends BaseApiTest {
             try {
                 ApiResponse resp = new ApiResponse(request(
                         org.springframework.http.HttpMethod.GET,
-                        "/auth/user-info", null, ""));
+                        "/api/auth/user-info", null, ""));
                 assertTrue(resp.getCode() == 401 || resp.getCode() == 500);
             } catch (Exception e) {
                 assertTrue(true, "无 token 被拦截");
@@ -394,7 +394,7 @@ class ExceptionBoundaryTest extends BaseApiTest {
             String expiredToken = generateExpiredToken(100L, "2022001", "ROLE_STUDENT");
             String response = request(
                     org.springframework.http.HttpMethod.GET,
-                    "/student/works", null, expiredToken);
+                    "/api/student/works", null, expiredToken);
             try {
                 var root = objectMapper.readTree(response);
                 assertTrue(root.get("code").asInt() == 401 || root.get("code").asInt() == 500,
@@ -412,7 +412,7 @@ class ExceptionBoundaryTest extends BaseApiTest {
         @Test
         @DisplayName("SQL 注入尝试不导致异常")
         void sqlInjection() {
-            ApiResponse resp = publicApi.get("/public/works?keyword=' OR 1=1--");
+            ApiResponse resp = publicApi.get("/api/public/works?keyword=' OR 1=1--");
             resp.assertOk();
         }
 
@@ -420,7 +420,7 @@ class ExceptionBoundaryTest extends BaseApiTest {
         @DisplayName("XSS 字符在作品标题中不导致异常")
         void xssInTitle() {
             // 使用 testStuApi（无现有作品）
-            ApiResponse resp = testStuApi.post("/student/works", Map.of(
+            ApiResponse resp = testStuApi.post("/api/student/works", Map.of(
                     "title", "<script>alert('XSS')</script>",
                     "summary", "XSS测试"
             ));
@@ -432,7 +432,7 @@ class ExceptionBoundaryTest extends BaseApiTest {
         @Test
         @DisplayName("评论内容包含 XSS 字符时不导致 500")
         void xssInComment() {
-            ApiResponse resp = studentApi.post("/comment/add?workId=1&content=<script>alert('xss')</script>", null);
+            ApiResponse resp = studentApi.post("/api/comment/add?workId=1&content=<script>alert('xss')</script>", null);
             assertTrue(resp.getCode() == 200 || resp.getCode() == 400,
                     "评论 XSS 内容应被放行或拦截，但不应 500，实际: " + resp.getCode());
         }
@@ -447,7 +447,7 @@ class ExceptionBoundaryTest extends BaseApiTest {
         void userInfoShouldNotLeakSensitiveFields() {
             String response = request(
                     org.springframework.http.HttpMethod.GET,
-                    "/auth/user-info", null, login("2022001", "test123"));
+                    "/api/auth/user-info", null, login("2022001", "test123"));
             assertFalse(response.toLowerCase().contains("password"), "响应不应包含 password 字段");
             assertFalse(response.toLowerCase().contains("stacktrace"), "响应不应包含 stacktrace");
         }
@@ -457,7 +457,7 @@ class ExceptionBoundaryTest extends BaseApiTest {
         void publicWorkDetailShouldNotLeakSensitiveFields() {
             String response = request(
                     org.springframework.http.HttpMethod.GET,
-                    "http://localhost:" + port + "/public/works/1", null, null);
+                    "http://localhost:" + port + "/api/public/works/1", null, null);
             assertFalse(response.toLowerCase().contains("token"), "公开详情不应包含 token");
             assertFalse(response.toLowerCase().contains("password"), "公开详情不应包含 password");
         }
@@ -465,7 +465,7 @@ class ExceptionBoundaryTest extends BaseApiTest {
         @Test
         @DisplayName("教师查看作品详情不应暴露提交者身份")
         void teacherDetailShouldHideSubmitterIdentity() {
-            ApiResponse resp = teacherApi.get("/teacher/work/1");
+            ApiResponse resp = teacherApi.get("/api/teacher/work/1");
             resp.assertOk();
             assertNull(resp.getDataText("submitterName"));
             assertNull(resp.getDataText("submitterId"));
@@ -476,7 +476,7 @@ class ExceptionBoundaryTest extends BaseApiTest {
         void errorResponseShouldNotLeakStackTrace() {
             String response = request(
                     org.springframework.http.HttpMethod.GET,
-                    "http://localhost:" + port + "/public/works/abc", null, null);
+                    "http://localhost:" + port + "/api/public/works/abc", null, null);
             String lower = response.toLowerCase();
             assertFalse(lower.contains("exception"), "响应不应暴露 exception 细节");
             assertFalse(lower.contains("stacktrace"), "响应不应暴露 stacktrace");
@@ -526,21 +526,21 @@ class ExceptionBoundaryTest extends BaseApiTest {
         @Test
         @DisplayName("大量标签查询")
         void manyTags() {
-            ApiResponse resp = publicApi.get("/public/works?tagIds=1,2,3,4");
+            ApiResponse resp = publicApi.get("/api/public/works?tagIds=1,2,3,4");
             resp.assertOk();
         }
 
         @Test
         @DisplayName("排行榜 topN=0")
         void rankingZero() {
-            ApiResponse resp = publicApi.get("/public/ranking/list?batchId=1&topN=0");
+            ApiResponse resp = publicApi.get("/api/public/ranking/list?batchId=1&topN=0");
             assertTrue(resp.getCode() == 200 || resp.getCode() == 500);
         }
 
         @Test
         @DisplayName("排行榜 topN=100")
         void rankingLarge() {
-            ApiResponse resp = publicApi.get("/public/ranking/list?batchId=1&topN=100");
+            ApiResponse resp = publicApi.get("/api/public/ranking/list?batchId=1&topN=100");
             assertTrue(resp.getCode() == 200 || resp.getCode() == 500);
         }
     }

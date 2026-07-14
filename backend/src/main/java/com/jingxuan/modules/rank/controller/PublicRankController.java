@@ -36,7 +36,7 @@ public class PublicRankController {
     private final ScoreBatchService scoreBatchService;
 
     @Operation(summary = "获取公共排行榜（仅已公示批次可见）")
-    @GetMapping("/public/ranking/list")
+    @GetMapping("/api/public/ranking/list")
     public Result<List<RankVO>> getRankingList(
             @RequestParam(required = false) Long batchId,
             @RequestParam(defaultValue = "10") int topN,
@@ -64,7 +64,7 @@ public class PublicRankController {
     }
 
     @Operation(summary = "获取已公示排行榜的评分批次列表")
-    @GetMapping("/public/ranking/batches")
+    @GetMapping("/api/public/ranking/batches")
     public Result<List<Map<String, Object>>> getRankingBatches() {
         List<ScoreBatch> allBatches = scoreBatchMapper.selectList(
                 Wrappers.<ScoreBatch>lambdaQuery()
@@ -86,7 +86,7 @@ public class PublicRankController {
     }
 
     @Operation(summary = "获取排行榜涉及的技术栈分类（仅已公示批次可见）")
-    @GetMapping("/public/ranking/categories")
+    @GetMapping("/api/public/ranking/categories")
     public Result<List<String>> getRankingCategories(
             @RequestParam(required = false) Long batchId) {
         if (batchId != null && !scoreBatchService.isRankPublished(batchId)) {

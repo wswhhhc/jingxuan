@@ -68,6 +68,8 @@ Thumbs.db
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+__pycache__/
+*.py[cod]
 frontend/dist/assets/*.bak
 frontend/dist/assets/*.conflicted
 frontend/dist/assets/*.gz

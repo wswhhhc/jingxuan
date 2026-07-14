@@ -26,7 +26,7 @@ export function updateBatch(data: Partial<ScoreBatchItem>) {
 }
 
 export function deleteBatch(id: number) {
-  return request.delete(`/score-batch/${id}`)
+  return request.delete(`/api/score-batch/${id}`)
 }
 
 export interface TeacherScoreItem {
@@ -47,5 +47,5 @@ export interface BatchScoreDetail {
 }
 
 export function getBatchScoreDetail(batchId: number) {
-  return request.get(`/admin/score/batch/${batchId}`)
+  return request.get(`/api/admin/score/batch/${batchId}`)
 }

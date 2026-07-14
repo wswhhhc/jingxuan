@@ -14,8 +14,8 @@ export interface ProblemDetails {
   code: string;
   /** 面向用户的错误详情 */
   detail: string;
-  /** 字段校验错误 */
-  fieldErrors?: ProblemDetailsFieldErrors;
+  /** 字段校验错误（键为字段名，值为错误消息） */
+  fieldErrors: ProblemDetailsFieldErrors;
   /** 请求实例 URI */
   instance: string;
   /** 请求追踪 ID */

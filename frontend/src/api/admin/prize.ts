@@ -19,11 +19,11 @@ export function createPrize(data: Partial<PrizeItem>) {
 }
 
 export function updatePrize(id: number, data: Partial<PrizeItem>) {
-  return request.put(`/admin/prize/${id}`, data)
+  return request.put(`/api/admin/prize/${id}`, data)
 }
 
 export function deletePrize(id: number) {
-  return request.delete(`/admin/prize/${id}`)
+  return request.delete(`/api/admin/prize/${id}`)
 }
 
 export function getPrizeBatches() {
@@ -51,7 +51,7 @@ export function issuePrize(data: { rewardId: number; workId: number; operatorId:
 }
 
 export function cancelIssue(id: number) {
-  return request.put(`/admin/prize/issue/${id}/cancel`)
+  return request.put(`/api/admin/prize/issue/${id}/cancel`)
 }
 
 export interface RankedWork {

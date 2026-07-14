@@ -6,6 +6,6 @@
  */
 
 /**
- * 字段校验错误
+ * 字段校验错误（键为字段名，值为错误消息）
  */
 export type ProblemDetailsFieldErrors = {[key: string]: string};

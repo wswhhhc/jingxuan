@@ -1,7 +1,6 @@
 package com.jingxuan.events;
 
 import com.jingxuan.TestContainerImages;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -15,6 +14,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.modulith.events.ApplicationModuleListener;
 import org.springframework.modulith.events.FailedEventPublications;
 import org.springframework.modulith.events.ResubmissionOptions;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
@@ -41,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.fail;
  * https://docs.spring.io/spring-modulith/reference/2.1/events.html#publication-registry</p>
  */
 @Tag("integration")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @SpringBootTest(
         classes = PersistentEventPublicationIntegrationTest.TestApplication.class,
         webEnvironment = SpringBootTest.WebEnvironment.NONE,
@@ -49,7 +50,8 @@ import static org.junit.jupiter.api.Assertions.fail;
                 "spring.flyway.enabled=true",
                 "spring.modulith.events.jdbc.schema-initialization.enabled=false",
                 "spring.modulith.events.completion-mode=delete",
-                "spring.modulith.events.republish-outstanding-events-on-restart=false"
+                "spring.modulith.events.republish-outstanding-events-on-restart=false",
+                "logging.level.org.springframework.aop.interceptor.SimpleAsyncUncaughtExceptionHandler=OFF"
         }
 )
 class PersistentEventPublicationIntegrationTest {
@@ -70,11 +72,6 @@ class PersistentEventPublicationIntegrationTest {
         registry.add("spring.datasource.username", MYSQL::getUsername);
         registry.add("spring.datasource.password", MYSQL::getPassword);
         registry.add("spring.datasource.driver-class-name", MYSQL::getDriverClassName);
-    }
-
-    @AfterAll
-    static void stopMysql() {
-        MYSQL.stop();
     }
 
     @Autowired

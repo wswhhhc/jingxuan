@@ -33,5 +33,5 @@ export function getAdminCommentWorkOptions() {
 }
 
 export function deleteAdminComment(commentId: number) {
-  return request.delete(`/admin/comment/${commentId}`)
+  return request.delete(`/api/admin/comment/${commentId}`)
 }

@@ -4,6 +4,7 @@ import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 import com.jingxuan.common.Result;
+import com.jingxuan.security.PublicRateLimitFilter;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -46,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * class MyTest extends BaseApiTest {
  *     @Test
  *     void testSomething() {
- *         ApiResponse resp = adminApi.get("/admin/xxx");
+ *         ApiResponse resp = adminApi.get("/api/admin/xxx");
  *         resp.assertOk();
  *         String title = resp.getData("title", String.class);
  *     }
@@ -107,6 +108,9 @@ public abstract class BaseApiTest {
     @Autowired
     private StringRedisTemplate redisTemplate;
 
+    @Autowired
+    private PublicRateLimitFilter publicRateLimitFilter;
+
     /** 管理端 API 调用器（已带 admin token） */
     protected ApiClient adminApi;
     /** 教师端 API 调用器（已带 teacher token） */
@@ -121,6 +125,7 @@ public abstract class BaseApiTest {
     @BeforeEach
     void setUp() {
         cleanTestUploadDirectory();
+        publicRateLimitFilter.clearCounters();
         redisTemplate.execute((RedisCallback<Void>) connection -> {
             connection.serverCommands().flushDb();
             return null;
@@ -163,7 +168,7 @@ public abstract class BaseApiTest {
     /** 通过登录 API 获取 JWT Token */
     protected String login(String username, String password) {
         ResponseEntity<String> raw = restTemplate.exchange(
-                "/auth/login", HttpMethod.POST,
+                "/api/auth/login", HttpMethod.POST,
                 new HttpEntity<>(Map.of("username", username, "password", password), jsonHeaders()),
                 String.class);
         String body = raw.getBody();
@@ -300,8 +305,15 @@ public abstract class BaseApiTest {
             this.token = token;
         }
 
+        public ResponseEntity<String> exchange(HttpMethod method, String path, Object body) {
+            HttpHeaders headers = jsonHeaders();
+            if (token != null) headers.setBearerAuth(token);
+            return restTemplate.exchange(
+                    baseUrl + path, method, new HttpEntity<>(body, headers), String.class);
+        }
+
         public ApiResponse get(String path) {
-            return new ApiResponse(request(HttpMethod.GET, baseUrl + path, null, token));
+            return new ApiResponse(exchange(HttpMethod.GET, path, null).getBody());
         }
 
         public ApiResponse get(String path, Map<String, ?> params) {
@@ -310,19 +322,19 @@ public abstract class BaseApiTest {
                     .reduce((a, b) -> a + "&" + b)
                     .map(s -> "?" + s)
                     .orElse("");
-            return new ApiResponse(request(HttpMethod.GET, baseUrl + path + qs, null, token));
+            return new ApiResponse(exchange(HttpMethod.GET, path + qs, null).getBody());
         }
 
         public ApiResponse post(String path, Object body) {
-            return new ApiResponse(request(HttpMethod.POST, baseUrl + path, body, token));
+            return new ApiResponse(exchange(HttpMethod.POST, path, body).getBody());
         }
 
         public ApiResponse put(String path, Object body) {
-            return new ApiResponse(request(HttpMethod.PUT, baseUrl + path, body, token));
+            return new ApiResponse(exchange(HttpMethod.PUT, path, body).getBody());
         }
 
         public ApiResponse delete(String path) {
-            return new ApiResponse(request(HttpMethod.DELETE, baseUrl + path, null, token));
+            return new ApiResponse(exchange(HttpMethod.DELETE, path, null).getBody());
         }
     }
 }

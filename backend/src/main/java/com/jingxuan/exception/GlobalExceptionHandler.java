@@ -1,6 +1,9 @@
 package com.jingxuan.exception;
 
 import cn.hutool.core.util.StrUtil;
+import com.jingxuan.api.ApiPaths;
+import com.jingxuan.api.ProblemDetails;
+import com.jingxuan.api.RequestIdFilter;
 import com.jingxuan.common.Result;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -8,6 +11,8 @@ import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.QueryTimeoutException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
@@ -64,9 +69,8 @@ public class GlobalExceptionHandler {
      * Spring Security 访问拒绝
      */
     @ExceptionHandler(AccessDeniedException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    public Result<Void> handleAccessDeniedException(AccessDeniedException e) {
-        return Result.forbidden("权限不足，无法访问");
+    public ResponseEntity<?> handleAccessDeniedException(AccessDeniedException e, HttpServletRequest request) {
+        return versionedError(HttpStatus.FORBIDDEN, "FORBIDDEN", "权限不足，无法访问", request);
     }
 
     /**
@@ -95,9 +99,8 @@ public class GlobalExceptionHandler {
      * 404 — 请求的资源不存在
      */
     @ExceptionHandler(NoHandlerFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Result<Void> handleNoHandlerFound(NoHandlerFoundException e) {
-        return Result.fail(404, "请求的资源不存在");
+    public ResponseEntity<?> handleNoHandlerFound(NoHandlerFoundException e, HttpServletRequest request) {
+        return versionedError(HttpStatus.NOT_FOUND, "NOT_FOUND", "请求的资源不存在", request);
     }
 
     /**
@@ -105,18 +108,18 @@ public class GlobalExceptionHandler {
      * 该异常不应落入兜底处理器而被误报为 500。
      */
     @ExceptionHandler(NoResourceFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Result<Void> handleNoResourceFound(NoResourceFoundException e) {
-        return Result.fail(404, "请求的资源不存在");
+    public ResponseEntity<?> handleNoResourceFound(NoResourceFoundException e, HttpServletRequest request) {
+        return versionedError(HttpStatus.NOT_FOUND, "NOT_FOUND", "请求的资源不存在", request);
     }
 
     /**
      * 请求方法不支持
      */
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
-    public Result<Void> handleMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
-        return Result.fail(405, "请求方法不支持: " + e.getMethod());
+    public ResponseEntity<?> handleMethodNotSupportedException(HttpRequestMethodNotSupportedException e,
+                                                                 HttpServletRequest request) {
+        return versionedError(HttpStatus.METHOD_NOT_ALLOWED, "METHOD_NOT_ALLOWED",
+                "请求方法不支持: " + e.getMethod(), request);
     }
 
     /**
@@ -173,5 +176,21 @@ public class GlobalExceptionHandler {
     public Result<Void> handleException(Exception e, HttpServletRequest request) {
         log.error("系统异常 [{}] {}", request.getMethod(), request.getRequestURI(), e);
         return Result.error("服务器内部错误，请稍后重试");
+    }
+
+    private ResponseEntity<?> versionedError(HttpStatus status, String problemCode, String message,
+                                               HttpServletRequest request) {
+        if (ApiPaths.isV1(request.getRequestURI())) {
+            Object requestId = request.getAttribute(RequestIdFilter.ATTRIBUTE);
+            ProblemDetails details = ProblemDetails.of(status.value(), problemCode, message,
+                    request.getRequestURI(), requestId == null ? request.getHeader(RequestIdFilter.HEADER)
+                            : requestId.toString());
+            return ResponseEntity.status(status)
+                    .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+                    .body(details);
+        }
+        return ResponseEntity.status(status)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(Result.fail(status.value(), message));
     }
 }

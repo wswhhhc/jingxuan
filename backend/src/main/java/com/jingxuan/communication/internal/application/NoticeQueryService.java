@@ -32,12 +32,24 @@ public class NoticeQueryService {
     }
 
     public V1Notice getNotice(String id) {
+        return toV1Notice(requireNotice(id));
+    }
+
+    public V1Notice getPublishedNotice(String id) {
+        SysNotice notice = requireNotice(id);
+        if (!Integer.valueOf(1).equals(notice.getStatus())) {
+            throw new NotFoundException("公告不存在");
+        }
+        return toV1Notice(notice);
+    }
+
+    private SysNotice requireNotice(String id) {
         Long noticeId = V1Ids.parse(id, "id");
         SysNotice notice = noticeService.getById(noticeId);
         if (notice == null) {
             throw new NotFoundException("公告不存在");
         }
-        return toV1Notice(notice);
+        return notice;
     }
 
     private static V1Page<V1Notice> toV1Page(PageResult<SysNotice> result, int page, int size) {

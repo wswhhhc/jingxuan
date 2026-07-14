@@ -152,7 +152,7 @@
 
 ### B2. 建立唯一且可渐进演化的 Flyway 历史
 
-- [ ] 把现有 14 个 legacy SQL 收敛为一个自包含、可校验的 Flyway V1 兼容基线；根目录和 `backend/sql` 不再参与运行时建表。
+- [x] 把现有 14 个 legacy SQL 收敛为一个自包含、可校验的 Flyway V1 兼容基线；根目录和 `backend/sql` 不再参与运行时建表。
 - [ ] 后续按业务模块采用 additive expand migration：先新增 v2 表/列/约束，再迁移消费者和数据，最后在 F 阶段 contract 删除旧结构。
 - [ ] v1 源库快照只作为测试/迁移 fixture，不作为第二生产 Schema 来源。
 - [ ] 每次迁移后仍保持当前已迁业务可构建、未迁业务可运行，禁止一次性切断所有旧消费者。

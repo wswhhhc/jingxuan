@@ -29,6 +29,16 @@ import type {
   MaybeRefOrGetter
 } from 'vue';
 
+import type {
+  DeleteTagsIdParams,
+  GetTagsParams,
+  ProblemDetails,
+  V1DeletionImpact,
+  V1ReferenceItem,
+  V1Tag,
+  V1TagRequest
+} from '../models';
+
 import { apiRequest } from '../../http';
 
 
@@ -45,7 +55,7 @@ export const getClasses = (
 ) => {
 
 
-      return apiRequest<void>(
+      return apiRequest<V1ReferenceItem[]>(
       {url: `/api/v1/classes`, method: 'GET', signal
     },
       options);
@@ -61,7 +71,7 @@ export const getGetClassesQueryKey = () => {
     }
 
 
-export const getGetClassesQueryOptions = <TData = Awaited<ReturnType<typeof getClasses>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getClasses>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export const getGetClassesQueryOptions = <TData = Awaited<ReturnType<typeof getClasses>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getClasses>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -80,14 +90,14 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetClassesQueryResult = NonNullable<Awaited<ReturnType<typeof getClasses>>>
-export type GetClassesQueryError = void
+export type GetClassesQueryError = ProblemDetails
 
 
 /**
  * @summary com/jingxuan/referencedata/web/V1ReferenceDataController.java
  */
 
-export function useGetClasses<TData = Awaited<ReturnType<typeof getClasses>>, TError = void>(
+export function useGetClasses<TData = Awaited<ReturnType<typeof getClasses>>, TError = ProblemDetails>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getClasses>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
  ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -115,7 +125,7 @@ export const getDictionariesType = (
 ) => {
       type = toValue(type);
 
-      return apiRequest<void>(
+      return apiRequest<V1ReferenceItem[]>(
       {url: `/api/v1/dictionaries/${type}`, method: 'GET', signal
     },
       options);
@@ -131,7 +141,7 @@ export const getGetDictionariesTypeQueryKey = (type: MaybeRefOrGetter<string>,) 
     }
 
 
-export const getGetDictionariesTypeQueryOptions = <TData = Awaited<ReturnType<typeof getDictionariesType>>, TError = void>(type: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDictionariesType>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export const getGetDictionariesTypeQueryOptions = <TData = Awaited<ReturnType<typeof getDictionariesType>>, TError = ProblemDetails>(type: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDictionariesType>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -150,14 +160,14 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetDictionariesTypeQueryResult = NonNullable<Awaited<ReturnType<typeof getDictionariesType>>>
-export type GetDictionariesTypeQueryError = void
+export type GetDictionariesTypeQueryError = ProblemDetails
 
 
 /**
  * @summary com/jingxuan/referencedata/web/V1ReferenceDataController.java
  */
 
-export function useGetDictionariesType<TData = Awaited<ReturnType<typeof getDictionariesType>>, TError = void>(
+export function useGetDictionariesType<TData = Awaited<ReturnType<typeof getDictionariesType>>, TError = ProblemDetails>(
  type: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDictionariesType>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
  ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -180,13 +190,14 @@ export function useGetDictionariesType<TData = Awaited<ReturnType<typeof getDict
  * @summary com/jingxuan/referencedata/web/V1ReferenceDataController.java
  */
 export const getTags = (
-
+    params?: MaybeRefOrGetter<GetTagsParams>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {
+      params = toValue(params);
 
-
-      return apiRequest<void>(
-      {url: `/api/v1/tags`, method: 'GET', signal
+      return apiRequest<V1Tag[]>(
+      {url: `/api/v1/tags`, method: 'GET',
+        params, signal
     },
       options);
     }
@@ -194,23 +205,23 @@ export const getTags = (
 
 
 
-export const getGetTagsQueryKey = () => {
+export const getGetTagsQueryKey = (params?: MaybeRefOrGetter<GetTagsParams>,) => {
     return [
-    'api','v1','tags'
+    'api','v1','tags', ...(params ? [params] : [])
     ] as const;
     }
 
 
-export const getGetTagsQueryOptions = <TData = Awaited<ReturnType<typeof getTags>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTags>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export const getGetTagsQueryOptions = <TData = Awaited<ReturnType<typeof getTags>>, TError = ProblemDetails>(params?: MaybeRefOrGetter<GetTagsParams>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTags>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  getGetTagsQueryKey();
+  const queryKey =  getGetTagsQueryKey(params);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getTags>>> = ({ signal }) => getTags(requestOptions, signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getTags>>> = ({ signal }) => getTags(params, requestOptions, signal);
 
 
 
@@ -220,19 +231,19 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetTagsQueryResult = NonNullable<Awaited<ReturnType<typeof getTags>>>
-export type GetTagsQueryError = void
+export type GetTagsQueryError = ProblemDetails
 
 
 /**
  * @summary com/jingxuan/referencedata/web/V1ReferenceDataController.java
  */
 
-export function useGetTags<TData = Awaited<ReturnType<typeof getTags>>, TError = void>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTags>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export function useGetTags<TData = Awaited<ReturnType<typeof getTags>>, TError = ProblemDetails>(
+ params?: MaybeRefOrGetter<GetTagsParams>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTags>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
  ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetTagsQueryOptions(options)
+  const queryOptions = getGetTagsQueryOptions(params,options)
 
   const query = useQuery(queryOptions, queryClient) as UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -250,13 +261,15 @@ export function useGetTags<TData = Awaited<ReturnType<typeof getTags>>, TError =
  * @summary com/jingxuan/referencedata/web/V1ReferenceDataController.java
  */
 export const postTags = (
-
+    v1TagRequest: MaybeRefOrGetter<V1TagRequest>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {
+      v1TagRequest = toValue(v1TagRequest);
 
-
-      return apiRequest<void>(
-      {url: `/api/v1/tags`, method: 'POST', signal
+      return apiRequest<V1Tag>(
+      {url: `/api/v1/tags`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: v1TagRequest, signal
     },
       options);
     }
@@ -264,9 +277,9 @@ export const postTags = (
 
 
 
-export const getPostTagsMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postTags>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof postTags>>, TError,void, TContext> => {
+export const getPostTagsMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postTags>>, TError,{data: V1TagRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof postTags>>, TError,{data: V1TagRequest}, TContext> => {
 
 const mutationKey = ['postTags'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -278,10 +291,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postTags>>, void> = () => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postTags>>, {data: V1TagRequest}> = (props) => {
+          const {data} = props ?? {};
 
-
-          return  postTags(requestOptions)
+          return  postTags(data,requestOptions)
         }
 
 
@@ -292,18 +305,18 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type PostTagsMutationResult = NonNullable<Awaited<ReturnType<typeof postTags>>>
-
-    export type PostTagsMutationError = void
+    export type PostTagsMutationBody = V1TagRequest
+    export type PostTagsMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/referencedata/web/V1ReferenceDataController.java
  */
-export const usePostTags = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postTags>>, TError,void, TContext>, request?: SecondParameter<typeof apiRequest>}
+export const usePostTags = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postTags>>, TError,{data: V1TagRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof postTags>>,
         TError,
-        void,
+        {data: V1TagRequest},
         TContext
       > => {
       return useMutation(getPostTagsMutationOptions(options), queryClient);
@@ -311,76 +324,17 @@ export const usePostTags = <TError = void,
     /**
  * @summary com/jingxuan/referencedata/web/V1ReferenceDataController.java
  */
-export const putTagsId = (
-    id: MaybeRefOrGetter<string>,
- options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
-) => {
-      id = toValue(id);
-
-      return apiRequest<void>(
-      {url: `/api/v1/tags/${id}`, method: 'PUT', signal
-    },
-      options);
-    }
-
-
-
-
-export const getPutTagsIdMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putTagsId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof putTagsId>>, TError,{id: string}, TContext> => {
-
-const mutationKey = ['putTagsId'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putTagsId>>, {id: string}> = (props) => {
-          const {id} = props ?? {};
-
-          return  putTagsId(id,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type PutTagsIdMutationResult = NonNullable<Awaited<ReturnType<typeof putTagsId>>>
-
-    export type PutTagsIdMutationError = void
-
-    /**
- * @summary com/jingxuan/referencedata/web/V1ReferenceDataController.java
- */
-export const usePutTagsId = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putTagsId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
- , queryClient?: QueryClient): UseMutationReturnType<
-        Awaited<ReturnType<typeof putTagsId>>,
-        TError,
-        {id: string},
-        TContext
-      > => {
-      return useMutation(getPutTagsIdMutationOptions(options), queryClient);
-    }
-    /**
- * @summary com/jingxuan/referencedata/web/V1ReferenceDataController.java
- */
 export const deleteTagsId = (
     id: MaybeRefOrGetter<string>,
+    params?: MaybeRefOrGetter<DeleteTagsIdParams>,
  options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
 ) => {
       id = toValue(id);
+params = toValue(params);
 
       return apiRequest<void>(
-      {url: `/api/v1/tags/${id}`, method: 'DELETE', signal
+      {url: `/api/v1/tags/${id}`, method: 'DELETE',
+        params, signal
     },
       options);
     }
@@ -388,9 +342,9 @@ export const deleteTagsId = (
 
 
 
-export const getDeleteTagsIdMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteTagsId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
-): UseMutationOptions<Awaited<ReturnType<typeof deleteTagsId>>, TError,{id: string}, TContext> => {
+export const getDeleteTagsIdMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteTagsId>>, TError,{id: string;params?: DeleteTagsIdParams}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteTagsId>>, TError,{id: string;params?: DeleteTagsIdParams}, TContext> => {
 
 const mutationKey = ['deleteTagsId'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -402,10 +356,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteTagsId>>, {id: string}> = (props) => {
-          const {id} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteTagsId>>, {id: string;params?: DeleteTagsIdParams}> = (props) => {
+          const {id,params} = props ?? {};
 
-          return  deleteTagsId(id,requestOptions)
+          return  deleteTagsId(id,params,requestOptions)
         }
 
 
@@ -417,20 +371,86 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type DeleteTagsIdMutationResult = NonNullable<Awaited<ReturnType<typeof deleteTagsId>>>
 
-    export type DeleteTagsIdMutationError = void
+    export type DeleteTagsIdMutationError = ProblemDetails
 
     /**
  * @summary com/jingxuan/referencedata/web/V1ReferenceDataController.java
  */
-export const useDeleteTagsId = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteTagsId>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof apiRequest>}
+export const useDeleteTagsId = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteTagsId>>, TError,{id: string;params?: DeleteTagsIdParams}, TContext>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient): UseMutationReturnType<
         Awaited<ReturnType<typeof deleteTagsId>>,
         TError,
-        {id: string},
+        {id: string;params?: DeleteTagsIdParams},
         TContext
       > => {
       return useMutation(getDeleteTagsIdMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary com/jingxuan/referencedata/web/V1ReferenceDataController.java
+ */
+export const putTagsId = (
+    id: MaybeRefOrGetter<string>,
+    v1TagRequest: MaybeRefOrGetter<V1TagRequest>,
+ options?: SecondParameter<typeof apiRequest>,signal?: AbortSignal
+) => {
+      id = toValue(id);
+v1TagRequest = toValue(v1TagRequest);
+
+      return apiRequest<V1Tag>(
+      {url: `/api/v1/tags/${id}`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: v1TagRequest, signal
+    },
+      options);
+    }
+
+
+
+
+export const getPutTagsIdMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putTagsId>>, TError,{id: string;data: V1TagRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+): UseMutationOptions<Awaited<ReturnType<typeof putTagsId>>, TError,{id: string;data: V1TagRequest}, TContext> => {
+
+const mutationKey = ['putTagsId'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putTagsId>>, {id: string;data: V1TagRequest}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  putTagsId(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PutTagsIdMutationResult = NonNullable<Awaited<ReturnType<typeof putTagsId>>>
+    export type PutTagsIdMutationBody = V1TagRequest
+    export type PutTagsIdMutationError = ProblemDetails
+
+    /**
+ * @summary com/jingxuan/referencedata/web/V1ReferenceDataController.java
+ */
+export const usePutTagsId = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putTagsId>>, TError,{id: string;data: V1TagRequest}, TContext>, request?: SecondParameter<typeof apiRequest>}
+ , queryClient?: QueryClient): UseMutationReturnType<
+        Awaited<ReturnType<typeof putTagsId>>,
+        TError,
+        {id: string;data: V1TagRequest},
+        TContext
+      > => {
+      return useMutation(getPutTagsIdMutationOptions(options), queryClient);
     }
     /**
  * @summary com/jingxuan/referencedata/web/V1ReferenceDataController.java
@@ -441,7 +461,7 @@ export const getTagsIdDeletionImpact = (
 ) => {
       id = toValue(id);
 
-      return apiRequest<void>(
+      return apiRequest<V1DeletionImpact>(
       {url: `/api/v1/tags/${id}/deletion-impact`, method: 'GET', signal
     },
       options);
@@ -457,7 +477,7 @@ export const getGetTagsIdDeletionImpactQueryKey = (id: MaybeRefOrGetter<string>,
     }
 
 
-export const getGetTagsIdDeletionImpactQueryOptions = <TData = Awaited<ReturnType<typeof getTagsIdDeletionImpact>>, TError = void>(id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTagsIdDeletionImpact>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
+export const getGetTagsIdDeletionImpactQueryOptions = <TData = Awaited<ReturnType<typeof getTagsIdDeletionImpact>>, TError = ProblemDetails>(id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTagsIdDeletionImpact>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -476,14 +496,14 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetTagsIdDeletionImpactQueryResult = NonNullable<Awaited<ReturnType<typeof getTagsIdDeletionImpact>>>
-export type GetTagsIdDeletionImpactQueryError = void
+export type GetTagsIdDeletionImpactQueryError = ProblemDetails
 
 
 /**
  * @summary com/jingxuan/referencedata/web/V1ReferenceDataController.java
  */
 
-export function useGetTagsIdDeletionImpact<TData = Awaited<ReturnType<typeof getTagsIdDeletionImpact>>, TError = void>(
+export function useGetTagsIdDeletionImpact<TData = Awaited<ReturnType<typeof getTagsIdDeletionImpact>>, TError = ProblemDetails>(
  id: MaybeRefOrGetter<string>, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTagsIdDeletionImpact>>, TError, TData>>, request?: SecondParameter<typeof apiRequest>}
  , queryClient?: QueryClient
  ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {

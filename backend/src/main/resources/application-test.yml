@@ -19,6 +19,8 @@ deepseek:
 jingxuan:
   upload:
     path: ./target/test-uploads
+  public-rate-limit:
+    window-ms: 10000
 
 logging:
   level:

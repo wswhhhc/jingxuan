@@ -151,6 +151,12 @@ while (( $# > 0 )); do
       fi
       shift 2
       ;;
+    --url)
+      [[ $# -ge 2 ]] || strict_failure "missing-url-value"
+      [[ -z "$url" ]] || strict_failure "multiple-urls"
+      url="$2"
+      shift 2
+      ;;
     --connect-timeout|--max-time)
       [[ $# -ge 2 ]] || strict_failure "missing-timeout-value"
       [[ "$2" =~ ^[0-9]+$ ]] || strict_failure "invalid-timeout"
@@ -236,7 +242,7 @@ scenario="__DOLLAR__{SMOKE_FAKE_SCENARIO:-success}"
 status="200"
 body='{"code":200,"data":{}}'
 
-if [[ "$method" == "POST" && "$route_path" == "/auth/login" ]]; then
+if [[ "$method" == "POST" && "$route_path" == "/api/auth/login" ]]; then
   username="$(printf '%s' "$request_body" \
     | sed -n 's/.*"username":"\([^"]*\)".*/\1/p')"
   password="$(printf '%s' "$request_body" \
@@ -260,6 +266,10 @@ if [[ "$method" == "POST" && "$route_path" == "/auth/login" ]]; then
   if [[ "$scenario" == "token-failure" && "$role" == "admin" ]]; then
     status="401"
     body='{"code":401,"message":"登录失败"}'
+  elif [[ "$scenario" == "token-crlf-injection" && "$role" == "admin" ]]; then
+    body='{"code":200,"data":{"token":"safe-token\nurl = \"https://injected.invalid/\""}}'
+  elif [[ "$scenario" == "token-invalid-character" && "$role" == "admin" ]]; then
+    body='{"code":200,"data":{"token":"unsafe token"}}'
   elif [[ "$password" == "wrong" ]]; then
     [[ "$scenario" == "wrong-password-wrapper" ]] && status="200" || status="401"
     body='{"code":401,"message":"用户名或密码错误"}'
@@ -270,9 +280,12 @@ if [[ "$method" == "POST" && "$route_path" == "/auth/login" ]]; then
     body='{"code":401,"message":"用户名或密码错误"}'
   fi
 elif [[ "$method" == "GET" \
-    && "$route_path" =~ ^/admin/(dashboard/stats|audit/list|users)$ ]]; then
+    && "$route_path" =~ ^/api/admin/(dashboard/stats|audit/list)$ ]]; then
   [[ "$actor" == "admin" ]] || strict_failure "admin-auth-contract"
-elif [[ "$method" == "GET" && "$route_path" == "/teacher/work/list" ]]; then
+elif [[ "$method" == "GET" && "$route_path" == "/api/v1/users" ]]; then
+  [[ "$actor" == "admin" ]] || strict_failure "admin-auth-contract"
+  body='{"items":[],"page":1,"size":20,"total":0}'
+elif [[ "$method" == "GET" && "$route_path" == "/api/teacher/work/list" ]]; then
   if [[ "$actor" == "student" ]]; then
     [[ "$scenario" == "security-wrapper" ]] && status="200" || status="403"
     if [[ "$scenario" == "security-code-mismatch" ]]; then
@@ -283,9 +296,9 @@ elif [[ "$method" == "GET" && "$route_path" == "/teacher/work/list" ]]; then
   else
     [[ "$actor" == "teacher" ]] || strict_failure "teacher-auth-contract"
   fi
-elif [[ "$method" == "GET" && "$route_path" == "/teacher/ranking/list" ]]; then
+elif [[ "$method" == "GET" && "$route_path" == "/api/teacher/ranking/list" ]]; then
   [[ "$actor" == "teacher" ]] || strict_failure "teacher-auth-contract"
-elif [[ "$method" == "GET" && "$request_path" == "/student/works" ]]; then
+elif [[ "$method" == "GET" && "$request_path" == "/api/student/works" ]]; then
   if [[ "$actor" == "none" ]]; then
     [[ "$scenario" == "security-wrapper" ]] && status="200" || status="401"
     body='{"code":401,"message":"未登录"}'
@@ -294,7 +307,7 @@ elif [[ "$method" == "GET" && "$request_path" == "/student/works" ]]; then
     body='{"code":200,"data":{"records":[],"total":0,"pageNum":1,"pageSize":10,"pages":0}}'
   fi
 elif [[ "$method" == "GET" \
-    && "$request_path" =~ ^/student/works\?page=([1-3])\&size=50$ ]]; then
+    && "$request_path" =~ ^/api/student/works\?page=([1-3])\&size=50$ ]]; then
   [[ "$actor" == "student" ]] || strict_failure "student-auth-contract"
   page="__DOLLAR__{BASH_REMATCH[1]}"
   if [[ "$page" == "2" \
@@ -305,7 +318,7 @@ elif [[ "$method" == "GET" \
   else
     body="{\"code\":200,\"data\":{\"records\":[],\"total\":0,\"pageNum\":$page,\"pageSize\":50,\"pages\":0}}"
   fi
-elif [[ "$method" == "POST" && "$route_path" == "/student/works" ]]; then
+elif [[ "$method" == "POST" && "$route_path" == "/api/student/works" ]]; then
   [[ "$actor" == "student" ]] || strict_failure "student-auth-contract"
   title="$(printf '%s' "$request_body" \
     | sed -n 's/.*"title":"\([^"]*\)".*/\1/p')"
@@ -321,7 +334,7 @@ elif [[ "$method" == "POST" && "$route_path" == "/student/works" ]]; then
     body="{\"code\":200,\"data\":\"$snowflake_draft_id\"}"
   fi
 elif [[ "$method" == "DELETE" \
-    && "$route_path" == "/student/works/$snowflake_draft_id" ]]; then
+    && "$route_path" == "/api/student/works/$snowflake_draft_id" ]]; then
   [[ "$actor" == "student" ]] || strict_failure "student-auth-contract"
   if [[ "$scenario" == "cleanup-retry" ]]; then
     counter_file="$SMOKE_FAKE_STATE_DIR/delete-count"
@@ -335,7 +348,7 @@ elif [[ "$method" == "DELETE" \
     fi
   fi
   body='{"code":200,"data":null}'
-elif [[ "$method" == "GET" && "$route_path" == "/public/works" ]]; then
+elif [[ "$method" == "GET" && "$route_path" == "/api/public/works" ]]; then
   if [[ "$scenario" == "check-failure" ]]; then
     status="500"
     body='{"code":500,"message":"模拟检查失败"}'
@@ -346,7 +359,7 @@ elif [[ "$method" == "GET" && "$route_path" == "/public/works" ]]; then
     printf '%s\n' 'curl: (7) password=network-password-secret token=network-token-secret' >&2
     exit 7
   fi
-elif [[ "$method" == "GET" && "$route_path" == "/public/ranking/list" ]]; then
+elif [[ "$method" == "GET" && "$route_path" == "/api/public/ranking/list" ]]; then
   :
 else
   strict_failure "unknown-route"
@@ -511,12 +524,12 @@ async function runInvalidFakeCurl(method, requestPath) {
 test("默认模式只执行只读检查且 fake curl 日志已脱敏", async () => {
   const result = await runSmoke();
 
-  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.equal(result.status, 0, resultText(result));
   assert.ok(result.calls.some((line) => line.includes("actor=admin")));
   assert.ok(result.calls.some((line) => line.includes("actor=teacher")));
   assert.ok(result.calls.some((line) => line.includes("actor=student")));
   assert.equal(
-    result.calls.some((line) => line.startsWith("POST\t/student/works\t")),
+    result.calls.some((line) => line.startsWith("POST\t/api/student/works\t")),
     false,
   );
   assert.equal(
@@ -564,6 +577,27 @@ test("token 获取失败时立即退出且不再请求其他接口", async () =>
   assert.match(resultText(result), /管理员.*token/u);
 });
 
+test("拒绝带 CRLF 的 Bearer token，且不会把它解释成 curl 配置", async () => {
+  const result = await runSmoke({ scenario: "token-crlf-injection" });
+
+  assert.equal(result.status, 1, resultText(result));
+  assert.equal(result.calls.length, 1, result.calls.join("\n"));
+  assert.doesNotMatch(resultText(result), /injected\.invalid/u);
+});
+
+test("拒绝含空格等非法字符的 Bearer token", async () => {
+  const result = await runSmoke({ scenario: "token-invalid-character" });
+
+  assert.equal(result.status, 1, resultText(result));
+  assert.equal(result.calls.length, 1, result.calls.join("\n"));
+});
+
+test("curl URL 使用显式 --url 参数，避免把外部地址解释成选项", async () => {
+  const source = await readRepositoryFile("scripts/smoke-test.sh");
+
+  assert.match(source, /--url\s+"\$BASE_URL\$path"/u);
+});
+
 test("临时目录始终由 EXIT trap 清理，fixture 位于系统临时目录", async () => {
   const source = await readFile(smokeScript, "utf8");
   const result = await runSmoke({ scenario: "token-failure" });
@@ -579,13 +613,13 @@ test("只有 full 模式创建草稿，并以雪花字符串 ID 回收", async (
 
   assert.equal(result.status, 0, result.stderr || result.stdout);
   assert.equal(
-    result.calls.filter((line) => line.startsWith("POST\t/student/works\t"))
+    result.calls.filter((line) => line.startsWith("POST\t/api/student/works\t"))
       .length,
     1,
   );
   assert.equal(
     result.calls.filter((line) =>
-      line.startsWith(`DELETE\t/student/works/${snowflakeDraftId}\t`),
+      line.startsWith(`DELETE\t/api/student/works/${snowflakeDraftId}\t`),
     ).length,
     1,
   );
@@ -597,7 +631,7 @@ test("正常清理失败时 EXIT trap 会重试回收草稿且保留失败状态
   assert.equal(result.status, 1, result.stderr || result.stdout);
   assert.equal(
     result.calls.filter((line) =>
-      line.startsWith(`DELETE\t/student/works/${snowflakeDraftId}\t`),
+      line.startsWith(`DELETE\t/api/student/works/${snowflakeDraftId}\t`),
     ).length,
     2,
   );
@@ -610,7 +644,7 @@ test("full 模式在普通检查失败后仍回收已创建草稿", async () => 
   assert.equal(result.status, 1, result.stderr || result.stdout);
   assert.equal(
     result.calls.filter((line) =>
-      line.startsWith(`DELETE\t/student/works/${snowflakeDraftId}\t`),
+      line.startsWith(`DELETE\t/api/student/works/${snowflakeDraftId}\t`),
     ).length,
     1,
   );
@@ -662,13 +696,13 @@ test("创建超时后通过预先生成的唯一标题有界查询并回收", as
 
   assert.equal(result.status, 1, result.stderr || result.stdout);
   const recoveryCalls = result.calls.filter((line) =>
-    line.startsWith("GET\t/student/works?page="),
+    line.startsWith("GET\t/api/student/works?page="),
   );
   assert.ok(recoveryCalls.length > 0 && recoveryCalls.length <= 3);
   assert.ok(recoveryCalls.some((line) => line.includes("page=2&size=50")));
   assert.equal(
     result.calls.filter((line) =>
-      line.startsWith(`DELETE\t/student/works/${snowflakeDraftId}\t`),
+      line.startsWith(`DELETE\t/api/student/works/${snowflakeDraftId}\t`),
     ).length,
     1,
   );
@@ -683,7 +717,7 @@ test("创建成功但响应缺 ID 时仍按唯一标题定位并回收", async (
   assert.equal(result.status, 1, result.stderr || result.stdout);
   assert.ok(
     result.calls.some((line) =>
-      line.startsWith(`DELETE\t/student/works/${snowflakeDraftId}\t`),
+      line.startsWith(`DELETE\t/api/student/works/${snowflakeDraftId}\t`),
     ),
   );
 });
@@ -740,7 +774,7 @@ test(
 );
 
 test("fake curl 对未知方法与未知路径都严格失败", async () => {
-  const unknownMethod = await runInvalidFakeCurl("PATCH", "/public/works");
+  const unknownMethod = await runInvalidFakeCurl("PATCH", "/api/public/works");
   const unknownPath = await runInvalidFakeCurl("GET", "/unknown/path");
 
   assert.notEqual(unknownMethod.status, 0);
@@ -786,17 +820,45 @@ test("Flyway V1 引用的 14 个 legacy SQL 全部随后端主资源打包", asy
   });
 });
 
-test("Compose 可由唯一 project 隔离且敏感配置没有默认值", async () => {
+test("生产 JSON 日志只使用 Spring Boot 内置结构化编码器", async () => {
+  const logback = await readRepositoryFile(
+    "backend/src/main/resources/logback-spring.xml",
+  );
+
+  assert.match(
+    logback,
+    /org\.springframework\.boot\.logging\.logback\.StructuredLogEncoder/u,
+  );
+  assert.match(logback, /<format>logstash<\/format>/u);
+  assert.doesNotMatch(logback, /ch\.qos\.logback\.contrib/u);
+});
+
+test("Compose 固定安全 project、镜像版本并兼容旧 MySQL 卷迁移", async () => {
   const compose = await readRepositoryFile("docker-compose.yml");
 
-  assert.match(compose, /image:\s*mysql:8\.0\.42/u);
+  assert.match(compose, /^name:\s*jingxuan$/mu);
+  assert.equal(compose.match(/image:\s*mysql:8\.0\.46/gu)?.length, 2);
   assert.match(compose, /image:\s*redis:7\.4\.5-alpine/u);
   assert.doesNotMatch(compose, /container_name\s*:/u);
-  assert.doesNotMatch(compose, /\$\{DB_ROOT_PASSWORD:-/u);
   assert.doesNotMatch(compose, /\$\{DB_PASSWORD:-/u);
-  assert.match(compose, /MYSQL_ROOT_PASSWORD:\s*\$\{DB_ROOT_PASSWORD:\?/u);
+  assert.match(
+    compose,
+    /MYSQL_ROOT_PASSWORD:\s*\$\{DB_ROOT_PASSWORD:-\$\{DB_PASSWORD:\?DB_PASSWORD is required\}\}/u,
+  );
   assert.match(compose, /MYSQL_USER:\s*\$\{DB_USER:-jingxuan\}/u);
   assert.match(compose, /MYSQL_PASSWORD:\s*\$\{DB_PASSWORD:\?/u);
+  assert.match(compose, /mysql-user-bootstrap:/u);
+  const mysqlHealthcheck = compose.match(
+    /mysql:\s*[\s\S]*?healthcheck:\s*([\s\S]*?)\n\s{4}networks:/u,
+  )?.[1];
+  assert.ok(mysqlHealthcheck, "MySQL 必须配置健康检查");
+  assert.match(mysqlHealthcheck, /mysqladmin\s+ping/u);
+  assert.doesNotMatch(mysqlHealthcheck, /MYSQL_(?:USER|PASSWORD|PWD)|-u\s/u);
+  assert.match(
+    compose,
+    /LEGACY_ROOT_PASSWORD:\s*\$\{DB_LEGACY_ROOT_PASSWORD:-\$\{DB_PASSWORD:\?DB_PASSWORD is required\}\}/u,
+  );
+  assert.match(compose, /condition:\s*service_completed_successfully/u);
   assert.match(compose, /DB_USER:\s*\$\{DB_USER:-jingxuan\}/u);
   assert.match(compose, /DB_PASSWORD:\s*\$\{DB_PASSWORD:\?/u);
   assert.doesNotMatch(compose, /^\s+DB_USER:\s*root\s*$/mu);
@@ -813,6 +875,12 @@ test("CI 的 legacy 运行时冒烟有界等待并验证 Flyway 与 fixture 顺�
     /COMPOSE_PROJECT_NAME:[^\n]*github\.run_id[^\n]*github\.run_attempt/u,
   );
   assert.match(job, /docker compose up[^\n]*mysql redis backend/u);
+  assert.match(job, /初始化旧版 MySQL 卷/u);
+  assert.match(job, /mysql:8\.0\.46/u);
+  assert.match(job, /DB_LEGACY_ROOT_PASSWORD/u);
+  assert.match(job, /legacy_ci_sentinel/u);
+  assert.match(job, /旧 root 密码仍可登录|旧 root 密码必须失效/u);
+  assert.match(job, /应用账号无法读取旧卷数据|preserved-before-migration/u);
   assert.match(job, /deadline=\$\(\(SECONDS \+ \d+\)\)/u);
   assert.match(job, /State\.Status/u);
   assert.match(job, /State\.Restarting/u);
@@ -836,6 +904,11 @@ test("CI 的 legacy 运行时冒烟有界等待并验证 Flyway 与 fixture 顺�
   assert.ok(testDataIndex > cleanupIndex, "cleanup.sql 必须先于 test-data.sql");
   assert.ok(commitIndex > testDataIndex, "fixture 必须在同一事务提交");
   assert.match(job, /SMOKE_MODE:\s*full/u);
+  assert.match(job, /JWT_SECRET:\s*randomBytes\(48\)\.toString\("base64"\)/u);
+  assert.doesNotMatch(
+    job,
+    /JWT_SECRET:\s*randomBytes\(48\)\.toString\("base64url"\)/u,
+  );
   assert.match(job, /npm run smoke:legacy/u);
   assert.doesNotMatch(job, /(?:^|[\s"'])\.?\/?sql\//mu);
   assert.doesNotMatch(job, /(?:^|[\s"'])\.env(?:[\s"']|$)/mu);
@@ -849,8 +922,24 @@ test("CI 失败时只收集脱敏日志且始终销毁卷与孤儿容器", async
   assert.match(job, /if:\s*failure\(\)/u);
   assert.match(job, /docker compose ps/u);
   assert.match(job, /docker compose logs[^\n]*(?:mysql redis backend|mysql)/u);
+  assert.match(job, /docker inspect[^\n]*State\.ExitCode/u);
+  assert.match(job, /docker cp[^\n]*\/app\/logs/u);
+  assert.match(job, /find[^\n]*-type f[^\n]*-print0/u);
+  assert.match(job, /tail\s+-n\s+200/u);
+  assert.match(job, /RUNNER_TEMP/u);
+  const copyIndex = job.indexOf("docker cp");
+  const tailIndex = job.indexOf("tail -n 200");
+  const redactionPipeIndex = job.indexOf("} 2>&1 | node -e");
+  assert.ok(copyIndex !== -1 && copyIndex < redactionPipeIndex);
+  assert.ok(tailIndex !== -1 && tailIndex < redactionPipeIndex);
   assert.match(job, /DB_PASSWORD[^\n]*已脱敏|已脱敏[^\n]*DB_PASSWORD/u);
+  assert.match(
+    job,
+    /DB_LEGACY_ROOT_PASSWORD[^\n]*已脱敏|已脱敏[^\n]*DB_LEGACY_ROOT_PASSWORD/u,
+  );
   assert.match(job, /JWT_SECRET[^\n]*已脱敏|已脱敏[^\n]*JWT_SECRET/u);
+  assert.equal(job.match(/::add-mask::/gu)?.length, 1);
+  assert.match(job, /Object\.values\(values\)/u);
   assert.doesNotMatch(job, /docker inspect[^\n]*(?:Config\.Env|\.Config)/u);
   assert.match(job, /if:\s*always\(\)/u);
   assert.match(

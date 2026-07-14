@@ -34,7 +34,7 @@ class EndToEndFlowTest extends BaseApiTest {
         void fullLifecycle() {
             // 1. 学生创建作品（使用 teststu，无现有作品）
             String title = "E2E测试作品-" + System.currentTimeMillis();
-            ApiResponse createResp = testStuApi.post("/student/works", Map.of(
+            ApiResponse createResp = testStuApi.post("/api/student/works", Map.of(
                     "title", title,
                     "summary", "端到端测试创建",
                     "techStack", "Java/Spring Boot"
@@ -44,12 +44,12 @@ class EndToEndFlowTest extends BaseApiTest {
             assertTrue(workId > 0);
 
             // 2. 学生查看自己的作品列表，新作品在列表中
-            ApiResponse listResp = testStuApi.get("/student/works");
+            ApiResponse listResp = testStuApi.get("/api/student/works");
             listResp.assertOk();
             assertTrue(listResp.getDataInt("total") >= 1);
 
             // 3. 提交审核（可能因缺少附件被拒，这是预期行为）
-            ApiResponse submitResp = testStuApi.post("/student/works/" + workId + "/submit", null);
+            ApiResponse submitResp = testStuApi.post("/api/student/works/" + workId + "/submit", null);
             // 有附件时成功200，无附件时失败400（需先上传文件）
             assertTrue(submitResp.getCode() == 200 || submitResp.getCode() == 400,
                     "提交审核状态: " + submitResp.getCode());
@@ -57,17 +57,17 @@ class EndToEndFlowTest extends BaseApiTest {
             // 如果提交成功，走完整审核-发布流程
             if (submitResp.getCode() == 200) {
                 // 4. 管理员审核通过
-                ApiResponse auditResp = adminApi.post("/admin/audit", Map.of(
+                ApiResponse auditResp = adminApi.post("/api/admin/audit", Map.of(
                         "workId", workId, "result", "approved", "reason", "E2E测试通过"
                 ));
                 auditResp.assertOk();
 
                 // 5. 管理员发布作品
-                ApiResponse publishResp = adminApi.post("/admin/audit/" + workId + "/publish", null);
+                ApiResponse publishResp = adminApi.post("/api/admin/audit/" + workId + "/publish", null);
                 publishResp.assertOk();
 
                 // 6. 前台可见
-                ApiResponse publicResp = publicApi.get("/public/works/" + workId);
+                ApiResponse publicResp = publicApi.get("/api/public/works/" + workId);
                 publicResp.assertOk();
                 assertEquals(title, publicResp.getDataText("title"));
             }
@@ -82,7 +82,7 @@ class EndToEndFlowTest extends BaseApiTest {
         @DisplayName("学生提交 → 管理员驳回 → 学生修改后重新提交 → 审核通过")
         void rejectThenResubmitAndApprove() {
             String title = "驳回重提测试-" + System.currentTimeMillis();
-            ApiResponse createResp = testStuApi.post("/student/works", Map.of(
+            ApiResponse createResp = testStuApi.post("/api/student/works", Map.of(
                     "title", title,
                     "summary", "首次提交流程",
                     "techStack", "Java/Spring Boot",
@@ -93,38 +93,38 @@ class EndToEndFlowTest extends BaseApiTest {
 
             String attachmentId = uploadAttachmentForWork(workId, "reject-resubmit.zip");
             String videoId = uploadAttachmentForWork(workId, "demo.mp4");
-            ApiResponse bindResp = testStuApi.put("/student/works/" + workId, Map.of(
+            ApiResponse bindResp = testStuApi.put("/api/student/works/" + workId, Map.of(
                     "attachmentIds", java.util.List.of(attachmentId, videoId)
             ));
             bindResp.assertOk();
 
-            ApiResponse firstSubmit = testStuApi.post("/student/works/" + workId + "/submit", null);
+            ApiResponse firstSubmit = testStuApi.post("/api/student/works/" + workId + "/submit", null);
             firstSubmit.assertOk();
 
-            ApiResponse rejectResp = adminApi.post("/admin/audit", Map.of(
+            ApiResponse rejectResp = adminApi.post("/api/admin/audit", Map.of(
                     "workId", workId,
                     "result", "rejected",
                     "reason", "测试驳回后重提"
             ));
             rejectResp.assertOk();
 
-            ApiResponse updateResp = testStuApi.put("/student/works/" + workId, Map.of(
+            ApiResponse updateResp = testStuApi.put("/api/student/works/" + workId, Map.of(
                     "title", title + "-修改版",
                     "summary", "驳回后修改再次提交"
             ));
             updateResp.assertOk();
 
-            ApiResponse secondSubmit = testStuApi.post("/student/works/" + workId + "/submit", null);
+            ApiResponse secondSubmit = testStuApi.post("/api/student/works/" + workId + "/submit", null);
             secondSubmit.assertOk();
 
-            ApiResponse approveResp = adminApi.post("/admin/audit", Map.of(
+            ApiResponse approveResp = adminApi.post("/api/admin/audit", Map.of(
                     "workId", workId,
                     "result", "approved",
                     "reason", "重提后通过"
             ));
             approveResp.assertOk();
 
-            ApiResponse historyResp = adminApi.get("/admin/audit/" + workId + "/history");
+            ApiResponse historyResp = adminApi.get("/api/admin/audit/" + workId + "/history");
             historyResp.assertOk();
             assertTrue(historyResp.getDataNode().has("records"));
             assertTrue(historyResp.getDataNode().get("records").size() >= 2, "应至少保留驳回和通过两条审核记录");
@@ -139,26 +139,26 @@ class EndToEndFlowTest extends BaseApiTest {
         @DisplayName("未登录 → 登录点赞 → 取消 → 计数正确")
         void likeFlow() {
             // 1. 查询初始点赞状态
-            ApiResponse initResp = studentApi.get("/public/works/1/like-status");
+            ApiResponse initResp = studentApi.get("/api/public/works/1/like-status");
             initResp.assertOk();
             boolean initLiked = initResp.getDataBool("liked");
             int initCount = initResp.getDataInt("likeCount");
 
             // 2. 如果已点赞，先取消
             if (initLiked) {
-                studentApi.post("/works/1/like", null);
+                studentApi.post("/api/works/1/like", null);
                 initCount = Math.max(initCount - 1, 0);
             }
 
             // 3. 点赞
-            ApiResponse likeResp = studentApi.post("/works/1/like", null);
+            ApiResponse likeResp = studentApi.post("/api/works/1/like", null);
             likeResp.assertOk();
             assertTrue(likeResp.getDataBool("liked"));
             assertEquals(initCount + 1, likeResp.getDataInt("likeCount"),
                     "点赞后计数应+1");
 
             // 4. 取消点赞
-            ApiResponse unlikeResp = studentApi.post("/works/1/like", null);
+            ApiResponse unlikeResp = studentApi.post("/api/works/1/like", null);
             unlikeResp.assertOk();
             assertFalse(unlikeResp.getDataBool("liked"));
             assertEquals(initCount, unlikeResp.getDataInt("likeCount"),
@@ -174,24 +174,24 @@ class EndToEndFlowTest extends BaseApiTest {
         @DisplayName("登录发表评论 → 查看评论列表 → 管理员删除")
         void commentLifecycle() {
             // 1. 获取评论列表（初始）
-            ApiResponse listBefore = studentApi.get("/comment/list/1");
+            ApiResponse listBefore = studentApi.get("/api/comment/list/1");
             listBefore.assertOk();
             int totalBefore = listBefore.getDataInt("total");
 
             // 2. 学生发表评论
-            ApiResponse addResp = studentApi.post("/comment/add?workId=1&content=E2E测试评论内容", null);
+            ApiResponse addResp = studentApi.post("/api/comment/add?workId=1&content=E2E测试评论内容", null);
             addResp.assertOk();
             long commentId = addResp.getDataNode().asLong();
             assertTrue(commentId > 0);
 
             // 3. 评论列表+1
-            ApiResponse listAfter = studentApi.get("/comment/list/1");
+            ApiResponse listAfter = studentApi.get("/api/comment/list/1");
             listAfter.assertOk();
             assertEquals(totalBefore + 1, listAfter.getDataInt("total"),
                     "评论后列表应+1");
 
             // 4. 管理员删除评论
-            ApiResponse delResp = adminApi.delete("/admin/comment/" + commentId);
+            ApiResponse delResp = adminApi.delete("/api/admin/comment/" + commentId);
             assertTrue(delResp.getCode() == 200 || delResp.getCode() == 500,
                     "删除评论期望 200 或 500，实际: " + delResp.getCode());
         }
@@ -206,17 +206,17 @@ class EndToEndFlowTest extends BaseApiTest {
         void tagFilterFlow() {
             // 1. 管理员创建标签
             String tagName = "E2E标签-" + System.currentTimeMillis();
-            ApiResponse createTagResp = adminApi.post("/admin/tags",
+            ApiResponse createTagResp = adminApi.post("/api/admin/tags",
                     Map.of("name", tagName, "type", "tech", "sort", 99));
             assertTrue(createTagResp.getCode() == 200 || createTagResp.getCode() == 400);
 
             // 2. 获取标签列表，确认包含新标签
-            ApiResponse tagListResp = adminApi.get("/admin/tags");
+            ApiResponse tagListResp = adminApi.get("/api/admin/tags");
             tagListResp.assertOk();
             assertTrue(tagListResp.getDataNode().isArray());
 
             // 3. 前台标签列表
-            ApiResponse publicTagsResp = publicApi.get("/public/tags");
+            ApiResponse publicTagsResp = publicApi.get("/api/public/tags");
             publicTagsResp.assertOk();
             assertTrue(publicTagsResp.getDataNode().isArray());
         }
@@ -230,7 +230,7 @@ class EndToEndFlowTest extends BaseApiTest {
         @DisplayName("管理员创建批次 → 教师评分 → 查看评分结果")
         void scoreLifecycle() {
             // 1. 为已审核作品评分
-            ApiResponse scoreResp = teacherApi.post("/teacher/score", Map.of(
+            ApiResponse scoreResp = teacherApi.post("/api/teacher/score", Map.of(
                     "workId", 4,
                     "innovation", 22, "difficulty", 20,
                     "completion", 27, "practicality", 18,
@@ -241,12 +241,12 @@ class EndToEndFlowTest extends BaseApiTest {
 
             if (scoreResp.getCode() == 200) {
                 // 2. 查询我的评分
-                ApiResponse myScoreResp = teacherApi.get("/teacher/score/4");
+                ApiResponse myScoreResp = teacherApi.get("/api/teacher/score/4");
                 myScoreResp.assertOk();
             }
 
             // 3. 评分历史可查
-            ApiResponse historyResp = teacherApi.get("/teacher/score/history");
+            ApiResponse historyResp = teacherApi.get("/api/teacher/score/history");
             historyResp.assertOk();
         }
     }
@@ -258,14 +258,14 @@ class EndToEndFlowTest extends BaseApiTest {
         @Test
         @DisplayName("学生不能访问教师接口")
         void studentToTeacher() {
-            ApiResponse resp = studentApi.get("/teacher/work/list");
+            ApiResponse resp = studentApi.get("/api/teacher/work/list");
             assertEquals(403, resp.getCode());
         }
 
         @Test
         @DisplayName("教师不能访问管理接口")
         void teacherToAdmin() {
-            ApiResponse resp = teacherApi.get("/admin/dashboard/stats");
+            ApiResponse resp = teacherApi.get("/api/admin/dashboard/stats");
             assertEquals(403, resp.getCode());
         }
 
@@ -273,7 +273,7 @@ class EndToEndFlowTest extends BaseApiTest {
         @DisplayName("匿名不能访问需认证接口")
         void anonymousToAuth() {
             try {
-                ApiResponse resp = publicApi.get("/student/works");
+                ApiResponse resp = publicApi.get("/api/student/works");
                 assertTrue(resp.getCode() == 401 || resp.getCode() == 403);
             } catch (Exception e) {
                 // TestRestTemplate 在 401 时可能抛异常

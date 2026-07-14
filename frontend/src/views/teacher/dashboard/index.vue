@@ -94,6 +94,11 @@ const stats = reactive({
 const totalScorable = computed(() => stats.totalScorableWorks || stats.pendingWorks + stats.scoredWorks)
 const completionRate = computed(() => stats.completionRate)
 
+function normalizePercentage(value: unknown): number {
+  const percentage = Number(value)
+  return Number.isFinite(percentage) ? Math.min(100, Math.max(0, percentage)) : 0
+}
+
 const statCards = computed(() => [
   { label: '待评分作品数', value: stats.pendingWorks, tip: '当前筛出仍未完成评分的作品' },
   { label: '已评分作品数', value: stats.scoredWorks, tip: '已提交或更新过评分的作品数量' },
@@ -110,7 +115,7 @@ const loadStats = async () => {
     stats.pendingWorks = data?.pendingWorks || 0
     stats.scoredWorks = data?.scoredWorks || 0
     stats.totalScorableWorks = data?.totalScorableWorks || 0
-    stats.completionRate = data?.completionRate || 0
+    stats.completionRate = normalizePercentage(data?.completionRate)
     stats.activeBatchCount = data?.activeBatchCount || 0
     stats.unreadCount = data?.unreadCount || 0
   } finally {

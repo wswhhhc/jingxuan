@@ -96,7 +96,7 @@
       <div v-else class="work-grid">
         <article v-for="item in list" :key="item.id" class="work-card" @click="router.push(`/works/${item.id}`)">
           <div class="work-card__cover">
-            <el-image :src="item.coverUrl || '/placeholder-cover.png'" fit="contain" class="cover-img">
+            <el-image :src="item.coverUrl || DEFAULT_COVER_URL" fit="contain" class="cover-img">
               <template #error>
                 <div class="cover-placeholder">
                   <el-icon :size="36"><Picture /></el-icon>
@@ -165,6 +165,7 @@ type V1Tag = { id: string; dictLabel: string }
 import type { PageResult } from '@/api/workAdapter'
 import { useApiList } from '@/composables/useApiList'
 import PaginationBar from '@/components/PaginationBar.vue'
+import { DEFAULT_COVER_URL } from '@/utils/cover'
 
 const router = useRouter()
 const page = ref(1)

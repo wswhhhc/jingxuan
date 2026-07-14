@@ -41,7 +41,7 @@
         </div>
 
         <div class="detail-hero__cover">
-          <el-image :src="work.coverUrl || '/placeholder-cover.png'" fit="contain" class="detail-cover">
+          <el-image :src="work.coverUrl || DEFAULT_COVER_URL" fit="contain" class="detail-cover">
             <template #error>
               <div class="cover-placeholder">
                 <el-icon :size="48"><Picture /></el-icon>
@@ -342,6 +342,7 @@ import type { UserInfo } from '@/api/student/auth'
 import type { WorkAttachment, WorkItem } from '@/api/student/work'
 import { IMAGE_TYPES, VIDEO_TYPES } from '@/api/types'
 import { getCachedUserInfo, hasLoginToken } from '@/utils/auth'
+import { DEFAULT_COVER_URL } from '@/utils/cover'
 import CommentThread from './CommentThread.vue'
 import PreviewDialog from '@/components/PreviewDialog.vue'
 

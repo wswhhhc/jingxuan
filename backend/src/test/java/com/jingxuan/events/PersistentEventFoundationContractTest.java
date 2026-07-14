@@ -49,6 +49,30 @@ class PersistentEventFoundationContractTest {
     }
 
     @Test
+    void enablesFlywayAutoConfigurationOnSpringBoot4() throws Exception {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        factory.setExpandEntityReferences(false);
+
+        Document pom = factory.newDocumentBuilder().parse(Path.of("pom.xml").toFile());
+        NodeList dependencies = pom.getElementsByTagName("dependency");
+
+        boolean hasBootFlyway = false;
+        for (int index = 0; index < dependencies.getLength(); index++) {
+            Element dependency = (Element) dependencies.item(index);
+            if (isDirectProjectDependency(dependency)
+                    && "org.springframework.boot".equals(childText(dependency, "groupId"))
+                    && "spring-boot-flyway".equals(childText(dependency, "artifactId"))) {
+                hasBootFlyway = true;
+                break;
+            }
+        }
+
+        assertTrue(hasBootFlyway,
+                "Spring Boot 4 将 Flyway 自动配置拆分到 spring-boot-flyway，缺失时不会执行数据库迁移");
+    }
+
+    @Test
     void delegatesSchemaOwnershipToFlywayAndKeepsFailedPublicationsRetryable() throws Exception {
         List<PropertySource<?>> sources = new YamlPropertySourceLoader()
                 .load("application", new ClassPathResource("application.yml"));

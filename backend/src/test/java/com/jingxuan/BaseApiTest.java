@@ -88,6 +88,8 @@ public abstract class BaseApiTest {
         registry.add("spring.datasource.password", MYSQL::getPassword);
         registry.add("spring.datasource.driver-class-name", MYSQL::getDriverClassName);
         registry.add("spring.flyway.enabled", () -> true);
+        registry.add("MAIL_USERNAME", () -> "test@example.invalid");
+        registry.add("MAIL_PASSWORD", () -> "test-password");
         registry.add("spring.data.redis.host", REDIS::getHost);
         registry.add("spring.data.redis.port", REDIS::getFirstMappedPort);
         registry.add("jingxuan.upload.path", () -> TEST_UPLOAD_DIR.toString());

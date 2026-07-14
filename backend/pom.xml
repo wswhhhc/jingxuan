@@ -361,6 +361,8 @@
                                         -Dspring.datasource.username=sa
                                         -Dspring.datasource.password=
                                         -DJWT_SECRET=dGhpcyBpcyBhIHRlc3Qgc2VjcmV0IGtleSBmb3Igand0IDI1NiBiaXRzIGxvbmc=
+                                        -DMAIL_USERNAME=openapi@example.invalid
+                                        -DMAIL_PASSWORD=openapi-test-password
                                         -Dspring.autoconfigure.exclude=org.springframework.modulith.events.jdbc.JdbcEventPublicationAutoConfiguration,org.springframework.modulith.events.config.EventPublicationAutoConfiguration
                                     </jvmArguments>
                                 </configuration>

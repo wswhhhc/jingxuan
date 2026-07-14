@@ -21,20 +21,25 @@ RUN npm run build
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
-# 安装 Nginx
-RUN apk add --no-cache nginx
+# 安装 Nginx 并创建最小权限运行用户
+RUN apk add --no-cache nginx libcap \
+    && addgroup -S app \
+    && adduser -S app -G app \
+    && mkdir -p /app/uploads /var/cache/nginx /var/run \
+    && chown -R app:app /app /var/cache/nginx /var/log/nginx /var/run \
+    && setcap cap_net_bind_service=+ep /usr/sbin/nginx
 
 # 后端
-COPY --from=backend-build /build/target/jingxuan-backend-1.0.0.jar app.jar
+COPY --chown=app:app --from=backend-build /build/target/jingxuan-backend-1.0.0.jar app.jar
 
 # 前端
-COPY --from=frontend-build /build/dist /usr/share/nginx/html
+COPY --chown=app:app --from=frontend-build /build/dist /usr/share/nginx/html
 
 # Nginx 配置
 COPY nginx-jingxuan.conf /etc/nginx/http.d/default.conf
 
 # 启动脚本
-COPY <<'SCRIPT' /app/start.sh
+COPY --chown=app:app <<'SCRIPT' /app/start.sh
 #!/bin/sh
 # 启动后端
 java -Xmx2g -Xms1g -XX:+UseG1GC -XX:MaxMetaspaceSize=256m \
@@ -48,5 +53,6 @@ SCRIPT
 RUN chmod +x /app/start.sh
 
 EXPOSE 80
+USER app
 CMD ["/app/start.sh"]
 

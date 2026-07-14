@@ -35,6 +35,12 @@ export default defineConfig({
         target: 'http://localhost:8080',
         changeOrigin: true,
       },
+      // 生产环境由 Nginx 剥离 /api；开发环境也保持同一请求路径语义。
+      '/api/public': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
       '/api': {
         target: 'http://localhost:8080',
         changeOrigin: true,

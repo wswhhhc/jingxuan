@@ -7,10 +7,10 @@ export function rewardTagType(level: string): string {
   const map: Record<string, string> = {
     一等奖: 'danger',
     二等奖: 'warning',
-    三等奖: '',
+    三等奖: 'primary',
     优秀奖: 'info',
   }
-  return map[level] || ''
+  return map[level] || 'info'
 }
 
 /**

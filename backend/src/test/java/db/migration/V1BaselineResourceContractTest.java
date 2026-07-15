@@ -41,7 +41,7 @@ class V1BaselineResourceContractTest {
                 "测试 Schema 必须由 Flyway 创建，不得保留重复 H2 建表脚本");
         assertFalse(Files.exists(Path.of("src/test/resources/data-test.sql")),
                 "测试数据只允许保留显式使用的 sql/test-data.sql fixture");
-        assertFalse(Files.exists(Path.of("src/test/resources/test-schema.sql")),
+        assertFalse(Files.exists(Path.of("src/test/resources/sql/test-schema.sql")),
                 "不得恢复已删除的重复测试 Schema");
     }
 

@@ -22,11 +22,4 @@ public enum PublishStatusEnum {
 
     @JsonValue
     private final String label;
-
-    public static PublishStatusEnum of(int value) {
-        for (PublishStatusEnum s : values()) {
-            if (s.value == value) return s;
-        }
-        return UNPUBLISHED;
-    }
 }

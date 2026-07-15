@@ -5,7 +5,6 @@ import com.jingxuan.entity.SysRole;
 import com.jingxuan.entity.SysUser;
 import com.jingxuan.enums.RoleEnum;
 import com.jingxuan.enums.UserStatusEnum;
-import com.jingxuan.mapper.SysMenuMapper;
 import com.jingxuan.mapper.SysRoleMapper;
 import com.jingxuan.mapper.SysUserMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +34,6 @@ class PasswordUpgradeAuthenticationProviderTest extends BaseServiceTest {
 
     @Mock private SysUserMapper sysUserMapper;
     @Mock private SysRoleMapper sysRoleMapper;
-    @Mock private SysMenuMapper sysMenuMapper;
 
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
 
@@ -64,7 +62,7 @@ class PasswordUpgradeAuthenticationProviderTest extends BaseServiceTest {
 
     private Authentication authenticate(String rawPassword) {
         CustomUserDetailsService userDetailsService =
-                new CustomUserDetailsService(sysUserMapper, sysRoleMapper, sysMenuMapper);
+                new CustomUserDetailsService(sysUserMapper, sysRoleMapper);
         return authenticationManager(userDetailsService).authenticate(
                 new UsernamePasswordAuthenticationToken(USERNAME, rawPassword));
     }

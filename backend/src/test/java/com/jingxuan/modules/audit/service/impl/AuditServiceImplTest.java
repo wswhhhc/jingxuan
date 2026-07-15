@@ -8,7 +8,6 @@ import com.jingxuan.exception.BusinessException;
 import com.jingxuan.mapper.SysUserMapper;
 import com.jingxuan.mapper.WorkAuditMapper;
 import com.jingxuan.mapper.WorkMapper;
-import com.jingxuan.mapper.WorkPublishMapper;
 import com.jingxuan.modules.audit.dto.AuditHistoryVO;
 import com.jingxuan.modules.audit.dto.AuditRequest;
 import com.jingxuan.modules.log.service.LogService;
@@ -40,7 +39,6 @@ class AuditServiceImplTest {
 
     @Mock private WorkMapper workMapper;
     @Mock private WorkAuditMapper workAuditMapper;
-    @Mock private WorkPublishMapper workPublishMapper;
     @Mock private PublishService publishService;
     @Mock private NotificationService notificationService;
     @Mock private SysUserMapper sysUserMapper;
@@ -55,7 +53,7 @@ class AuditServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        auditService = new AuditServiceImpl(workMapper, workAuditMapper, workPublishMapper,
+        auditService = new AuditServiceImpl(workMapper, workAuditMapper,
                 publishService, notificationService, sysUserMapper, logService, studentTaskService);
         securityUtilsMock = mockStatic(SecurityUtils.class);
         securityUtilsMock.when(SecurityUtils::requireCurrentUserId).thenReturn(300L);

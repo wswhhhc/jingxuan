@@ -2,7 +2,6 @@ package com.jingxuan.evaluation.internal.application;
 
 import com.jingxuan.api.V1Ids;
 import com.jingxuan.entity.RewardConfig;
-import com.jingxuan.entity.RewardIssue;
 import com.jingxuan.evaluation.api.V1Prize;
 import com.jingxuan.evaluation.api.V1PrizeRequest;
 import com.jingxuan.modules.prize.service.PrizeService;

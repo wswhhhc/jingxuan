@@ -357,11 +357,11 @@ public class RedisRefreshTokenService implements RefreshTokenService {
                 throw corruptedStore();
             }
 
-            Long userId = parseLong(result.get(1), "userId");
+            Long userId = parseLong(result.get(1));
             String username = asString(result.get(2));
             String role = asString(result.get(3));
             String rememberMeValue = asString(result.get(4));
-            Instant expiresAt = Instant.ofEpochMilli(parseLong(result.get(5), "expiresAt"));
+            Instant expiresAt = Instant.ofEpochMilli(parseLong(result.get(5)));
             if (!userId.equals(context.userId()) || !expiresAt.equals(context.expiresAt())
                     || !("0".equals(rememberMeValue) || "1".equals(rememberMeValue))) {
                 throw corruptedStore();
@@ -429,12 +429,12 @@ public class RedisRefreshTokenService implements RefreshTokenService {
 
         String tokenStatus = asString(result.get(1));
         String returnedFamilyId = asString(result.get(2));
-        Long tokenUserId = parseLong(result.get(3), "tokenUserId");
-        long tokenExpiresAt = parseLong(result.get(4), "tokenExpiresAt");
+        Long tokenUserId = parseLong(result.get(3));
+        long tokenExpiresAt = parseLong(result.get(4));
         String familyStatus = asString(result.get(5));
-        Long familyUserId = parseLong(result.get(6), "familyUserId");
+        Long familyUserId = parseLong(result.get(6));
         String currentHash = asString(result.get(7));
-        long familyExpiresAt = parseLong(result.get(8), "familyExpiresAt");
+        long familyExpiresAt = parseLong(result.get(8));
 
         if (!isTokenStatus(tokenStatus) || !isFamilyStatus(familyStatus)
                 || !familyId.equals(returnedFamilyId) || !tokenUserId.equals(familyUserId)
@@ -502,10 +502,10 @@ public class RedisRefreshTokenService implements RefreshTokenService {
         if (result == null || result.isEmpty()) {
             throw corruptedStore();
         }
-        return Math.toIntExact(parseLong(result.get(0), "resultCode"));
+        return Math.toIntExact(parseLong(result.get(0)));
     }
 
-    private static long parseLong(Object value, String field) {
+    private static long parseLong(Object value) {
         try {
             return Long.parseLong(asString(value));
         } catch (NumberFormatException exception) {

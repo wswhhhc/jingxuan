@@ -1,10 +1,8 @@
 package com.jingxuan.communication.api;
 
-import com.jingxuan.entity.SysNotification;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 
 @Schema(name = "V1Notification", description = "个人通知")
 public record V1Notification(

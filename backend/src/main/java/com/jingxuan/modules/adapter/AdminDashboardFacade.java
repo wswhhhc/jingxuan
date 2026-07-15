@@ -2,7 +2,6 @@ package com.jingxuan.modules.adapter;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.jingxuan.entity.ScoreBatch;
 import com.jingxuan.entity.SysUser;
 import com.jingxuan.entity.Work;
 import com.jingxuan.entity.WorkPublish;

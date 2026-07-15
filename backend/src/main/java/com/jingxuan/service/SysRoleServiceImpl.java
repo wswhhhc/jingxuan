@@ -2,13 +2,11 @@ package com.jingxuan.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
-import com.jingxuan.entity.SysMenu;
 import com.jingxuan.entity.SysRole;
 import com.jingxuan.entity.SysRoleMenu;
 import com.jingxuan.entity.SysUser;
 import com.jingxuan.enums.RoleEnum;
 import com.jingxuan.exception.BusinessException;
-import com.jingxuan.mapper.SysMenuMapper;
 import com.jingxuan.mapper.SysRoleMapper;
 import com.jingxuan.mapper.SysRoleMenuMapper;
 import com.jingxuan.mapper.SysUserMapper;
@@ -23,14 +21,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> implements SysRoleService {
 
-    private final SysMenuMapper sysMenuMapper;
     private final SysRoleMenuMapper sysRoleMenuMapper;
     private final SysUserMapper sysUserMapper;
-
-    @Override
-    public List<SysMenu> getMenusByRoleId(Long roleId) {
-        return sysMenuMapper.selectByRoleId(roleId);
-    }
 
     @Override
     public List<Long> getMenuIdsByRoleId(Long roleId) {

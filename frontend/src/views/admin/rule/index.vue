@@ -143,7 +143,7 @@ const handleDelete = async (row: RuleItem) => {
     ElMessage.success('已删除')
     reload()
   } catch {
-    /* */
+    // 用户取消删除时无需提示。
   }
 }
 

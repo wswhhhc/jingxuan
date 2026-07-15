@@ -5,7 +5,6 @@ import com.jingxuan.BaseServiceTest;
 import com.jingxuan.mapper.RankRewardMapper;
 import com.jingxuan.mapper.ScoreBatchMapper;
 import com.jingxuan.mapper.WorkMapper;
-import com.jingxuan.modules.notification.service.NotificationService;
 import com.jingxuan.modules.rank.dto.RankQueryRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,7 +29,6 @@ class RankServiceImplExtraTest extends BaseServiceTest {
         RankRewardMapper rankRewardMapper = mock(RankRewardMapper.class);
         StringRedisTemplate redisTemplate = mock(StringRedisTemplate.class);
         ObjectMapper objectMapper = new ObjectMapper();
-        NotificationService notificationService = mock(NotificationService.class);
         @SuppressWarnings("unchecked")
         ValueOperations<String, String> valueOps = mock(ValueOperations.class);
 
@@ -40,7 +38,7 @@ class RankServiceImplExtraTest extends BaseServiceTest {
         when(rankRewardMapper.selectList(any())).thenReturn(Collections.emptyList());
 
         RankServiceImpl service = new RankServiceImpl(
-                workMapper, scoreBatchMapper, rankRewardMapper, redisTemplate, objectMapper, notificationService);
+                workMapper, scoreBatchMapper, rankRewardMapper, redisTemplate, objectMapper);
 
         RankQueryRequest request = new RankQueryRequest();
         request.setBatchId(1L);
@@ -57,7 +55,6 @@ class RankServiceImplExtraTest extends BaseServiceTest {
         RankRewardMapper rankRewardMapper = mock(RankRewardMapper.class);
         StringRedisTemplate redisTemplate = mock(StringRedisTemplate.class);
         ObjectMapper objectMapper = new ObjectMapper();
-        NotificationService notificationService = mock(NotificationService.class);
         @SuppressWarnings("unchecked")
         ValueOperations<String, String> valueOps = mock(ValueOperations.class);
 
@@ -68,7 +65,7 @@ class RankServiceImplExtraTest extends BaseServiceTest {
         when(rankRewardMapper.selectList(any())).thenReturn(Collections.emptyList());
 
         RankServiceImpl service = new RankServiceImpl(
-                workMapper, scoreBatchMapper, rankRewardMapper, redisTemplate, objectMapper, notificationService);
+                workMapper, scoreBatchMapper, rankRewardMapper, redisTemplate, objectMapper);
 
         assertDoesNotThrow(() -> service.refreshRankCache(1L));
     }

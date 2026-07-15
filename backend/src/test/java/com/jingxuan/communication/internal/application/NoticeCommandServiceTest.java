@@ -1,7 +1,6 @@
 package com.jingxuan.communication.internal.application;
 
 import com.jingxuan.entity.SysNotice;
-import com.jingxuan.modules.notice.dto.NoticeRequest;
 import com.jingxuan.modules.notice.service.NoticeService;
 import com.jingxuan.communication.api.V1NoticeRequest;
 import org.junit.jupiter.api.Test;

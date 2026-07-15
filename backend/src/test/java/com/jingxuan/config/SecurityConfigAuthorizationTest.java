@@ -1,6 +1,5 @@
 package com.jingxuan.config;
 
-import com.jingxuan.identityaccess.api.RateLimitService;
 import com.jingxuan.security.CustomUserDetailsService;
 import com.jingxuan.security.JwtAuthenticationFilter;
 import com.jingxuan.security.JwtTokenProvider;

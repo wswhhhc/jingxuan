@@ -3,7 +3,6 @@ package com.jingxuan.security;
 import com.jingxuan.entity.SysRole;
 import com.jingxuan.entity.SysUser;
 import com.jingxuan.enums.UserStatusEnum;
-import com.jingxuan.mapper.SysMenuMapper;
 import com.jingxuan.mapper.SysRoleMapper;
 import com.jingxuan.mapper.SysUserMapper;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +24,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private final SysUserMapper sysUserMapper;
     private final SysRoleMapper sysRoleMapper;
-    private final SysMenuMapper sysMenuMapper;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

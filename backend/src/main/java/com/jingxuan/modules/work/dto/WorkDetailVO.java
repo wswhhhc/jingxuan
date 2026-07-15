@@ -104,6 +104,6 @@ public class WorkDetailVO {
     private Boolean liked;
 
     @Schema(description = "标签列表")
-    private java.util.List<String> tags;
+    private List<String> tags;
 }
 

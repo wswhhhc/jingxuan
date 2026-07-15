@@ -4,7 +4,6 @@ import com.jingxuan.modules.work.dto.WorkDetailVO;
 
 import java.time.ZoneOffset;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /** v1 作品详情。ID 始终作为不透明字符串输出。 */
 public record V1WorkDetail(

@@ -1,6 +1,6 @@
 # 菁选 (Jingxuan) — 校园作品展示平台
 
-[![CI](https://github.com/wswhhhc/jingxuan-/actions/workflows/ci.yml/badge.svg)](https://github.com/wswhhhc/jingxuan-/actions/workflows/ci.yml)
+[![CI](https://github.com/wswhhhc/jingxuan/actions/workflows/ci.yml/badge.svg)](https://github.com/wswhhhc/jingxuan/actions/workflows/ci.yml)
 
 基于 **Spring Boot 4.1 + Vue 3** 的全栈校园作品展示平台，支持学生提交作品、教师匿名评分、管理员审核发布、前台公开展示。集成 DeepSeek AI 内容安全审核、Redis 排行榜缓存、Docker 一键部署、GitHub Actions CI/CD 流水线。
 
@@ -42,7 +42,7 @@
 
 ```bash
 # 1. 克隆仓库
-git clone https://github.com/wswhhhc/jingxuan-.git && cd jingxuan-
+git clone https://github.com/wswhhhc/jingxuan.git && cd jingxuan
 
 # 2. 配置环境变量
 cp .env.example .env

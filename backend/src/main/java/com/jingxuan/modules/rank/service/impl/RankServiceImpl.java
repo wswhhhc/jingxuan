@@ -9,7 +9,6 @@ import com.jingxuan.entity.Work;
 import com.jingxuan.mapper.RankRewardMapper;
 import com.jingxuan.mapper.ScoreBatchMapper;
 import com.jingxuan.mapper.WorkMapper;
-import com.jingxuan.modules.notification.service.NotificationService;
 import com.jingxuan.modules.rank.dto.RankQueryRequest;
 import com.jingxuan.modules.rank.dto.RankVO;
 import com.jingxuan.modules.rank.service.RankService;
@@ -41,7 +40,6 @@ public class RankServiceImpl implements RankService {
     private final RankRewardMapper rankRewardMapper;
     private final StringRedisTemplate stringRedisTemplate;
     private final ObjectMapper objectMapper;
-    private final NotificationService notificationService;
 
     @Override
     public List<RankVO> getRankList(RankQueryRequest request) {

@@ -613,11 +613,6 @@ public class WorkServiceImpl extends ServiceImpl<WorkMapper, Work> implements Wo
         }
     }
 
-    private boolean isSourceArchive(String fileType) {
-        String normalized = normalizeFileType(fileType);
-        return "zip".equals(normalized) || "rar".equals(normalized) || "7z".equals(normalized);
-    }
-
     private String normalizeFileType(String fileType) {
         return fileType == null ? "" : fileType.toLowerCase(Locale.ROOT);
     }

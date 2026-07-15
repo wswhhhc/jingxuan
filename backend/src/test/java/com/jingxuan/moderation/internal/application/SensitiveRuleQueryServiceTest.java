@@ -2,7 +2,6 @@ package com.jingxuan.moderation.internal.application;
 
 import com.jingxuan.common.PageResult;
 import com.jingxuan.entity.SensitiveRule;
-import com.jingxuan.moderation.api.V1SensitiveRule;
 import com.jingxuan.modules.sensitive.service.SensitiveRuleService;
 import org.junit.jupiter.api.Test;
 

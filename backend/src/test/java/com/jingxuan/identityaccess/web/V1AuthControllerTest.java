@@ -5,7 +5,6 @@ import com.jingxuan.auth.model.UserInfoVO;
 import com.jingxuan.auth.service.AuthService;
 import com.jingxuan.auth.model.LoginRequest;
 import com.jingxuan.identityaccess.api.V1LoginResponse;
-import com.jingxuan.identityaccess.api.V1UserInfo;
 import com.jingxuan.identityaccess.application.RefreshTokenService;
 import com.jingxuan.security.JwtTokenProvider;
 import org.junit.jupiter.api.Test;

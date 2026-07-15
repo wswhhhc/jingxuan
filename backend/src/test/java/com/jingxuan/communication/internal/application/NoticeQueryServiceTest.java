@@ -3,7 +3,6 @@ package com.jingxuan.communication.internal.application;
 import com.jingxuan.common.PageResult;
 import com.jingxuan.entity.SysNotice;
 import com.jingxuan.exception.NotFoundException;
-import com.jingxuan.modules.notice.dto.NoticeRequest;
 import com.jingxuan.modules.notice.service.NoticeService;
 import org.junit.jupiter.api.Test;
 

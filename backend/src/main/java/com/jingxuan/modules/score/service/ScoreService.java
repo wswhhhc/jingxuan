@@ -30,9 +30,5 @@ public interface ScoreService extends IService<WorkScore> {
      */
     ScoreSummaryVO getScoreSummary(Long workId);
 
-    /**
-     * 获取某批次的评分汇总列表
-     */
-    List<ScoreSummaryVO> getBatchScoreSummary(Long batchId);
 }
 

@@ -80,7 +80,7 @@ public class FileUploadController {
                 log.warn("文件类型不匹配: 声明为 .{}, 实际为 {}, fileName={}", ext, realType, originalName);
                 return Result.fail("文件内容与扩展名不匹配，已拦截");
             }
-        } catch (java.io.IOException e) {
+        } catch (IOException e) {
             log.warn("文件类型检测流读取异常: {}", e.getMessage());
             // 检测失败时仅依赖扩展名校验，不拦截上传
         }

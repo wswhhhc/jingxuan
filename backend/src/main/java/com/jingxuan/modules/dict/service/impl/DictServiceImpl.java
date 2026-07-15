@@ -1,6 +1,5 @@
 package com.jingxuan.modules.dict.service.impl;
 
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 import com.jingxuan.entity.SysDict;
 import com.jingxuan.mapper.SysDictMapper;

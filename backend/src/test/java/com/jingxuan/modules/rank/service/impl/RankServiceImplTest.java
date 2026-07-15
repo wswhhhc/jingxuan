@@ -1,12 +1,9 @@
 package com.jingxuan.modules.rank.service.impl;
 
 import tools.jackson.databind.ObjectMapper;
-import com.jingxuan.entity.RankReward;
-import com.jingxuan.entity.ScoreBatch;
 import com.jingxuan.mapper.RankRewardMapper;
 import com.jingxuan.mapper.ScoreBatchMapper;
 import com.jingxuan.mapper.WorkMapper;
-import com.jingxuan.modules.notification.service.NotificationService;
 import com.jingxuan.modules.rank.dto.RankQueryRequest;
 import com.jingxuan.modules.rank.dto.RankVO;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-import tools.jackson.core.type.TypeReference;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("RankServiceImpl - 排行榜服务")
@@ -37,7 +33,6 @@ class RankServiceImplTest {
     @Mock private RankRewardMapper rankRewardMapper;
     @Mock private StringRedisTemplate stringRedisTemplate;
     @Mock private ObjectMapper objectMapper;
-    @Mock private NotificationService notificationService;
     @Mock private ValueOperations<String, String> valueOps;
 
     private RankServiceImpl rankService;
@@ -47,7 +42,7 @@ class RankServiceImplTest {
     @BeforeEach
     void setUp() {
         rankService = new RankServiceImpl(workMapper, scoreBatchMapper, rankRewardMapper,
-                stringRedisTemplate, objectMapper, notificationService);
+                stringRedisTemplate, objectMapper);
     }
 
     private RankVO createRankVO(int rankNo, Long workId, String title) {

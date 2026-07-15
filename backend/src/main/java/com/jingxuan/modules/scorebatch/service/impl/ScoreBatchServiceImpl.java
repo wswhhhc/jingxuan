@@ -1,8 +1,6 @@
 package com.jingxuan.modules.scorebatch.service.impl;
 
-import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 import com.jingxuan.common.PageResult;
 import com.jingxuan.common.PageUtil;
@@ -26,8 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -94,12 +90,12 @@ public class ScoreBatchServiceImpl extends ServiceImpl<ScoreBatchMapper, ScoreBa
     }
 
     @Override
-    public java.util.List<ScoreBatch> getAvailableBatchesForStudent(Long userId) {
+    public List<ScoreBatch> getAvailableBatchesForStudent(Long userId) {
         return lambdaQuery()
                 .eq(ScoreBatch::getStatus, 1)
                 .eq(ScoreBatch::getDeleted, 0)
-                .le(ScoreBatch::getStartTime, java.time.LocalDateTime.now())
-                .ge(ScoreBatch::getEndTime, java.time.LocalDateTime.now())
+                .le(ScoreBatch::getStartTime, LocalDateTime.now())
+                .ge(ScoreBatch::getEndTime, LocalDateTime.now())
                 .orderByDesc(ScoreBatch::getCreateTime)
                 .list();
     }

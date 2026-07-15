@@ -1,7 +1,6 @@
 package com.jingxuan.modules.notice.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 import com.jingxuan.common.PageResult;
 import com.jingxuan.common.PageUtil;

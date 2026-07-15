@@ -8,7 +8,5 @@ import java.util.List;
 public interface SysMenuService extends IService<SysMenu> {
 
     List<SysMenu> getMenuTree();
-
-    List<SysMenu> getByParentId(Long parentId);
 }
 

@@ -51,7 +51,7 @@ public class V1PortfolioController {
    idStr(v.getId()), v.getTitle(), v.getSummary(),
    switch (v.getStatus() == null ? 0 : v.getStatus()) { case 1 -> "SUBMITTED"; case 2 -> "REJECTED"; case 3 -> "APPROVED"; default -> "DRAFT"; },
    idStr(v.getSubmitterId()), v.getSubmitterName(), idStr(v.getBatchId()),
-   v.getSubmitTime() == null ? null : v.getSubmitTime().atOffset(ZoneOffset.ofHours(8)).toString(), v.getTags() == null ? java.util.List.of() : v.getTags());
+   v.getSubmitTime() == null ? null : v.getSubmitTime().atOffset(ZoneOffset.ofHours(8)).toString(), v.getTags() == null ? List.of() : v.getTags());
  }
  private V1WorkDetail toV1WorkDetail(WorkDetailVO v) {
   var members = v.getMembers() == null ? List.<V1WorkMember>of() : v.getMembers().stream().map(m -> new V1WorkMember(

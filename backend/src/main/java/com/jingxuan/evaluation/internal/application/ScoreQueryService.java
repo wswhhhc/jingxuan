@@ -1,6 +1,5 @@
 package com.jingxuan.evaluation.internal.application;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jingxuan.api.V1Page;
 import com.jingxuan.api.V1PageInfo;
 import com.jingxuan.evaluation.api.V1ScoreEntry;
@@ -11,12 +10,9 @@ import com.jingxuan.modules.adapter.AdminScoreFacade;
 import com.jingxuan.modules.adapter.TeacherWorkFacade;
 import com.jingxuan.modules.score.dto.ScoreSummaryVO;
 import com.jingxuan.modules.score.dto.ScoreVO;
-import com.jingxuan.modules.score.dto.AdminScoreDetailVO;
-import com.jingxuan.modules.score.dto.TeacherScoreHistoryVO;
 import com.jingxuan.modules.score.service.ScoreService;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 /** 评分查询用例。 */

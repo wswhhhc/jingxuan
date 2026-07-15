@@ -3,7 +3,6 @@ package com.jingxuan;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
-import com.jingxuan.common.Result;
 import com.jingxuan.security.PublicRateLimitFilter;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;

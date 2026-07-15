@@ -12,7 +12,6 @@ import com.jingxuan.exception.BusinessException;
 import com.jingxuan.mapper.SysUserMapper;
 import com.jingxuan.mapper.WorkAuditMapper;
 import com.jingxuan.mapper.WorkMapper;
-import com.jingxuan.mapper.WorkPublishMapper;
 import com.jingxuan.modules.audit.dto.AuditHistoryVO;
 import com.jingxuan.modules.audit.dto.AuditRequest;
 import com.jingxuan.modules.audit.service.AuditService;
@@ -41,7 +40,6 @@ public class AuditServiceImpl implements AuditService {
 
     private final WorkMapper workMapper;
     private final WorkAuditMapper workAuditMapper;
-    private final WorkPublishMapper workPublishMapper;
     private final PublishService publishService;
     private final NotificationService notificationService;
     private final SysUserMapper sysUserMapper;

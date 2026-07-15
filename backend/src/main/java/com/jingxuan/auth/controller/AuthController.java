@@ -4,7 +4,6 @@ import com.jingxuan.auth.model.LoginRequest;
 import com.jingxuan.auth.model.LoginResponse;
 import com.jingxuan.auth.model.UserInfoVO;
 import com.jingxuan.auth.service.AuthService;
-import com.jingxuan.auth.service.RegistrationService;
 import com.jingxuan.common.Result;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,7 +23,6 @@ import java.util.Map;
 public class AuthController {
 
     private final AuthService authService;
-    private final RegistrationService registrationService;
 
     @Operation(summary = "检查当前用户是否需要修改密码（首次登录）")
     @GetMapping("/check-first-login")

@@ -65,7 +65,7 @@ public class DeepSeekReviewServiceImpl implements DeepSeekReviewService {
         }
 
         // ── 第二阶段：DFA 未命中 → 交由 AI 做语义审核 ──
-        return callAISync(text, scene);
+        return callAISync(text);
     }
 
     @Override
@@ -100,7 +100,7 @@ public class DeepSeekReviewServiceImpl implements DeepSeekReviewService {
     /**
      * 同步调用 AI 审核（带重试）
      */
-    private ReviewResult callAISync(String text, String scene) {
+    private ReviewResult callAISync(String text) {
         String apiKey = deepSeekConfig.getApiKey();
         if (apiKey == null || apiKey.isBlank()) {
             log.warn("DeepSeek API Key 未配置，跳过 AI 审核");
@@ -116,9 +116,8 @@ public class DeepSeekReviewServiceImpl implements DeepSeekReviewService {
                 "response_format", Map.of("type", "json_object")
         );
 
-        String jsonBody;
         try {
-            jsonBody = objectMapper.writeValueAsString(requestBody);
+            objectMapper.writeValueAsString(requestBody);
         } catch (Exception e) {
             log.error("序列化请求体失败", e);
             return handleFallback("序列化异常");

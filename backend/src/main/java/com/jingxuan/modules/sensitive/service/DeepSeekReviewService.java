@@ -39,19 +39,8 @@ public interface DeepSeekReviewService {
             return r;
         }
 
-        public static ReviewResult error(String message) {
-            ReviewResult r = new ReviewResult();
-            r.passed = false;
-            r.category = "system_error";
-            r.reason = message;
-            return r;
-        }
-
         public boolean isPassed() { return passed; }
-        public void setPassed(boolean passed) { this.passed = passed; }
         public String getCategory() { return category; }
-        public void setCategory(String category) { this.category = category; }
         public String getReason() { return reason; }
-        public void setReason(String reason) { this.reason = reason; }
     }
 }

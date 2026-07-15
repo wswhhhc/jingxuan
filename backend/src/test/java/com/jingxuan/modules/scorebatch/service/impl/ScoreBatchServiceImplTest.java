@@ -1,8 +1,6 @@
 package com.jingxuan.modules.scorebatch.service.impl;
 
-import com.jingxuan.common.PageResult;
 import com.jingxuan.entity.ScoreBatch;
-import com.jingxuan.entity.Work;
 import com.jingxuan.exception.BusinessException;
 import com.jingxuan.mapper.ScoreBatchMapper;
 import com.jingxuan.mapper.SysDictMapper;
@@ -29,7 +27,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-import com.jingxuan.entity.ScoreBatch;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("ScoreBatchServiceImpl - 评分批次服务")

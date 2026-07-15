@@ -1,7 +1,6 @@
 package com.jingxuan.modules.work.controller;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.mock.web.MockMultipartFile;
 
 class FileUploadControllerTest {
 

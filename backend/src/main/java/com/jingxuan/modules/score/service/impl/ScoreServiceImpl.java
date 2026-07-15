@@ -1,8 +1,6 @@
 package com.jingxuan.modules.score.service.impl;
 
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 import com.jingxuan.entity.ScoreBatch;
@@ -25,7 +23,6 @@ import com.jingxuan.modules.log.service.LogService;
 import com.jingxuan.modules.notification.service.NotificationService;
 import com.jingxuan.modules.rank.service.RankService;
 import com.jingxuan.modules.sensitive.service.DeepSeekReviewService;
-import com.jingxuan.security.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,12 +33,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -220,45 +213,6 @@ public class ScoreServiceImpl extends ServiceImpl<WorkScoreMapper, WorkScore> im
         computeScoreAverages(scores, summary);
         return summary;
     }
-
-    @Override
-    public List<ScoreSummaryVO> getBatchScoreSummary(Long batchId) {
-        LambdaQueryWrapper<WorkScore> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(WorkScore::getBatchId, batchId)
-                .eq(WorkScore::getDeleted, 0);
-        List<WorkScore> allScores = workScoreMapper.selectList(wrapper);
-        if (allScores.isEmpty()) {
-            return new ArrayList<>();
-        }
-
-        // 按 workId 分组，在 Java 中计算各维度平均值
-        Map<Long, List<WorkScore>> grouped = allScores.stream()
-                .collect(Collectors.groupingBy(WorkScore::getWorkId));
-
-        List<ScoreSummaryVO> result = new ArrayList<>();
-        for (Map.Entry<Long, List<WorkScore>> entry : grouped.entrySet()) {
-            Long workId = entry.getKey();
-            List<WorkScore> workScores = entry.getValue();
-
-            Work work = workMapper.selectById(workId);
-
-            ScoreSummaryVO summary = new ScoreSummaryVO();
-            summary.setWorkId(workId);
-            summary.setWorkTitle(work != null ? work.getTitle() : null);
-            summary.setTeacherCount(workScores.size());
-
-            computeScoreAverages(workScores, summary);
-
-            result.add(summary);
-        }
-
-        return result;
-    }
-
-    /**
-     * 将 WorkScore 实体转换为 ScoreVO（不含 teacherName）
-     */
-    
 
     private void computeScoreAverages(List<WorkScore> scores, ScoreSummaryVO summary) {
         BigDecimal sumInnovation = BigDecimal.ZERO;

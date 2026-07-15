@@ -13,11 +13,6 @@ export interface PublicWorkListParams {
   sortBy?: string
 }
 
-export interface TagItem {
-  id: string
-  dictLabel: string
-}
-
 interface V1ReferenceItem {
   id: string
   label: string
@@ -48,12 +43,6 @@ export async function getPublicWorkList(params: PublicWorkListParams) {
   })
   res.data = adaptPageResult(res.data, adaptWorkVO, 12)
   return res
-}
-
-export interface PublicClassItem {
-  id: string
-  dictValue: string
-  dictLabel: string
 }
 
 export async function getPublicClassList() {

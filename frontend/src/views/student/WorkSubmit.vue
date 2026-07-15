@@ -306,7 +306,6 @@ onMounted(() => {
   // 从待办页面传入 batchId，自动设置
   const batchIdFromQuery = route.query?.batchId
   if (batchIdFromQuery) {
-    // const id = Number(batchIdFromQuery)  // 雪花 ID 直接用字符串，防止精度丢失
     form.batchId = Array.isArray(batchIdFromQuery) ? batchIdFromQuery[0] : batchIdFromQuery
   }
   const workId = getRouteWorkId()

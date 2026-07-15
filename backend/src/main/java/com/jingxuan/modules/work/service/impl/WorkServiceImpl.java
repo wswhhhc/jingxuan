@@ -7,14 +7,12 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 import com.jingxuan.common.PageResult;
-import com.jingxuan.entity.RewardIssue;
 import com.jingxuan.entity.ScoreBatch;
 import com.jingxuan.entity.SysUser;
 import com.jingxuan.entity.Work;
 import com.jingxuan.entity.WorkAttachment;
 import com.jingxuan.entity.WorkMember;
 import com.jingxuan.entity.WorkPublish;
-import com.jingxuan.entity.WorkTag;
 import com.jingxuan.enums.AuditStatusEnum;
 import com.jingxuan.exception.BusinessException;
 import com.jingxuan.mapper.RewardIssueMapper;
@@ -304,16 +302,7 @@ public class WorkServiceImpl extends ServiceImpl<WorkMapper, Work> implements Wo
                 .eq(com.jingxuan.entity.RewardIssue::getWorkId, workId));
 
         // 重置关联的学生待办为待处理（可重新提交）
-        if (work.getBatchId() != null) {
-            com.jingxuan.entity.StudentTask taskRef = studentTaskService
-                    .getByUserAndBatch(work.getSubmitterId(), work.getBatchId());
-            if (taskRef != null) {
-                taskRef.setStatus(0);
-                taskRef.setWorkId(null);
-                studentTaskService.updateById(taskRef);
-                log.info("待办已重置为待处理: taskId={}, batchId={}", taskRef.getId(), work.getBatchId());
-            }
-        }
+        studentTaskService.resetTask(workId);
 
         // 通知作者
         try {

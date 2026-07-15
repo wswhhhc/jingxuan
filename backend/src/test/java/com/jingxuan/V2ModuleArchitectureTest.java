@@ -48,17 +48,15 @@ class V2ModuleArchitectureTest {
     private static final Map<String, Set<String>> buildControllerBridges() {
         var map = new LinkedHashMap<String, Set<String>>();
         map.put("com.jingxuan.identityaccess.web.V1AuthController", Set.of("com.jingxuan.auth."));
-        map.put("com.jingxuan.portfolio.web.V1AuditController", Set.of("com.jingxuan.modules.audit.", "com.jingxuan.modules.work."));
-        map.put("com.jingxuan.portfolio.web.V1CommentController", Set.of("com.jingxuan.modules.comment.", "com.jingxuan.modules.work."));
+        map.put("com.jingxuan.portfolio.web.V1AuditController", Set.of("com.jingxuan.modules.audit."));
+        map.put("com.jingxuan.portfolio.web.V1CommentController", Set.of("com.jingxuan.modules.comment."));
         map.put("com.jingxuan.portfolio.web.V1CommentAdminController", Set.of("com.jingxuan.modules.comment."));
         map.put("com.jingxuan.portfolio.web.V1LikeController", Set.of("com.jingxuan.modules.adapter."));
-        map.put("com.jingxuan.portfolio.web.V1PortfolioController", Set.of("com.jingxuan.modules.deleterequest.", "com.jingxuan.modules.work.", "com.jingxuan.workflow.", "com.jingxuan.entity."));
+        map.put("com.jingxuan.portfolio.web.V1PortfolioController", Set.of("com.jingxuan.modules.deleterequest.", "com.jingxuan.modules.work.", "com.jingxuan.entity."));
         map.put("com.jingxuan.portfolio.web.V1PublicationController", Set.of("com.jingxuan.modules.publish."));
         map.put("com.jingxuan.portfolio.web.V1ShowcaseController", Set.of("com.jingxuan.modules.work.", "com.jingxuan.modules.adapter."));
         map.put("com.jingxuan.evaluation.web.V1ScoreController", Set.of("com.jingxuan.modules.score."));
         map.put("com.jingxuan.identityaccess.web.V1RegistrationController", Set.of("com.jingxuan.auth."));
-        map.put("com.jingxuan.campaign.web.V1CampaignController", Set.of("com.jingxuan.modules.scorebatch."));
-        map.put("com.jingxuan.referencedata.web.V1ReferenceDataController", Set.of("com.jingxuan.modules.dict."));
         return Collections.unmodifiableMap(map);
     }
 

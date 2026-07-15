@@ -52,7 +52,7 @@ public class PublicApiController {
 
     @Operation(summary = "获取标签列表（公开）")
     @GetMapping("/api/public/tags")
-    public Result<List<com.jingxuan.entity.SysDict>> getPublicTagList() {
+    public Result<List<SysDict>> getPublicTagList() {
         return Result.ok(publicWorkFacade.getPublicTags());
     }
 

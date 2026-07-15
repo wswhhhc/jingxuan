@@ -30,7 +30,4 @@ public class UnauthorizedException extends RuntimeException {
         return code == 401;
     }
 
-    public boolean isAccessDenied() {
-        return code == 403;
-    }
 }

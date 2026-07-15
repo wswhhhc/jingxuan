@@ -1,11 +1,9 @@
 package com.jingxuan.modules.rank.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import tools.jackson.databind.ObjectMapper;
 import com.jingxuan.entity.RankReward;
 import com.jingxuan.entity.ScoreBatch;
-import com.jingxuan.entity.Work;
 import com.jingxuan.mapper.RankRewardMapper;
 import com.jingxuan.mapper.ScoreBatchMapper;
 import com.jingxuan.mapper.WorkMapper;

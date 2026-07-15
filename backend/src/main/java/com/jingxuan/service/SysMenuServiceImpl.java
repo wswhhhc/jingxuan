@@ -29,13 +29,6 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
     }
 
     @Override
-    public List<SysMenu> getByParentId(Long parentId) {
-        return list(new LambdaQueryWrapper<SysMenu>()
-                .eq(SysMenu::getParentId, parentId)
-                .orderByAsc(SysMenu::getSort));
-    }
-
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean removeById(Serializable id) {
         long subCount = count(new LambdaQueryWrapper<SysMenu>()

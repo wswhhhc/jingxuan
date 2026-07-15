@@ -17,18 +17,4 @@ public enum RoleEnum {
     private final int value;
     private final String label;
     private final String authority;
-
-    public static RoleEnum of(int value) {
-        for (RoleEnum r : values()) {
-            if (r.value == value) return r;
-        }
-        return STUDENT;
-    }
-
-    public static RoleEnum fromAuthority(String authority) {
-        for (RoleEnum r : values()) {
-            if (r.authority.equals(authority)) return r;
-        }
-        return null;
-    }
 }

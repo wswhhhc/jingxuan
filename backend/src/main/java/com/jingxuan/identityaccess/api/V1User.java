@@ -1,7 +1,6 @@
 package com.jingxuan.identityaccess.api;
 
 import com.jingxuan.entity.SysUser;
-import com.jingxuan.enums.UserStatusEnum;
 
 /** v1 用户 DTO。 */
 public record V1User(

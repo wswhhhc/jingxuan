@@ -3,7 +3,6 @@ package com.jingxuan.modules.rank.controller;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.jingxuan.common.Result;
 import com.jingxuan.entity.ScoreBatch;
-import com.jingxuan.exception.BusinessException;
 import com.jingxuan.mapper.ScoreBatchMapper;
 import com.jingxuan.mapper.WorkMapper;
 import com.jingxuan.modules.rank.dto.RankQueryRequest;

@@ -1,7 +1,6 @@
 package com.jingxuan.evaluation.web;
 
 import com.jingxuan.api.V1Api;
-import com.jingxuan.api.V1Ids;
 import com.jingxuan.evaluation.api.V1LeaderboardEntry;
 import com.jingxuan.evaluation.api.V1MyRank;
 import com.jingxuan.evaluation.internal.application.LeaderboardCommandService;

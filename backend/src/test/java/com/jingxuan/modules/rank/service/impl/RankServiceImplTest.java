@@ -1,8 +1,6 @@
 package com.jingxuan.modules.rank.service.impl;
 
 import tools.jackson.databind.ObjectMapper;
-import com.jingxuan.entity.RankReward;
-import com.jingxuan.entity.ScoreBatch;
 import com.jingxuan.mapper.RankRewardMapper;
 import com.jingxuan.mapper.ScoreBatchMapper;
 import com.jingxuan.mapper.WorkMapper;
@@ -25,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-import tools.jackson.core.type.TypeReference;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("RankServiceImpl - 排行榜服务")

@@ -96,32 +96,6 @@ public class SensitiveWordDFA {
     }
 
     /**
-     * 将敏感词替换为指定字符（如 *）
-     */
-    public String replace(String text, char c) {
-        if (text == null || text.isEmpty()) return text;
-        String lower = text.toLowerCase(Locale.ROOT);
-        boolean[] mask = new boolean[text.length()];
-
-        for (int i = 0; i < lower.length(); i++) {
-            TrieNode node = root;
-            for (int j = i; j < lower.length(); j++) {
-                node = node.children.get(lower.charAt(j));
-                if (node == null) break;
-                if (node.isEnd) {
-                    Arrays.fill(mask, i, j + 1, true);
-                }
-            }
-        }
-
-        StringBuilder sb = new StringBuilder(text.length());
-        for (int i = 0; i < text.length(); i++) {
-            sb.append(mask[i] ? c : text.charAt(i));
-        }
-        return sb.toString();
-    }
-
-    /**
      * 当前词库中敏感词数量
      */
     public int countWords() {

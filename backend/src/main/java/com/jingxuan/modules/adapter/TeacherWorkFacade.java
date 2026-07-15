@@ -2,7 +2,6 @@ package com.jingxuan.modules.adapter;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import cn.hutool.json.JSONUtil;
 import com.jingxuan.common.PageResult;
 import com.jingxuan.util.ClassScopeUtil;
 import com.jingxuan.entity.ScoreBatch;

@@ -5,14 +5,12 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.jingxuan.entity.ScoreBatch;
 import com.jingxuan.entity.Work;
 import com.jingxuan.entity.WorkAttachment;
-import com.jingxuan.entity.WorkMember;
 import com.jingxuan.entity.WorkPublish;
 import com.jingxuan.enums.AuditStatusEnum;
 import com.jingxuan.exception.BusinessException;
 import com.jingxuan.mapper.*;
 import com.jingxuan.modules.log.service.LogService;
 import com.jingxuan.modules.notification.service.NotificationService;
-import com.jingxuan.modules.task.service.StudentTaskService;
 import com.jingxuan.modules.sensitive.service.DeepSeekReviewService;
 import com.jingxuan.modules.task.service.StudentTaskService;
 import com.jingxuan.modules.work.dto.WorkMemberDTO;
@@ -381,6 +379,18 @@ class WorkServiceImplTest {
                         () -> workService.deleteWork(1L),
                         "状态 " + status + " 应不可删除");
             }
+        }
+
+        @Test
+        @DisplayName("管理员删除作品时委托待办服务重置关联任务")
+        void shouldResetTaskThroughTaskServiceWhenAdminDeletesWork() {
+            Work work = createWork(1L, AuditStatusEnum.APPROVED.getValue(), CURRENT_USER_ID);
+            when(workMapper.selectById(1L)).thenReturn(work);
+
+            workService.adminDeleteWork(1L);
+
+            verify(studentTaskService).resetTask(1L);
+            verify(studentTaskService, never()).updateById(any());
         }
     }
 
